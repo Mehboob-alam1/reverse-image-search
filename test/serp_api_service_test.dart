@@ -33,4 +33,34 @@ void main() {
     expect(response.results.visualMatches.first.sourceDomain, 'shop.example.com');
     expect(response.results.aboutImage?.hasContent, isTrue);
   });
+
+  test('normalizes Google Reverse Image inline and page results', () {
+    final service = SerpApiService();
+    final response = service.normalizeReverseImage(
+      {
+        'inline_images': [
+          {
+            'title': 'Match one',
+            'source': 'https://example.com/a',
+            'thumbnail': 'https://img.example.com/t.jpg',
+            'original': 'https://img.example.com/full.jpg',
+          },
+        ],
+        'image_results': [
+          {
+            'position': 1,
+            'title': 'Page hit',
+            'link': 'https://example.com/page',
+            'snippet': 'desc',
+          },
+        ],
+      },
+      'https://cdn.example.com/query.jpg',
+      SearchType.all,
+    );
+
+    expect(response.results.visualMatches, hasLength(1));
+    expect(response.results.exactMatches, hasLength(1));
+    expect(response.results.exactMatches.first.title, 'Page hit');
+  });
 }

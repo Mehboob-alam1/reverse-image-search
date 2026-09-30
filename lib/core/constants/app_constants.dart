@@ -1,3 +1,5 @@
+import 'api_config.dart';
+
 class AppConstants {
   AppConstants._();
 
@@ -43,10 +45,12 @@ class AppEnv {
     defaultValue: 'development',
   );
 
-  static const String serpApiKey = String.fromEnvironment(
-    'SERPAPI_KEY',
-    defaultValue: '',
-  );
+  static const String _serpApiKeyFromDefine = String.fromEnvironment('SERPAPI_KEY');
+
+  /// Non-empty `--dart-define=SERPAPI_KEY=...` wins; otherwise [ApiConfig.serpApiKey].
+  /// An empty define (e.g. `SERPAPI_KEY=`) does not override the embedded key.
+  static String get serpApiKey =>
+      _serpApiKeyFromDefine.isNotEmpty ? _serpApiKeyFromDefine : ApiConfig.serpApiKey;
 
   static bool get isProduction => flavor == 'production';
   static bool get isDevelopment => flavor == 'development';

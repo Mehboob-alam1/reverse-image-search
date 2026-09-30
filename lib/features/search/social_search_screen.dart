@@ -9,7 +9,7 @@ import '../../core/errors/app_exception_l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/picked_media.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/search_type.dart';
+import '../../models/home_search_mode.dart';
 import '../../models/user_models.dart';
 import '../../services/analytics_service.dart';
 import '../controllers.dart';
@@ -85,11 +85,12 @@ class SocialSearchScreen extends ConsumerWidget {
       final file = await PickedMedia.pickOriginal(source: source);
       if (file == null || !context.mounted) return;
       await ref.read(analyticsServiceProvider).imageSelected();
-      ref.read(searchControllerProvider.notifier).setPending(
-            PendingImage(localPath: file.path),
+      ref.read(searchControllerProvider.notifier).beginSearch(
+            image: PendingImage(localPath: file.path),
+            mode: HomeSearchMode.social,
             siteFilter: platform.domains,
           );
-      if (context.mounted) context.push('/searching', extra: SearchType.all.apiValue);
+      if (context.mounted) context.push('/searching');
     } on AppException catch (error) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/constants/api_config.dart';
 import '../../core/errors/app_exception.dart';
 import '../../core/widgets/app_widgets.dart';
+import '../../core/widgets/search_debug_log_panel.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/search_result.dart';
 import '../../services/analytics_service.dart';
@@ -26,6 +28,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   void initState() {
     super.initState();
     _tabs = TabController(length: 5, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final index = ref.read(searchControllerProvider).homeSearchMode.resultsTabIndex;
+      if (_tabs.index != index) {
+        _tabs.animateTo(index.clamp(0, 4));
+      }
+    });
   }
 
   @override
@@ -66,19 +75,40 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       final copy = _errorCopy(l10n, session.error!);
       return Scaffold(
         appBar: AppBar(title: Text(l10n.searchResults)),
-        body: ErrorView(
-          title: copy.$1,
-          body: copy.$2,
-          onRetry: () => context.go('/home'),
+        body: Column(
+          children: [
+            Expanded(
+              child: ErrorView(
+                title: copy.$1,
+                body: copy.$2,
+                onRetry: () => context.go('/home'),
+              ),
+            ),
+            if (ApiConfig.showSearchDebugLog)
+              const Padding(
+                padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
+                child: SearchDebugLogPanel(maxHeight: 180, darkBackground: false),
+              ),
+          ],
         ),
       );
     }
 
     final results = session.response?.results;
     if (results == null) {
+      if (session.loading) {
+        return Scaffold(
+          appBar: AppBar(title: Text(l10n.searchResults)),
+          body: const LoadingView(),
+        );
+      }
       return Scaffold(
         appBar: AppBar(title: Text(l10n.searchResults)),
-        body: const LoadingView(),
+        body: ErrorView(
+          title: l10n.searchFailedTitle,
+          body: l10n.searchFailedBody,
+          onRetry: () => context.go('/home'),
+        ),
       );
     }
 
@@ -121,9 +151,14 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(l10n.copyrightNotice, style: Theme.of(context).textTheme.bodySmall),
           ),
+          if (ApiConfig.showSearchDebugLog)
+            const Padding(
+              padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
+              child: SearchDebugLogPanel(maxHeight: 160, darkBackground: false),
+            ),
         ],
       ),
     );

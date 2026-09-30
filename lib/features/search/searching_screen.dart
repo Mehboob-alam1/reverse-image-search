@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/errors/app_exception.dart';
+import '../../core/constants/api_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/app_widgets.dart';
+import '../../core/widgets/search_debug_log_panel.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/search_type.dart';
 import '../controllers.dart';
 
 class SearchingScreen extends ConsumerStatefulWidget {
-  const SearchingScreen({super.key, required this.searchType});
-
-  final String searchType;
+  const SearchingScreen({super.key});
 
   @override
   ConsumerState<SearchingScreen> createState() => _SearchingScreenState();
@@ -37,12 +35,8 @@ class _SearchingScreenState extends ConsumerState<SearchingScreen> {
     });
 
     try {
-      await ref.read(searchControllerProvider.notifier).search(
-            SearchType.fromValue(widget.searchType),
-          );
-      await sub.cancel();
-      if (mounted) context.go('/results');
-    } on AppException {
+      await ref.read(searchControllerProvider.notifier).search();
+    } finally {
       await sub.cancel();
       if (mounted) context.go('/results');
     }
@@ -118,7 +112,14 @@ class _SearchingScreenState extends ConsumerState<SearchingScreen> {
                     backgroundColor: Colors.white24,
                   ),
                 ),
-                const SizedBox(height: 36),
+                const SizedBox(height: 16),
+                if (ApiConfig.showSearchDebugLog)
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
+                    child: SearchDebugLogPanel(maxHeight: 200),
+                  )
+                else
+                  const SizedBox(height: 20),
               ],
             ),
           ),

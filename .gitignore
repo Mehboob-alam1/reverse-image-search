@@ -48,6 +48,8 @@ app.*.map.json
 .env
 .env.local
 .env.*.local
+dart_defines.dev.json
+dart_defines.prod.json
 backend/.env
 **/google-services.json
 **/GoogleService-Info.plist

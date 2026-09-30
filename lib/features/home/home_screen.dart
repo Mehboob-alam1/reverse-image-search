@@ -10,7 +10,7 @@ import '../../core/utils/picked_media.dart';
 import '../../core/utils/url_validator.dart';
 import '../../core/widgets/app_widgets.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/search_type.dart';
+import '../../models/home_search_mode.dart';
 import '../../models/user_models.dart';
 import '../../services/analytics_service.dart';
 import '../controllers.dart';
@@ -32,6 +32,7 @@ class _HomeMode {
     required this.title,
     required this.subtitle,
     required this.icon,
+    required this.searchMode,
     this.badge = '',
     this.pro = false,
     this.social = false,
@@ -40,6 +41,7 @@ class _HomeMode {
   final String title;
   final String subtitle;
   final HomeIconKind icon;
+  final HomeSearchMode searchMode;
   final String badge;
   final bool pro;
   final bool social;
@@ -53,12 +55,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: l10n.modeFaceTitle,
           subtitle: l10n.modeFaceSubtitle,
           icon: HomeIconKind.face,
+          searchMode: HomeSearchMode.face,
           badge: l10n.badgeNew,
         ),
         _HomeMode(
           title: l10n.modeSocialTitle,
           subtitle: l10n.modeSocialSubtitle,
           icon: HomeIconKind.twitter,
+          searchMode: HomeSearchMode.social,
           badge: l10n.badgeNew,
           social: true,
         ),
@@ -66,11 +70,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: l10n.modeObjectTitle,
           subtitle: l10n.modeObjectSubtitle,
           icon: HomeIconKind.plant,
+          searchMode: HomeSearchMode.object,
         ),
         _HomeMode(
           title: l10n.modeSimilarTitle,
           subtitle: l10n.modeSimilarSubtitle,
           icon: HomeIconKind.photo,
+          searchMode: HomeSearchMode.similar,
           badge: l10n.badgePro,
           pro: true,
         ),
@@ -78,11 +84,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: l10n.modeWebTitle,
           subtitle: l10n.modeWebSubtitle,
           icon: HomeIconKind.globe,
+          searchMode: HomeSearchMode.web,
         ),
         _HomeMode(
           title: l10n.modeDuplicateTitle,
           subtitle: l10n.modeDuplicateSubtitle,
           icon: HomeIconKind.duplicate,
+          searchMode: HomeSearchMode.duplicate,
         ),
       ];
 
@@ -101,14 +109,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       context.push('/social-search');
       return;
     }
-    await _pickAndSearch();
+    await _pickAndSearch(mode.searchMode);
   }
 
-  Future<void> _pickAndSearch() async {
+  Future<void> _pickAndSearch([HomeSearchMode mode = HomeSearchMode.general]) async {
     final typed = _name.text.trim();
     if (UrlValidator.isValidHttpUrl(typed)) {
-      ref.read(searchControllerProvider.notifier).setPending(PendingImage(remoteUrl: typed));
-      if (mounted) context.push('/searching', extra: SearchType.all.apiValue);
+      ref.read(searchControllerProvider.notifier).beginSearch(
+            image: PendingImage(remoteUrl: typed),
+            mode: mode,
+          );
+      if (mounted) context.push('/searching');
       return;
     }
 
@@ -122,10 +133,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final file = await PickedMedia.pickOriginal(source: source);
       if (file == null || !mounted) return;
       await ref.read(analyticsServiceProvider).imageSelected();
-      ref.read(searchControllerProvider.notifier).setPending(
-            PendingImage(localPath: file.path),
+      ref.read(searchControllerProvider.notifier).beginSearch(
+            image: PendingImage(localPath: file.path),
+            mode: mode,
           );
-      if (mounted) context.push('/searching', extra: SearchType.all.apiValue);
+      if (mounted) context.push('/searching');
     } on AppException catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

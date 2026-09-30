@@ -8,12 +8,14 @@ import '../core/constants/app_constants.dart';
 import '../core/errors/app_exception.dart';
 import '../core/storage/local_storage.dart';
 import '../models/favorite_item.dart';
+import '../models/home_search_mode.dart';
 import '../models/search_history_item.dart';
 import '../models/search_response.dart';
 import '../models/search_result.dart';
 import '../models/search_type.dart';
 import '../models/user_models.dart';
 import '../services/analytics_service.dart';
+import '../services/search_debug_log.dart';
 import '../services/feature_access_service.dart';
 import '../services/search_repository.dart';
 import '../services/user_repositories.dart';
@@ -134,6 +136,7 @@ class SearchSession {
     this.loading = false,
     this.error,
     this.siteFilter = const [],
+    this.homeSearchMode = HomeSearchMode.general,
   });
 
   final PendingImage? pending;
@@ -141,6 +144,7 @@ class SearchSession {
   final bool loading;
   final AppException? error;
   final List<String> siteFilter;
+  final HomeSearchMode homeSearchMode;
 
   SearchSession copyWith({
     PendingImage? pending,
@@ -148,6 +152,7 @@ class SearchSession {
     bool? loading,
     AppException? error,
     List<String>? siteFilter,
+    HomeSearchMode? homeSearchMode,
     bool clearError = false,
     bool clearResponse = false,
   }) {
@@ -157,6 +162,7 @@ class SearchSession {
       loading: loading ?? this.loading,
       error: clearError ? null : error ?? this.error,
       siteFilter: siteFilter ?? this.siteFilter,
+      homeSearchMode: homeSearchMode ?? this.homeSearchMode,
     );
   }
 }
@@ -168,15 +174,33 @@ class SearchController extends Notifier<SearchSession> {
   @override
   SearchSession build() => const SearchSession();
 
-  void setPending(PendingImage image, {List<String> siteFilter = const []}) {
-    state = SearchSession(pending: image, siteFilter: siteFilter);
+  void beginSearch({
+    required PendingImage image,
+    required HomeSearchMode mode,
+    List<String>? siteFilter,
+  }) {
+    final log = ref.read(searchDebugLogProvider.notifier)..clear();
+    log.log('─── New search (${mode.name}) ───');
+    if (image.hasLocal) {
+      log.log(
+        'Local copy on this phone (not sent to SerpApi yet): ${image.localPath}',
+      );
+      log.log('Next: upload to tmpfiles / catbox / 0x0.st → public HTTPS URL');
+    } else {
+      log.log('Image URL (no upload): ${image.remoteUrl}');
+    }
+    state = SearchSession(
+      pending: image,
+      homeSearchMode: mode,
+      siteFilter: siteFilter ?? mode.siteFilter,
+    );
   }
 
   void applyResponse(SearchResponse response) {
     state = state.copyWith(response: response, loading: false, clearError: true);
   }
 
-  Future<SearchResponse> search(SearchType type) async {
+  Future<SearchResponse> search() async {
     final pending = state.pending;
     if (pending == null) {
       throw const AppException(
@@ -184,6 +208,8 @@ class SearchController extends Notifier<SearchSession> {
         message: 'Please select an image first.',
       );
     }
+
+    final type = state.homeSearchMode.searchType;
 
     final usage = ref.read(authControllerProvider).usage;
     if (!ref.read(featureAccessProvider).canSearch(usage)) {
@@ -194,6 +220,7 @@ class SearchController extends Notifier<SearchSession> {
     }
 
     state = state.copyWith(loading: true, clearError: true, clearResponse: true);
+    ref.read(searchDebugLogProvider.notifier).log('Search pipeline started (SerpApi type=${type.apiValue})');
     await ref.read(analyticsServiceProvider).searchStarted(type.apiValue);
     try {
       final repo = ref.read(searchRepositoryProvider);
@@ -201,6 +228,9 @@ class SearchController extends Notifier<SearchSession> {
           ? await repo.searchImage(file: File(pending.localPath!), searchType: type)
           : await repo.searchByUrl(url: pending.remoteUrl!, searchType: type);
       final filtered = result.forSites(state.siteFilter);
+      ref.read(searchDebugLogProvider.notifier).log(
+            'Site filter: ${state.siteFilter.isEmpty ? 'none' : state.siteFilter.join(', ')}',
+          );
       state = state.copyWith(loading: false, response: filtered);
       await ref.read(analyticsServiceProvider).searchCompleted(
             type.apiValue,
@@ -211,9 +241,19 @@ class SearchController extends Notifier<SearchSession> {
       }
       return filtered;
     } on AppException catch (error) {
+      ref.read(searchDebugLogProvider.notifier).log('Search error: ${error.message}');
       state = state.copyWith(loading: false, error: error);
       await ref.read(analyticsServiceProvider).searchFailed(error.code.name);
       rethrow;
+    } catch (error) {
+      ref.read(searchDebugLogProvider.notifier).log('Unexpected error: $error');
+      final wrapped = AppException(
+        code: AppErrorCode.unavailable,
+        message: error.toString(),
+      );
+      state = state.copyWith(loading: false, error: wrapped);
+      await ref.read(analyticsServiceProvider).searchFailed(wrapped.code.name);
+      throw wrapped;
     }
   }
 }

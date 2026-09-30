@@ -14,7 +14,7 @@ Flutter + Dart reverse image search app. The app calls SerpApi Google Lens direc
 
 ## Requirements
 
-- Flutter 3.41+ / Dart 3.11+
+- Flutter 3.35+ / Dart 3.9+
 - Android SDK 24+
 - A [SerpApi](https://serpapi.com/) key
 
@@ -34,10 +34,12 @@ Pass the SerpApi key at compile time. Do not commit a real key.
 | `SERPAPI_KEY` | empty | SerpApi Google Lens key |
 | `FLAVOR` | `development` | `development`, `staging`, or `production` |
 
+For local runs, copy `dart_defines.dev.json.example` to `dart_defines.dev.json` (gitignored), add your key, then use `--dart-define-from-file=dart_defines.dev.json`. VS Code/Cursor launch configs already use that file.
+
 ## Running the app
 
 ```bash
-flutter run --dart-define=FLAVOR=development --dart-define=SERPAPI_KEY=your_key
+flutter run --dart-define-from-file=dart_defines.dev.json
 ```
 
 Android emulator and physical devices both work with that command. Local files are hosted briefly on tmpfiles.org so Google Lens can read a public image URL.

@@ -6,8 +6,7 @@
       "request": "launch",
       "type": "dart",
       "args": [
-        "--dart-define=FLAVOR=development",
-        "--dart-define=SERPAPI_KEY="
+        "--dart-define-from-file=dart_defines.dev.json"
       ]
     },
     {
@@ -16,8 +15,7 @@
       "type": "dart",
       "flutterMode": "release",
       "args": [
-        "--dart-define=FLAVOR=production",
-        "--dart-define=SERPAPI_KEY="
+        "--dart-define-from-file=dart_defines.prod.json"
       ]
     }
   ]

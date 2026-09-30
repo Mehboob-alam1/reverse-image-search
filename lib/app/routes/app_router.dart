@@ -31,7 +31,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/social-search', builder: (_, _) => const SocialSearchScreen()),
       GoRoute(
         path: '/searching',
-        builder: (_, state) => SearchingScreen(searchType: state.extra as String? ?? 'all'),
+        builder: (_, _) => const SearchingScreen(),
       ),
       GoRoute(path: '/results', builder: (_, _) => const ResultsScreen()),
       GoRoute(
