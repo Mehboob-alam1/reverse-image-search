@@ -67,6 +67,7 @@ class SearchRepository {
     }
 
     if (file != null) {
+      _log('SearchRepository: SerpApi file search (upload + lens).');
       return _serpApi.searchFile(file: file, searchType: searchType);
     }
     return _serpApi.searchByUrl(url: imageUrl ?? '', searchType: searchType);

@@ -115,10 +115,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Future<void> _pickAndSearch([HomeSearchMode mode = HomeSearchMode.general]) async {
     final typed = _name.text.trim();
     if (UrlValidator.isValidHttpUrl(typed)) {
-      ref.read(searchControllerProvider.notifier).beginSearch(
-            image: PendingImage(remoteUrl: typed),
-            mode: mode,
-          );
+      final search = ref.read(searchControllerProvider.notifier);
+      search.beginSearch(
+        image: PendingImage(remoteUrl: typed),
+        mode: mode,
+      );
+      search.scheduleSearch();
       if (mounted) context.push('/searching');
       return;
     }
@@ -133,10 +135,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final file = await PickedMedia.pickOriginal(source: source);
       if (file == null || !mounted) return;
       await ref.read(analyticsServiceProvider).imageSelected();
-      ref.read(searchControllerProvider.notifier).beginSearch(
-            image: PendingImage(localPath: file.path),
-            mode: mode,
-          );
+      final search = ref.read(searchControllerProvider.notifier);
+      search.beginSearch(
+        image: PendingImage(localPath: file.path),
+        mode: mode,
+      );
+      search.scheduleSearch();
       if (mounted) context.push('/searching');
     } on AppException catch (error) {
       if (!mounted) return;

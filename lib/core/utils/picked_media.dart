@@ -38,9 +38,9 @@ class PickedMedia {
     final picked = await _picker.pickImage(
       source: source,
       requestFullMetadata: true,
-      maxWidth: 1600,
-      maxHeight: 1600,
-      imageQuality: 85,
+      maxWidth: 1200,
+      maxHeight: 1200,
+      imageQuality: 78,
     );
     if (picked == null) return null;
 

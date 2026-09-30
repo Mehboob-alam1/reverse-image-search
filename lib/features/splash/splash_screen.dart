@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/storage/local_storage.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/analytics_service.dart';
@@ -36,7 +37,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _timer = Timer(AppConstants.splashDuration, () {
       if (!mounted) return;
       if (GoRouter.maybeOf(context) == null) return;
-      context.go('/language');
+      final storage = ref.read(localStorageProvider);
+      if (!storage.hasSelectedLanguage) {
+        context.go('/language');
+      } else if (!storage.hasSeenPro) {
+        context.go('/pro');
+      } else {
+        context.go('/home');
+      }
     });
   }
 

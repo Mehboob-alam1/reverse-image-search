@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -55,15 +54,105 @@ class SerpApiService {
     return _performImageSearch(imageUrl: imageUrl, searchType: searchType);
   }
 
+  static const int _serpApiMaxUploadBytes = 500 * 1024;
+
   Future<SearchResponse> searchFile({
     required File file,
     required SearchType searchType,
   }) async {
+    final bytes = await file.length();
     _log(
-      'Reading local file on device: ${file.path} (${await file.length()} bytes)',
+      'Reading local file on device: ${file.path} ($bytes bytes)',
     );
+    _assertSerpApiKey();
+    if (bytes <= _serpApiMaxUploadBytes) {
+      try {
+        return await _searchFileViaSerpImageUpload(file, searchType);
+      } on Object catch (error) {
+        _log(
+          'SerpApi direct upload failed ($error); trying public URL hosts…',
+        );
+      }
+    } else {
+      _log(
+        'File over ${_serpApiMaxUploadBytes ~/ 1024} KB — SerpApi needs a public URL (catbox / tmpfiles / 0x0.st).',
+      );
+    }
     final hostedUrl = await _hostTemporaryImage(file);
     return _performImageSearch(imageUrl: hostedUrl, searchType: searchType);
+  }
+
+  /// [SerpApi Image API](https://serpapi.com/image-api) — upload from the phone, then Google Lens via `image_id`.
+  Future<SearchResponse> _searchFileViaSerpImageUpload(
+    File file,
+    SearchType searchType,
+  ) async {
+    final imageId = await _uploadSerpApiImage(file);
+    _log('SerpApi image_id ready (expires in ~10 minutes)');
+    final lens = await _fetchGoogleLens(
+      imageId: imageId,
+      searchType: searchType,
+    );
+    _logResultCounts('google_lens', lens);
+    if (!lens.results.isEmpty) {
+      _log('Done: Google Lens via SerpApi direct upload (no ImgBB/catbox).');
+      return lens;
+    }
+    _log('google_lens (image_id) returned no matches; trying hosted URL + reverse image…');
+    throw const AppException(
+      code: AppErrorCode.unavailable,
+      message: 'Retry with public URL hosting.',
+    );
+  }
+
+  Future<String> _uploadSerpApiImage(File file) async {
+    final length = await file.length();
+    if (length > _serpApiMaxUploadBytes) {
+      throw AppException(
+        code: AppErrorCode.invalidImage,
+        message: 'Image must be under 500 KB for SerpApi direct upload.',
+      );
+    }
+    _log('Upload: SerpApi Image API (POST serpapi.com/image)…');
+    final response = await _uploadDio.post<Map<String, dynamic>>(
+      'https://serpapi.com/image',
+      data: FormData.fromMap({
+        'api_key': AppEnv.serpApiKey,
+        'image': await MultipartFile.fromFile(
+          file.path,
+          filename: _uploadFilename(file),
+        ),
+      }),
+    );
+    final raw = response.data ?? const {};
+    if (raw['error'] != null) {
+      final msg = raw['error']?.toString() ?? 'SerpApi image upload failed.';
+      _log('Upload [serpapi.com/image]: $msg');
+      throw AppException(code: AppErrorCode.invalidImage, message: msg);
+    }
+    final imageId = raw['image_id']?.toString().trim() ?? '';
+    if (imageId.isEmpty) {
+      throw const AppException(
+        code: AppErrorCode.invalidImage,
+        message: 'SerpApi did not return an image_id.',
+      );
+    }
+    _log('Upload [serpapi.com/image]: OK');
+    return imageId;
+  }
+
+  String _uploadFilename(File file) {
+    final name = file.uri.pathSegments.isEmpty
+        ? 'search.jpg'
+        : file.uri.pathSegments.last;
+    final lower = name.toLowerCase();
+    if (lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png') ||
+        lower.endsWith('.webp')) {
+      return name;
+    }
+    return '$name.jpg';
   }
 
   /// SerpApi [Google Reverse Image](https://serpapi.com/google-reverse-image) first,
@@ -91,7 +180,10 @@ class SerpApiService {
       _log('google_reverse_image failed: ${error.message}');
     }
     try {
-      final lens = await _fetchGoogleLens(imageUrl: imageUrl, searchType: searchType);
+      final lens = await _fetchGoogleLens(
+        imageUrl: imageUrl,
+        searchType: searchType,
+      );
       _logResultCounts('google_lens', lens);
       _log('Done: using Google Lens results.');
       return lens;
@@ -134,29 +226,42 @@ class SerpApiService {
   }
 
   Future<SearchResponse> _fetchGoogleLens({
-    required String imageUrl,
+    String? imageUrl,
+    String? imageId,
     required SearchType searchType,
   }) async {
+    assert(
+      (imageUrl != null && imageUrl.isNotEmpty) ^
+          (imageId != null && imageId.isNotEmpty),
+      'Provide either imageUrl or imageId',
+    );
     final raw = await _serpGet(
       queryParameters: {
         'engine': 'google_lens',
-        'url': imageUrl,
+        if (imageId != null) 'image_id': imageId else 'url': imageUrl!,
         if (searchType != SearchType.all &&
             searchType != SearchType.aboutThisImage)
           'type': searchType.apiValue,
       },
     );
-    return normalize(raw, imageUrl, searchType);
+    final ref = imageUrl ?? 'image_id:$imageId';
+    return normalize(raw, ref, searchType);
   }
 
   Future<Map<String, dynamic>> _serpGet({
     required Map<String, dynamic> queryParameters,
   }) async {
     final engine = queryParameters['engine'];
-    final imageRef =
-        queryParameters['image_url'] ?? queryParameters['url'] ?? '';
+    final imageRef = queryParameters['image_url'] ??
+        queryParameters['url'] ??
+        queryParameters['image_id'] ??
+        '';
     _log('SerpApi request: engine=$engine');
-    _log('SerpApi image URL: $imageRef');
+    if (queryParameters['image_id'] != null) {
+      _log('SerpApi image_id: $imageRef');
+    } else {
+      _log('SerpApi image URL: $imageRef');
+    }
     try {
       final response = await _dio.get<Map<String, dynamic>>(
         'https://serpapi.com/search.json',
@@ -244,11 +349,13 @@ class SerpApiService {
       );
     }
 
+    const perHostTimeout = Duration(seconds: 22);
+
     if (ApiConfig.imgBbApiKey.isNotEmpty) {
-      _log('Upload: trying ImgBB first…');
+      _log('Upload: trying ImgBB (optional)…');
       try {
-        final url = await _uploadImgBb(bytes, filename).timeout(
-          const Duration(seconds: 20),
+        final url = await _uploadImgBbFile(file, filename).timeout(
+          perHostTimeout,
           onTimeout: () => throw const AppException(
             code: AppErrorCode.network,
             message: 'ImgBB upload timed out.',
@@ -256,95 +363,82 @@ class SerpApiService {
         );
         _log('Upload: public image URL → $url');
         return url;
-      } on AppException catch (error) {
-        _log('Upload: ImgBB failed (${error.message}), trying other hosts…');
+      } on Object catch (error) {
+        _log('Upload: ImgBB failed ($error), trying catbox…');
       }
     }
 
-    _log('Upload: ${bytes.length} bytes as "$filename" → tmpfiles / catbox / 0x0.st (parallel)');
+    _log('Upload: ${bytes.length} bytes as "$filename" (catbox → tmpfiles → 0x0.st)');
 
-    final uploads = <Future<String>>[
-      _uploadTmpFiles(bytes, filename),
-      _uploadCatbox(bytes, filename),
-      _uploadZeroX(bytes, filename),
+    final attempts = <(String, Future<String> Function())>[
+      ('catbox.moe', () => _uploadCatbox(bytes, filename)),
+      ('tmpfiles.org', () => _uploadTmpFiles(bytes, filename)),
+      ('0x0.st', () => _uploadZeroX(bytes, filename)),
     ];
 
-    try {
-      final url = await _firstSuccessfulUpload(uploads);
-      _log('Upload: public image URL → $url');
-      return url;
-    } on AppException {
-      rethrow;
-    } catch (_) {
-      throw const AppException(
-        code: AppErrorCode.invalidImage,
-        message: 'Unable to prepare this image for search. Check your connection.',
-      );
-    }
-  }
-
-  Future<String> _firstSuccessfulUpload(List<Future<String>> uploads) async {
-    final completer = Completer<String>();
-    var failures = 0;
     AppException? lastError;
-
-    for (final upload in uploads) {
-      upload.then((url) {
-        if (completer.isCompleted) return;
+    for (final (host, upload) in attempts) {
+      try {
+        _log('Upload: trying $host…');
+        final url = await upload().timeout(
+          perHostTimeout,
+          onTimeout: () => throw AppException(
+            code: AppErrorCode.network,
+            message: '$host upload timed out.',
+          ),
+        );
         if (UrlValidator.isValidHttpUrl(url)) {
-          completer.complete(url);
-        } else {
-          failures++;
-          lastError = const AppException(
-            code: AppErrorCode.invalidImage,
-            message: 'Unable to upload this gallery image.',
-          );
-          if (failures == uploads.length) {
-            completer.completeError(lastError!);
-          }
+          _log('Upload: public image URL → $url');
+          return url;
         }
-      }).catchError((Object error) {
-        failures++;
-        _log('Upload host failed ($failures/${uploads.length}): $error');
-        if (error is AppException) {
-          lastError = error;
-        } else {
-          lastError = const AppException(
-            code: AppErrorCode.invalidImage,
-            message: 'Unable to upload this gallery image.',
-          );
-        }
-        if (failures == uploads.length && !completer.isCompleted) {
-          completer.completeError(
-            lastError ??
-                const AppException(
-                  code: AppErrorCode.invalidImage,
-                  message: 'Unable to prepare this image for search.',
-                ),
-          );
-        }
-      });
+        _log('Upload: $host returned invalid URL');
+      } on AppException catch (error) {
+        lastError = error;
+        _log('Upload: $host failed: ${error.message}');
+      } on Object catch (error) {
+        lastError = AppException(
+          code: AppErrorCode.invalidImage,
+          message: error.toString(),
+        );
+        _log('Upload: $host failed: $error');
+      }
     }
 
-    return completer.future.timeout(
-      const Duration(seconds: 25),
-      onTimeout: () => throw const AppException(
-        code: AppErrorCode.network,
-        message: 'Image upload timed out. Add bingVisualSearchKey or imgBbApiKey in api_config.dart.',
-      ),
-    );
+    throw lastError ??
+        const AppException(
+          code: AppErrorCode.invalidImage,
+          message: 'Unable to prepare this image for search. Check your connection.',
+        );
   }
 
-  Future<String> _uploadImgBb(List<int> bytes, String filename) async {
-    _log('Upload [api.imgbb.com]: sending…');
+  Future<String> _uploadImgBbFile(File file, String filename) async {
+    _log('Upload [api.imgbb.com]: sending multipart file…');
     final response = await _uploadDio.post<Map<String, dynamic>>(
       'https://api.imgbb.com/1/upload',
       queryParameters: {'key': ApiConfig.imgBbApiKey},
-      data: FormData.fromMap({'image': base64Encode(bytes)}),
+      data: FormData.fromMap({
+        'image': await MultipartFile.fromFile(
+          file.path,
+          filename: filename.endsWith('.jpg') || filename.endsWith('.jpeg')
+              ? filename
+              : '$filename.jpg',
+        ),
+      }),
     );
-    final data = response.data?['data'];
+    final body = response.data ?? const {};
+    final statusCode = int.tryParse(body['status_code']?.toString() ?? '') ?? 0;
+    if (statusCode != 200) {
+      final msg = body['error'] is Map
+          ? (body['error'] as Map)['message']?.toString()
+          : body['status_txt']?.toString();
+      _log('Upload [api.imgbb.com]: API error $statusCode ${msg ?? ''}');
+      throw AppException(
+        code: AppErrorCode.invalidImage,
+        message: msg ?? 'ImgBB upload failed.',
+      );
+    }
+    final data = body['data'];
     if (data is! Map) {
-      _log('Upload [api.imgbb.com]: invalid response');
       throw const AppException(
         code: AppErrorCode.invalidImage,
         message: 'ImgBB upload failed.',

@@ -1,11 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/api_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/app_widgets.dart';
-import '../../core/widgets/search_debug_log_panel.dart';
 import '../../l10n/app_localizations.dart';
 import '../controllers.dart';
 
@@ -18,32 +18,40 @@ class SearchingScreen extends ConsumerStatefulWidget {
 
 class _SearchingScreenState extends ConsumerState<SearchingScreen> {
   int _step = 0;
+  StreamSubscription<int>? _stepSub;
 
   @override
   void initState() {
     super.initState();
-    _run();
-  }
-
-  Future<void> _run() async {
-    final messagesTicker = Stream<int>.periodic(
+    _stepSub = Stream<int>.periodic(
       const Duration(milliseconds: 900),
       (i) => i,
-    ).take(4);
-    final sub = messagesTicker.listen((i) {
+    ).take(4).listen((i) {
       if (mounted) setState(() => _step = i);
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(searchControllerProvider.notifier).scheduleSearch();
+    });
+  }
 
-    try {
-      await ref.read(searchControllerProvider.notifier).search();
-    } finally {
-      await sub.cancel();
-      if (mounted) context.go('/results');
-    }
+  @override
+  void dispose() {
+    _stepSub?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<SearchSession>(searchControllerProvider, (prev, next) {
+      final done = !next.loading &&
+          (next.response != null || next.error != null);
+      if (!done) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.replace('/results');
+      });
+    });
+
     final l10n = AppLocalizations.of(context);
     final pending = ref.watch(searchControllerProvider).pending;
     final steps = [
@@ -112,14 +120,7 @@ class _SearchingScreenState extends ConsumerState<SearchingScreen> {
                     backgroundColor: Colors.white24,
                   ),
                 ),
-                const SizedBox(height: 16),
-                if (ApiConfig.showSearchDebugLog)
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
-                    child: SearchDebugLogPanel(maxHeight: 200),
-                  )
-                else
-                  const SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
           ),

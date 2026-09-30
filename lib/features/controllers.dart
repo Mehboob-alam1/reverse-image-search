@@ -171,6 +171,8 @@ final searchControllerProvider =
     NotifierProvider<SearchController, SearchSession>(SearchController.new);
 
 class SearchController extends Notifier<SearchSession> {
+  bool _searchKickScheduled = false;
+
   @override
   SearchSession build() => const SearchSession();
 
@@ -179,13 +181,16 @@ class SearchController extends Notifier<SearchSession> {
     required HomeSearchMode mode,
     List<String>? siteFilter,
   }) {
+    _searchKickScheduled = false;
     final log = ref.read(searchDebugLogProvider.notifier)..clear();
     log.log('─── New search (${mode.name}) ───');
     if (image.hasLocal) {
       log.log(
         'Local copy on this phone (not sent to SerpApi yet): ${image.localPath}',
       );
-      log.log('Next: upload to tmpfiles / catbox / 0x0.st → public HTTPS URL');
+      log.log(
+        'Next: SerpApi direct upload (≤500 KB), else catbox / tmpfiles / 0x0.st',
+      );
     } else {
       log.log('Image URL (no upload): ${image.remoteUrl}');
     }
@@ -196,11 +201,26 @@ class SearchController extends Notifier<SearchSession> {
     );
   }
 
+  /// Starts [search] on the next event-loop turn. Safe to call from home + searching screen.
+  void scheduleSearch() {
+    if (_searchKickScheduled) return;
+    _searchKickScheduled = true;
+    Future.microtask(() async {
+      ref.read(searchDebugLogProvider.notifier).log('scheduleSearch: kickoff');
+      try {
+        await search();
+      } on Object {
+        // [search] stores [AppException] on session; navigation listens for completion.
+      }
+    });
+  }
+
   void applyResponse(SearchResponse response) {
     state = state.copyWith(response: response, loading: false, clearError: true);
   }
 
   Future<SearchResponse> search() async {
+    ref.read(searchDebugLogProvider.notifier).log('SearchController.search() started');
     final pending = state.pending;
     if (pending == null) {
       throw const AppException(

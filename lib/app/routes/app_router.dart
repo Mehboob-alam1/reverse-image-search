@@ -51,7 +51,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
     redirect: (context, state) {
       final loc = state.matchedLocation;
-      if (loc == '/' || loc == '/language') return null;
+      if (loc == '/') return null;
+      if (!storage.hasSelectedLanguage && loc != '/language') {
+        return '/language';
+      }
+      if (loc == '/language') return null;
       if (!storage.hasSeenPro && loc != '/pro') {
         return '/pro';
       }

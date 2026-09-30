@@ -85,11 +85,13 @@ class SocialSearchScreen extends ConsumerWidget {
       final file = await PickedMedia.pickOriginal(source: source);
       if (file == null || !context.mounted) return;
       await ref.read(analyticsServiceProvider).imageSelected();
-      ref.read(searchControllerProvider.notifier).beginSearch(
-            image: PendingImage(localPath: file.path),
-            mode: HomeSearchMode.social,
-            siteFilter: platform.domains,
-          );
+      final search = ref.read(searchControllerProvider.notifier);
+      search.beginSearch(
+        image: PendingImage(localPath: file.path),
+        mode: HomeSearchMode.social,
+        siteFilter: platform.domains,
+      );
+      search.scheduleSearch();
       if (context.mounted) context.push('/searching');
     } on AppException catch (error) {
       if (!context.mounted) return;

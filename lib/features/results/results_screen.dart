@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/api_config.dart';
 import '../../core/errors/app_exception.dart';
 import '../../core/widgets/app_widgets.dart';
-import '../../core/widgets/search_debug_log_panel.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/search_result.dart';
 import '../../services/analytics_service.dart';
@@ -58,6 +56,14 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     }
   }
 
+  void _backToHome(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/home');
+    }
+  }
+
   Future<void> _open(SearchResult result) async {
     await ref.read(analyticsServiceProvider).resultOpened();
     if (!mounted) return;
@@ -74,22 +80,14 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     if (session.error != null) {
       final copy = _errorCopy(l10n, session.error!);
       return Scaffold(
-        appBar: AppBar(title: Text(l10n.searchResults)),
-        body: Column(
-          children: [
-            Expanded(
-              child: ErrorView(
-                title: copy.$1,
-                body: copy.$2,
-                onRetry: () => context.go('/home'),
-              ),
-            ),
-            if (ApiConfig.showSearchDebugLog)
-              const Padding(
-                padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
-                child: SearchDebugLogPanel(maxHeight: 180, darkBackground: false),
-              ),
-          ],
+        appBar: AppBar(
+          title: Text(l10n.searchResults),
+          leading: BackButton(onPressed: () => _backToHome(context)),
+        ),
+        body: ErrorView(
+          title: copy.$1,
+          body: copy.$2,
+          onRetry: () => context.go('/home'),
         ),
       );
     }
@@ -98,12 +96,18 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     if (results == null) {
       if (session.loading) {
         return Scaffold(
-          appBar: AppBar(title: Text(l10n.searchResults)),
+          appBar: AppBar(
+            title: Text(l10n.searchResults),
+            leading: BackButton(onPressed: () => _backToHome(context)),
+          ),
           body: const LoadingView(),
         );
       }
       return Scaffold(
-        appBar: AppBar(title: Text(l10n.searchResults)),
+        appBar: AppBar(
+          title: Text(l10n.searchResults),
+          leading: BackButton(onPressed: () => _backToHome(context)),
+        ),
         body: ErrorView(
           title: l10n.searchFailedTitle,
           body: l10n.searchFailedBody,
@@ -115,6 +119,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.searchResults),
+        leading: BackButton(onPressed: () => _backToHome(context)),
         bottom: TabBar(
           controller: _tabs,
           isScrollable: true,
@@ -154,11 +159,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(l10n.copyrightNotice, style: Theme.of(context).textTheme.bodySmall),
           ),
-          if (ApiConfig.showSearchDebugLog)
-            const Padding(
-              padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
-              child: SearchDebugLogPanel(maxHeight: 160, darkBackground: false),
-            ),
         ],
       ),
     );
