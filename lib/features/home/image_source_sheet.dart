@@ -31,7 +31,7 @@ class ImageSourceSheet extends StatelessWidget {
               width: 42,
               height: 4,
               decoration: BoxDecoration(
-                color: const Color(0xFFE0E0E0),
+                color: AppColors.border(context),
                 borderRadius: BorderRadius.circular(99),
               ),
             ),
@@ -49,7 +49,7 @@ class ImageSourceSheet extends StatelessWidget {
               children: [
                 Expanded(
                   child: _SourceCard(
-                    icon: Icons.photo_library_outlined,
+                    icon: Icons.photo_library,
                     label: l10n.gallery,
                     onTap: () => Navigator.pop(context, ImageSource.gallery),
                   ),
@@ -57,7 +57,7 @@ class ImageSourceSheet extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _SourceCard(
-                    icon: Icons.photo_camera_outlined,
+                    icon: Icons.photo_camera,
                     label: l10n.camera,
                     onTap: () => Navigator.pop(context, ImageSource.camera),
                   ),
@@ -97,7 +97,7 @@ class _SourceCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 22),
           child: Column(
             children: [
-              Icon(icon, color: AppColors.primary, size: 32),
+              Icon(icon, color: AppColors.brandIcon(context), size: 32),
               const SizedBox(height: 10),
               Text(
                 label,

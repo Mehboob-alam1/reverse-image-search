@@ -10,20 +10,20 @@ class HomeTileIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const color = AppColors.primary;
+    final color = AppColors.brandIcon(context);
     switch (kind) {
       case HomeIconKind.face:
-        return const Icon(Icons.person_outline, color: color, size: 28);
+        return Icon(Icons.person, color: color, size: 28);
       case HomeIconKind.twitter:
-        return const FaIcon(FontAwesomeIcons.twitter, color: color, size: 22);
+        return FaIcon(FontAwesomeIcons.twitter, color: color, size: 22);
       case HomeIconKind.plant:
-        return const FaIcon(FontAwesomeIcons.seedling, color: color, size: 22);
+        return FaIcon(FontAwesomeIcons.seedling, color: color, size: 22);
       case HomeIconKind.photo:
-        return const Icon(Icons.image_outlined, color: color, size: 26);
+        return Icon(Icons.image, color: color, size: 26);
       case HomeIconKind.globe:
-        return const Icon(Icons.language, color: color, size: 26);
+        return Icon(Icons.language, color: color, size: 26);
       case HomeIconKind.duplicate:
-        return const SizedBox(
+        return SizedBox(
           width: 26,
           height: 26,
           child: Stack(
@@ -31,17 +31,17 @@ class HomeTileIcon extends StatelessWidget {
               Positioned(
                 left: 4,
                 top: 0,
-                child: Icon(Icons.image_outlined, color: color, size: 18),
+                child: Icon(Icons.image, color: color, size: 18),
               ),
               Positioned(
                 left: 0,
                 bottom: 0,
-                child: Icon(Icons.image_outlined, color: color, size: 18),
+                child: Icon(Icons.image, color: color, size: 18),
               ),
               Positioned(
                 right: 0,
                 bottom: 0,
-                child: Icon(Icons.autorenew, color: color, size: 12),
+                child: Icon(Icons.sync, color: color, size: 12),
               ),
             ],
           ),
@@ -64,7 +64,7 @@ class ProChip extends StatelessWidget {
   final bool compact;
   final VoidCallback? onTap;
 
-  static const Color fill = Color(0xFFF5D15C);
+  static const Color fill = AppColors.accentGold;
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +80,7 @@ class ProChip extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          color: Colors.white,
+          color: AppColors.primaryDark,
           fontWeight: FontWeight.w700,
           fontSize: compact ? 11 : 13,
         ),

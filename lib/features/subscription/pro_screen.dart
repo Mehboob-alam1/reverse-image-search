@@ -114,17 +114,21 @@ class _ProScreenState extends ConsumerState<ProScreen> {
                           SizedBox(
                             width: 36,
                             child: Icon(
-                              row.$2 ? Icons.check_circle : Icons.remove,
+                              row.$2 ? Icons.check_circle : Icons.circle,
                               size: 20,
-                              color: row.$2 ? AppColors.primary : Colors.black26,
+                              color: row.$2
+                                  ? AppColors.primary
+                                  : AppColors.brandIconMuted(context),
                             ),
                           ),
                           SizedBox(
                             width: 36,
                             child: Icon(
-                              row.$3 ? Icons.check_circle : Icons.remove,
+                              row.$3 ? Icons.check_circle : Icons.circle,
                               size: 20,
-                              color: AppColors.primary,
+                              color: row.$3
+                                  ? AppColors.primary
+                                  : AppColors.brandIconMuted(context),
                             ),
                           ),
                         ],

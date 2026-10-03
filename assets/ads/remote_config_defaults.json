@@ -1,0 +1,11 @@
+{
+  "ads_enabled": true,
+  "native_bottom_enabled": true,
+  "interstitial_enabled": true,
+  "app_open_enabled": true,
+  "interstitial_interval_seconds": 90,
+  "splash_min_ms": 2800,
+  "android_native_unit_id": "",
+  "android_interstitial_unit_id": "",
+  "android_app_open_unit_id": ""
+}

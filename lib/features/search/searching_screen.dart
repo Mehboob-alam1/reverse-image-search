@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/app_widgets.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/ads/ads_controller.dart';
 import '../controllers.dart';
 
 class SearchingScreen extends ConsumerStatefulWidget {
@@ -47,7 +48,11 @@ class _SearchingScreenState extends ConsumerState<SearchingScreen> {
       final done = !next.loading &&
           (next.response != null || next.error != null);
       if (!done) return;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+        if (next.response != null) {
+          await ref.read(adsControllerProvider.notifier).showInterstitialAfterSearch();
+        }
         if (mounted) context.replace('/results');
       });
     });

@@ -8,6 +8,7 @@ import '../../core/errors/app_exception_l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/picked_media.dart';
 import '../../core/utils/url_validator.dart';
+import '../../core/widgets/ad_bottom_scaffold.dart';
 import '../../core/widgets/app_widgets.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/home_search_mode.dart';
@@ -158,7 +159,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final muted = AppColors.muted(context);
     final cardColor = AppColors.card(context);
 
-    return Scaffold(
+    return AdBottomScaffold(
       backgroundColor: AppColors.page(context),
       drawer: const AppDrawer(),
       body: Column(
@@ -224,7 +225,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     AppTextField(
                       controller: _name,
                       hint: l10n.typeFullNameHint,
-                      prefix: const Icon(Icons.search, color: AppColors.mutedLight),
+                      prefix: Icon(
+                        Icons.search,
+                        color: Colors.white.withValues(alpha: 0.85),
+                      ),
                       onSubmitted: (_) => _pickAndSearch(),
                     ),
                   ],
@@ -257,7 +261,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           padding: const EdgeInsets.fromLTRB(16, 16, 52, 16),
                           child: Row(
                             children: [
-                              HomeTileIcon(kind: mode.icon),
+                              Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Center(
+                                  child: HomeTileIcon(kind: mode.icon),
+                                ),
+                              ),
                               const SizedBox(width: 14),
                               Expanded(
                                 child: Column(

@@ -57,6 +57,15 @@ class AppColors {
       isDark(context) ? borderDark : borderLight;
 
   static Color onPrimary(BuildContext context) => Colors.white;
+
+  /// Primary brand color for icons on light surfaces (tiles, cards, fields).
+  static Color brandIcon(BuildContext context) => primary;
+
+  /// Icons on hero / app bar / drawer gradient.
+  static const Color brandIconOnHero = Colors.white;
+
+  static Color brandIconMuted(BuildContext context) =>
+      primary.withValues(alpha: 0.35);
 }
 
 class AppRadii {

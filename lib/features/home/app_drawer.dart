@@ -18,17 +18,15 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isDark = AppColors.isDark(context);
-    final textColor = AppColors.text(context);
-    final iconColor = isDark ? Colors.white : AppColors.primary;
+    const textColor = AppColors.brandIconOnHero;
+    const iconColor = AppColors.brandIconOnHero;
 
     return Drawer(
       width: MediaQuery.sizeOf(context).width,
-      backgroundColor: isDark ? AppColors.primary : AppColors.page(context),
+      backgroundColor: AppColors.primaryDark,
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: isDark ? null : AppColors.page(context),
-          gradient: isDark ? AppColors.heroGradient : null,
+        decoration: const BoxDecoration(
+          gradient: AppColors.heroGradient,
         ),
         child: SafeArea(
           child: ListView(
@@ -47,7 +45,7 @@ class AppDrawer extends StatelessWidget {
               ),
               const SizedBox(height: 36),
               _DrawerItem(
-                icon: Icons.share_outlined,
+                icon: Icons.share,
                 label: l10n.shareApp,
                 color: textColor,
                 iconColor: iconColor,
@@ -67,7 +65,7 @@ class AppDrawer extends StatelessWidget {
                 onTap: () => _open(context, () => context.push('/language-settings')),
               ),
               _DrawerItem(
-                icon: Icons.verified_user_outlined,
+                icon: Icons.verified_user,
                 label: l10n.privacyPolicy,
                 color: textColor,
                 iconColor: iconColor,
@@ -86,7 +84,7 @@ class AppDrawer extends StatelessWidget {
                 }),
               ),
               _DrawerItem(
-                icon: Icons.star_border,
+                icon: Icons.star,
                 label: l10n.rateUs,
                 color: textColor,
                 iconColor: iconColor,
@@ -104,7 +102,7 @@ class AppDrawer extends StatelessWidget {
                 onTap: () => _open(context, () => context.push('/community')),
               ),
               _DrawerItem(
-                icon: Icons.chat_bubble_outline,
+                icon: Icons.chat_bubble,
                 label: l10n.feedback,
                 color: textColor,
                 iconColor: iconColor,
@@ -176,7 +174,8 @@ class _DrawerItem extends StatelessWidget {
               : null,
           onTap: onTap,
         ),
-        if (showDivider) Divider(color: AppColors.border(context), height: 1),
+        if (showDivider)
+          Divider(color: Colors.white.withValues(alpha: 0.22), height: 1),
       ],
     );
   }
@@ -187,16 +186,19 @@ class _DrawerLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = AppColors.isDark(context) ? const Color(0xFFF2B33A) : AppColors.primary;
+    const accent = AppColors.brandIconOnHero;
     return SizedBox(
       width: 92,
       height: 92,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CustomPaint(size: const Size(88, 88), painter: _ViewfinderPainter(accent: accent)),
-          Icon(Icons.image_outlined, color: accent, size: 36),
-          Positioned(
+          const CustomPaint(
+            size: Size(88, 88),
+            painter: _ViewfinderPainter(accent: accent),
+          ),
+          const Icon(Icons.image, color: accent, size: 36),
+          const Positioned(
             right: 22,
             top: 22,
             child: Icon(Icons.search, color: accent, size: 18),

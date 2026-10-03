@@ -63,12 +63,21 @@ class AppTheme {
       textTheme: textTheme,
       scaffoldBackgroundColor:
           isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      iconTheme: IconThemeData(
+        color: AppColors.primary,
+        size: 24,
+      ),
+      primaryIconTheme: const IconThemeData(
+        color: Colors.white,
+        size: 24,
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.primary,
         elevation: 0,
         centerTitle: false,
         foregroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.white),
+        actionsIconTheme: const IconThemeData(color: Colors.white),
         titleTextStyle: textTheme.titleMedium?.copyWith(fontSize: 18, color: Colors.white),
       ),
       cardTheme: CardThemeData(

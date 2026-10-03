@@ -19,6 +19,8 @@ class LocalStorage {
 
   final SharedPreferences _prefs;
 
+  SharedPreferences get prefs => _prefs;
+
   bool get hasSelectedLanguage =>
       _prefs.getBool(StorageKeys.hasCompletedLanguageSelection) ?? false;
 

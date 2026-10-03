@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/errors/app_exception.dart';
+import '../../core/widgets/ad_bottom_scaffold.dart';
 import '../../core/widgets/app_widgets.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/search_result.dart';
@@ -116,7 +117,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       );
     }
 
-    return Scaffold(
+    return AdBottomScaffold(
       appBar: AppBar(
         title: Text(l10n.searchResults),
         leading: BackButton(onPressed: () => _backToHome(context)),
@@ -183,7 +184,7 @@ class _ResultList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (items.isEmpty) {
-      return EmptyState(title: emptyTitle, body: emptyBody, icon: Icons.search_off);
+      return EmptyState(title: emptyTitle, body: emptyBody, icon: Icons.search);
     }
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -217,7 +218,7 @@ class _AboutTab extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final about = ref.watch(searchControllerProvider).response?.results.aboutImage;
     if (about == null || !about.hasContent) {
-      return EmptyState(title: l10n.aboutUnavailable, body: '', icon: Icons.info_outline);
+      return EmptyState(title: l10n.aboutUnavailable, body: '', icon: Icons.info);
     }
     return ListView(
       padding: const EdgeInsets.all(16),

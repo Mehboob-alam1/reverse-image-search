@@ -52,6 +52,31 @@ flutter build appbundle --release --dart-define=FLAVOR=production --dart-define=
 flutter build ipa --release --dart-define=FLAVOR=production --dart-define=SERPAPI_KEY=your_key
 ```
 
+## Android ads (AdMob)
+
+Ads run on **Android only** (native bottom banner, interstitial after search, app open after splash / resume).
+
+| Control | Location |
+| --- | --- |
+| Master switch | `AdConfig.enableAdsOnAndroid` in `lib/core/constants/ad_config.dart` |
+| Remote toggles | HTTPS JSON at `AdConfig.remoteConfigUrl` (cached 6h). Keys match `assets/ads/remote_config_defaults.json` |
+| Test IDs | Default Google sample units; replace `androidAdMobAppId` and unit IDs before release |
+
+Remote JSON example:
+
+```json
+{
+  "ads_enabled": true,
+  "native_bottom_enabled": true,
+  "interstitial_enabled": true,
+  "app_open_enabled": true,
+  "interstitial_interval_seconds": 90,
+  "splash_min_ms": 2800
+}
+```
+
+Ads preload during the splash screen. Pro subscribers (`isPro`) do not see ads.
+
 ## Accounts
 
 The app does not use Firebase Authentication. Anyone can search without signing in. History and favorites stay on the device.

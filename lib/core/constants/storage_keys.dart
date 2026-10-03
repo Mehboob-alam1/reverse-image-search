@@ -16,4 +16,7 @@ class StorageKeys {
   static const localHistory = 'localHistory';
   static const localSearchCache = 'localSearchCache';
   static const guestId = 'guestId';
+  static const adsRemoteConfigJson = 'adsRemoteConfigJson';
+  static const adsRemoteConfigFetchedAt = 'adsRemoteConfigFetchedAt';
+  static const adsLastInterstitialAt = 'adsLastInterstitialAt';
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../core/widgets/app_widgets.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/search_result.dart';
@@ -63,7 +64,10 @@ class ResultDetailsScreen extends ConsumerWidget {
           ),
           TextButton.icon(
             onPressed: () => ref.read(favoritesControllerProvider.notifier).toggle(result),
-            icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
+            icon: Icon(
+              Icons.favorite,
+              color: isFav ? AppColors.error : AppColors.brandIconMuted(context),
+            ),
             label: Text(isFav ? l10n.unfavorite : l10n.favorite),
           ),
           TextButton.icon(

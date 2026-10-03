@@ -112,7 +112,7 @@ class EmptyState extends StatelessWidget {
     super.key,
     required this.title,
     required this.body,
-    this.icon = Icons.inbox_outlined,
+    this.icon = Icons.inbox,
     this.action,
   });
 
@@ -134,7 +134,7 @@ class EmptyState extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 56, color: Theme.of(context).colorScheme.primary),
+                Icon(icon, size: 56, color: AppColors.brandIcon(context)),
                 const SizedBox(height: 16),
                 Text(
                   title,
@@ -171,7 +171,7 @@ class ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return EmptyState(
-      icon: Icons.error_outline,
+      icon: Icons.error,
       title: title,
       body: body,
       action: onRetry == null
@@ -339,7 +339,7 @@ class ModeTile extends StatelessWidget {
             ),
             if (badge != null) const ProBadge()
             else
-              const Icon(Icons.chevron_right_rounded, color: AppColors.mutedLight),
+              Icon(Icons.chevron_right, color: AppColors.brandIcon(context)),
           ],
         ),
       ),
@@ -368,8 +368,8 @@ class LanguageTile extends StatelessWidget {
       title: Text(name),
       subtitle: nativeName == name ? null : Text(nativeName),
       trailing: selected
-          ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary)
-          : const Icon(Icons.circle_outlined),
+          ? Icon(Icons.check_circle, color: AppColors.brandIcon(context))
+          : Icon(Icons.circle, color: AppColors.brandIconMuted(context), size: 22),
     );
   }
 }
@@ -396,7 +396,8 @@ class SettingTile extends StatelessWidget {
       leading: leading,
       title: Text(title),
       subtitle: subtitle == null ? null : Text(subtitle!),
-      trailing: trailing ?? const Icon(Icons.chevron_right),
+      trailing: trailing ??
+          Icon(Icons.chevron_right, color: AppColors.brandIcon(context)),
       onTap: onTap,
     );
   }
@@ -431,7 +432,8 @@ class ImagePreview extends StatelessWidget {
         fit: fit,
         alignment: Alignment.center,
         filterQuality: FilterQuality.high,
-        errorBuilder: (_, _, _) => const Icon(Icons.broken_image_outlined),
+        errorBuilder: (_, _, _) =>
+            Icon(Icons.broken_image, color: AppColors.brandIcon(context)),
       );
     } else if (networkUrl != null && networkUrl!.isNotEmpty) {
       child = CachedNetworkImage(
@@ -439,10 +441,11 @@ class ImagePreview extends StatelessWidget {
         fit: fit,
         alignment: Alignment.center,
         placeholder: (_, _) => const ResultSkeleton(),
-        errorWidget: (_, _, _) => const Icon(Icons.broken_image_outlined),
+        errorWidget: (_, _, _) =>
+            Icon(Icons.broken_image, color: AppColors.brandIcon(context)),
       );
     } else {
-      child = const Icon(Icons.image_outlined, size: 48);
+      child = Icon(Icons.image, size: 48, color: AppColors.brandIcon(context));
     }
 
     return Semantics(
@@ -487,17 +490,19 @@ class NetworkThumb extends StatelessWidget {
             ? Image.file(
                 File(filePath!),
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => const Icon(Icons.image),
+                errorBuilder: (_, _, _) =>
+                    Icon(Icons.image, color: AppColors.brandIcon(context)),
               )
             : url == null || url!.isEmpty
                 ? const ColoredBox(
                     color: Color(0x11000000),
-                    child: Icon(Icons.image_outlined),
+                    child: Icon(Icons.image, color: AppColors.primary),
                   )
                 : CachedNetworkImage(
                     imageUrl: url!,
                     fit: BoxFit.cover,
-                    errorWidget: (_, _, _) => const Icon(Icons.broken_image_outlined),
+                    errorWidget: (_, _, _) =>
+            Icon(Icons.broken_image, color: AppColors.brandIcon(context)),
                   ),
       ),
     );
@@ -579,12 +584,17 @@ class ResultCard extends StatelessWidget {
                   IconButton(
                     tooltip: isFavorite ? l10n.unfavorite : l10n.favorite,
                     onPressed: onFavorite,
-                    icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+                    icon: Icon(
+                      Icons.favorite,
+                      color: isFavorite
+                          ? AppColors.error
+                          : AppColors.brandIconMuted(context),
+                    ),
                   ),
                   IconButton(
                     tooltip: l10n.share,
                     onPressed: onShare,
-                    icon: const Icon(Icons.share_outlined),
+                    icon: Icon(Icons.share, color: AppColors.brandIcon(context)),
                   ),
                   const Spacer(),
                   TextButton(
