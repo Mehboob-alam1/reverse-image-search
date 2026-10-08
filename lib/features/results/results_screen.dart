@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/constants/app_constants.dart';
 import '../../core/errors/app_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/ad_bottom_scaffold.dart';
@@ -76,12 +77,14 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
 
   Widget _resultTile(
     SearchResult item,
-    Set<String> favoriteIds,
-  ) {
+    Set<String> favoriteIds, {
+    bool compact = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: ResultCard(
         result: item,
+        compact: compact,
         isFavorite: favoriteIds.contains(item.favoriteId),
         onOpen: () => _open(item),
         onFavorite: () => ref.read(favoritesControllerProvider.notifier).toggle(item),
@@ -163,21 +166,52 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                     ),
                   ],
                 )
-              : CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: _buildHeader(session, results, allCount, l10n),
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) => _resultTile(listItems[index], favoriteIds),
-                          childCount: listItems.length,
+              : LayoutBuilder(
+                  builder: (context, constraints) {
+                    final useGrid =
+                        _filter == _ResultsFilter.visual && constraints.maxWidth >= 520;
+                    return CustomScrollView(
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: _buildHeader(session, results, allCount, l10n),
                         ),
-                      ),
-                    ),
-                  ],
+                        if (useGrid)
+                          SliverPadding(
+                            padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                            sliver: SliverGrid(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 12,
+                                crossAxisSpacing: 12,
+                                childAspectRatio: 0.72,
+                              ),
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) => _resultTile(
+                                  listItems[index],
+                                  favoriteIds,
+                                  compact: true,
+                                ),
+                                childCount: listItems.length,
+                              ),
+                            ),
+                          )
+                        else
+                          SliverPadding(
+                            padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) => _resultTile(
+                                  listItems[index],
+                                  favoriteIds,
+                                ),
+                                childCount: listItems.length,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
     );
   }
@@ -267,8 +301,12 @@ class _ResultsQueryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final pending = session.pending;
     final queryUrl = pending?.remoteUrl ?? session.response?.queryImage;
+    final providerLabel = AppEnv.useApifySearch
+        ? l10n.searchProviderApify
+        : l10n.searchProviderSerp;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
@@ -287,8 +325,26 @@ class _ResultsQueryHeader extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.travel_explore, size: 16, color: AppColors.primary),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  providerLabel,
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
           Text(
-            'Tap a tile to open full details',
+            l10n.resultsOpenHint,
             style: TextStyle(
               color: AppColors.muted(context),
               fontSize: 13,

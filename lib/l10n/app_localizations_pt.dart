@@ -783,7 +783,17 @@ class AppLocalizationsPt extends AppLocalizations {
   String get selectImage => 'Selecionar imagem';
 
   @override
-  String get uploadingSerpApi => 'Enviando a imagem e pesquisando com SerpApi';
+  String get uploadingSerpApi => 'Analyzing your image with Google Lens…';
+
+  @override
+  String get resultsOpenHint =>
+      'Tap a card for full details, source link, and share';
+
+  @override
+  String get searchProviderApify => 'Google Lens · Apify';
+
+  @override
+  String get searchProviderSerp => 'Google Lens';
 
   @override
   String get communityGuidelinesBody =>

@@ -781,7 +781,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectImage => 'Select image';
 
   @override
-  String get uploadingSerpApi => 'Uploading image and searching with SerpApi';
+  String get uploadingSerpApi => 'Analyzing your image with Google Lens…';
+
+  @override
+  String get resultsOpenHint =>
+      'Tap a card for full details, source link, and share';
+
+  @override
+  String get searchProviderApify => 'Google Lens · Apify';
+
+  @override
+  String get searchProviderSerp => 'Google Lens';
 
   @override
   String get communityGuidelinesBody =>
@@ -789,7 +799,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyPolicyBody =>
-      'Deep Image Search processes images you pick, capture, or provide by URL so we can perform reverse image searches through SerpApi Google Lens.\n\nLocal photos are uploaded to a temporary file host so the search provider can read them. We do not keep uploaded images on a custom server.\n\nSearch results are retrieved from third-party websites. Those websites remain the source of the images and may have their own copyright and terms.\n\nHistory and favorites stay on this device. Analytics events such as app opens, search started, and search completed may be collected. We do not collect image contents in analytics.\n\nSubscriptions are processed by Apple or Google. We do not store payment card details.\n\nYou can delete local history and remove favorites from the app.';
+      'Deep Image Search processes images you pick, capture, or provide by URL so we can perform reverse image searches through Google Lens (via Apify or SerpApi, depending on configuration).\n\nLocal photos may be sent as encoded data or uploaded to a temporary file host so the search provider can read them. We do not keep uploaded images on a custom server.\n\nSearch results are retrieved from third-party websites. Those websites remain the source of the images and may have their own copyright and terms.\n\nHistory and favorites stay on this device. Analytics events such as app opens, search started, and search completed may be collected. We do not collect image contents in analytics.\n\nSubscriptions are processed by Apple or Google. We do not store payment card details.\n\nYou can delete local history and remove favorites from the app.';
 
   @override
   String get allowPhotoAccess => 'Allow photo access to search from gallery.';

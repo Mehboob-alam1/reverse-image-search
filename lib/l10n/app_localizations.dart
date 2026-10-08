@@ -1591,8 +1591,26 @@ abstract class AppLocalizations {
   /// No description provided for @uploadingSerpApi.
   ///
   /// In en, this message translates to:
-  /// **'Uploading image and searching with SerpApi'**
+  /// **'Analyzing your image with Google Lens…'**
   String get uploadingSerpApi;
+
+  /// No description provided for @resultsOpenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a card for full details, source link, and share'**
+  String get resultsOpenHint;
+
+  /// No description provided for @searchProviderApify.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Lens · Apify'**
+  String get searchProviderApify;
+
+  /// No description provided for @searchProviderSerp.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Lens'**
+  String get searchProviderSerp;
 
   /// No description provided for @communityGuidelinesBody.
   ///
@@ -1603,7 +1621,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyPolicyBody.
   ///
   /// In en, this message translates to:
-  /// **'Deep Image Search processes images you pick, capture, or provide by URL so we can perform reverse image searches through SerpApi Google Lens.\n\nLocal photos are uploaded to a temporary file host so the search provider can read them. We do not keep uploaded images on a custom server.\n\nSearch results are retrieved from third-party websites. Those websites remain the source of the images and may have their own copyright and terms.\n\nHistory and favorites stay on this device. Analytics events such as app opens, search started, and search completed may be collected. We do not collect image contents in analytics.\n\nSubscriptions are processed by Apple or Google. We do not store payment card details.\n\nYou can delete local history and remove favorites from the app.'**
+  /// **'Deep Image Search processes images you pick, capture, or provide by URL so we can perform reverse image searches through Google Lens (via Apify or SerpApi, depending on configuration).\n\nLocal photos may be sent as encoded data or uploaded to a temporary file host so the search provider can read them. We do not keep uploaded images on a custom server.\n\nSearch results are retrieved from third-party websites. Those websites remain the source of the images and may have their own copyright and terms.\n\nHistory and favorites stay on this device. Analytics events such as app opens, search started, and search completed may be collected. We do not collect image contents in analytics.\n\nSubscriptions are processed by Apple or Google. We do not store payment card details.\n\nYou can delete local history and remove favorites from the app.'**
   String get privacyPolicyBody;
 
   /// No description provided for @allowPhotoAccess.

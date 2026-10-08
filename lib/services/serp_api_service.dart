@@ -337,6 +337,9 @@ class SerpApiService {
     );
   }
 
+  /// Public URL for large local images (shared with Apify when base64 is too big).
+  Future<String> hostTemporaryImage(File file) => _hostTemporaryImage(file);
+
   Future<String> _hostTemporaryImage(File file) async {
     final filename = file.uri.pathSegments.isEmpty
         ? 'search.jpg'

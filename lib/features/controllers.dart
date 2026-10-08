@@ -194,11 +194,9 @@ class SearchController extends Notifier<SearchSession> {
     final log = ref.read(searchDebugLogProvider.notifier)..clear();
     log.log('─── New search (${mode.name}) ───');
     if (image.hasLocal) {
+      log.log('Local image on device: ${image.localPath}');
       log.log(
-        'Local copy on this phone (not sent to SerpApi yet): ${image.localPath}',
-      );
-      log.log(
-        'Next: SerpApi direct upload (≤500 KB), else catbox / tmpfiles / 0x0.st',
+        'Next: Apify base64 (≤4 MB) or temporary public URL for Google Lens',
       );
     } else {
       log.log('Image URL (no upload): ${image.remoteUrl}');
@@ -264,7 +262,9 @@ class SearchController extends Notifier<SearchSession> {
     }
 
     state = state.copyWith(loading: true, clearError: true, clearResponse: true);
-    ref.read(searchDebugLogProvider.notifier).log('Search pipeline started (SerpApi type=${type.apiValue})');
+    ref.read(searchDebugLogProvider.notifier).log(
+          'Search pipeline started (type=${type.apiValue})',
+        );
     await ref.read(analyticsServiceProvider).searchStarted(type.apiValue);
     try {
       final repo = ref.read(searchRepositoryProvider);
@@ -272,7 +272,7 @@ class SearchController extends Notifier<SearchSession> {
           ? await repo.searchImage(file: File(pending.localPath!), searchType: type)
           : await repo.searchByUrl(url: pending.remoteUrl!, searchType: type);
       ref.read(searchDebugLogProvider.notifier).log(
-            'Full SerpApi results (all matches shown; mode=${state.homeSearchMode.name})',
+            'Results ready (${result.results.all.length} matches; mode=${state.homeSearchMode.name})',
           );
       state = state.copyWith(loading: false, response: result);
       await ref.read(authControllerProvider.notifier).consumeSearchCredit();

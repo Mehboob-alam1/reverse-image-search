@@ -1,11 +1,15 @@
-/// SerpApi credentials used when [SERPAPI_KEY] is not passed via `--dart-define`.
+/// Search API credentials (`--dart-define` or local values for development).
 class ApiConfig {
   ApiConfig._();
 
-  /// In-app upload/SerpApi trace on Searching + Results screens.
+  /// In-app search trace on Searching + Results screens.
   static const bool showSearchDebugLog = false;
 
-  /// SerpApi key (Google Reverse Image + Google Lens). Replace before production.
+  /// Apify API token — preferred when set (Google Lens actor).
+  /// https://console.apify.com/account/integrations
+  static const String apifyToken = '';
+
+  /// SerpApi fallback when Apify token is empty.
   /// https://serpapi.com/manage-api-key
   static const String serpApiKey = '';
 
