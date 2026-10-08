@@ -758,6 +758,14 @@ class AppLocalizationsTr extends AppLocalizations {
       '3 günlük ücretsiz deneme bitince haftalık abonelik başlar. Yenilemeden 24 saat önce istediğiniz zaman iptal edin';
 
   @override
+  String get subscriptionFreeTierNote =>
+      'Free: 5 lifetime searches on all modes.';
+
+  @override
+  String get subscriptionMonthlyNote =>
+      'Monthly: 120 searches every 30 days, billed through the store.';
+
+  @override
   String get continueForFree => 'ÜCRETSİZ DEVAM ET  →';
 
   @override

@@ -4,12 +4,19 @@ class UsageStats {
     required this.limit,
     required this.remaining,
     required this.isPro,
+    this.tier = UsageTier.free,
+    this.trialActive = false,
+    this.periodEndsAt,
   });
 
   final int used;
   final int limit;
   final int remaining;
+  /// Premium benefits (full results, no ads) — not the same as unlimited searches.
   final bool isPro;
+  final UsageTier tier;
+  final bool trialActive;
+  final DateTime? periodEndsAt;
 
   factory UsageStats.fromJson(Map<String, dynamic> json) {
     return UsageStats(
@@ -17,9 +24,17 @@ class UsageStats {
       limit: int.tryParse(json['limit']?.toString() ?? '') ?? 50,
       remaining: int.tryParse(json['remaining']?.toString() ?? '') ?? 0,
       isPro: json['isPro'] == true,
+      tier: UsageTier.values.firstWhere(
+        (e) => e.name == json['tier'],
+        orElse: () => UsageTier.free,
+      ),
+      trialActive: json['trialActive'] == true,
+      periodEndsAt: DateTime.tryParse(json['periodEndsAt']?.toString() ?? ''),
     );
   }
 }
+
+enum UsageTier { free, trial, weekly, monthly, yearly }
 
 class UserProfile {
   const UserProfile({

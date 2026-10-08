@@ -769,6 +769,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Nach 3 Tagen endet die kostenlose Testphase, dann beginnt das wöchentliche Abo. Jederzeit mindestens 24 Stunden vor der Verlängerung kündbar';
 
   @override
+  String get subscriptionFreeTierNote =>
+      'Free: 5 lifetime searches on all modes.';
+
+  @override
+  String get subscriptionMonthlyNote =>
+      'Monthly: 120 searches every 30 days, billed through the store.';
+
+  @override
   String get continueForFree => 'KOSTENLOS FORTFAHREN  →';
 
   @override

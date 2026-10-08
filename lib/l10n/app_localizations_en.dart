@@ -761,7 +761,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proTrialWeekly =>
-      'After 3 days Free trial ends, Weekly subscription will start. Cancel anytime 24 hours before renewal';
+      '3-day free trial includes 12 searches on the weekly plan. After the trial, billing continues at the weekly price unless you cancel at least 24 hours before renewal in Google Play or App Store settings.';
+
+  @override
+  String get subscriptionFreeTierNote =>
+      'Free: 5 lifetime searches on all modes.';
+
+  @override
+  String get subscriptionMonthlyNote =>
+      'Monthly: 120 searches every 30 days, billed through the store.';
 
   @override
   String get continueForFree => 'CONTINUE FOR FREE  →';

@@ -8,10 +8,12 @@ import '../../core/errors/app_exception.dart';
 import '../../core/errors/app_exception_l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/picked_media.dart';
+import '../../core/widgets/ad_bottom_scaffold.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/home_search_mode.dart';
 import '../../models/user_models.dart';
 import '../../services/analytics_service.dart';
+import '../../services/feature_access_service.dart';
 import '../controllers.dart';
 import '../home/image_source_sheet.dart';
 
@@ -19,13 +21,11 @@ class SocialPlatform {
   const SocialPlatform({
     required this.id,
     required this.icon,
-    required this.color,
     required this.domains,
   });
 
   final String id;
   final IconData icon;
-  final Color color;
   final List<String> domains;
 }
 
@@ -33,25 +33,21 @@ const socialPlatforms = [
   SocialPlatform(
     id: 'instagram',
     icon: FontAwesomeIcons.instagram,
-    color: Color(0xFF222222),
     domains: ['instagram.com'],
   ),
   SocialPlatform(
     id: 'facebook',
     icon: FontAwesomeIcons.facebook,
-    color: Color(0xFF1877F2),
     domains: ['facebook.com', 'fb.com'],
   ),
   SocialPlatform(
     id: 'linkedin',
     icon: FontAwesomeIcons.linkedin,
-    color: Color(0xFF0A66C2),
     domains: ['linkedin.com'],
   ),
   SocialPlatform(
     id: 'twitter',
     icon: FontAwesomeIcons.twitter,
-    color: AppColors.primary,
     domains: ['twitter.com', 'x.com'],
   ),
 ];
@@ -75,6 +71,11 @@ class SocialSearchScreen extends ConsumerWidget {
   const SocialSearchScreen({super.key});
 
   Future<void> _search(BuildContext context, WidgetRef ref, SocialPlatform platform) async {
+    final usage = ref.read(authControllerProvider).usage;
+    if (!ref.read(featureAccessProvider).canSearch(usage)) {
+      if (context.mounted) context.push('/subscription');
+      return;
+    }
     final source = await ImageSourceSheet.show(context);
     if (source == null || !context.mounted) return;
 
@@ -104,7 +105,8 @@ class SocialSearchScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    return Scaffold(
+    return AdBottomScaffold(
+      nativeAdSlotKey: 'social',
       backgroundColor: AppColors.page(context),
       appBar: AppBar(
         backgroundColor: AppColors.primary,
@@ -143,7 +145,6 @@ class SocialSearchScreen extends ConsumerWidget {
                 return Material(
                   color: AppColors.card(context),
                   elevation: 0,
-                  shadowColor: Colors.transparent,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18),
                     side: BorderSide(color: AppColors.border(context), width: 1.2),
@@ -152,24 +153,38 @@ class SocialSearchScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(18),
                     onTap: () => _search(context, ref, platform),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       child: Row(
                         children: [
-                          FaIcon(
-                            platform.icon,
-                            color: platform.id == 'instagram'
-                                ? AppColors.text(context)
-                                : platform.color,
-                            size: 22,
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Center(
+                              child: FaIcon(
+                                platform.icon,
+                                color: AppColors.primary,
+                                size: 22,
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 16),
-                          Text(
-                            _platformName(l10n, platform.id),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.text(context),
+                          Expanded(
+                            child: Text(
+                              _platformName(l10n, platform.id),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.text(context),
+                              ),
                             ),
+                          ),
+                          Icon(
+                            Icons.chevron_right,
+                            color: AppColors.brandIcon(context),
                           ),
                         ],
                       ),
@@ -177,24 +192,6 @@ class SocialSearchScreen extends ConsumerWidget {
                   ),
                 );
               },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 22),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2.4, color: AppColors.primary),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  l10n.loadingAd,
-                  style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500),
-                ),
-              ],
             ),
           ),
         ],

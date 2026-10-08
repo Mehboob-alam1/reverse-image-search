@@ -49,6 +49,8 @@ final adsControllerProvider = NotifierProvider<AdsController, AdsUiState>(
 );
 
 class AdsController extends Notifier<AdsUiState> {
+  bool _pendingAppOpenAfterSplash = false;
+
   AdsManager get _manager => ref.read(adsManagerProvider);
 
   bool get _isPro => ref.read(authControllerProvider).isPro;
@@ -67,69 +69,55 @@ class AdsController extends Notifier<AdsUiState> {
       return;
     }
 
-    state = state.copyWith(bootstrapMessage: 'Preparing experience…');
+    state = state.copyWith(bootstrapMessage: 'Preparing ads…');
     await _manager.preloadAll(isPro: _isPro);
+    _manager.markSplashFinished();
+    _pendingAppOpenAfterSplash = settings.appOpenEnabled;
+    _publishNativeFromPool(settings.nativeBottomEnabled);
     state = state.copyWith(
       ready: true,
-      showNativeBottom:
-          settings.nativeBottomEnabled && _manager.adsAllowed(isPro: _isPro),
       bootstrapMessage: '',
     );
   }
 
-  Future<void> completeSplashAndShowAppOpen() async {
+  void finishSplashWithoutShowingAds() {
     _manager.markSplashFinished();
-    final lastInterstitial = ref.read(localStorageProvider).prefs.getInt(
-          StorageKeys.adsLastInterstitialAt,
-        ) ??
-        0;
-    await _manager.showAppOpenIfReady(
-      isPro: _isPro,
-      lastInterstitialMs: lastInterstitial,
-    );
-    _refreshNativeSlot();
+  }
+
+  Future<void> showDeferredAppOpenIfAny() async {
+    if (!_pendingAppOpenAfterSplash) return;
+    _pendingAppOpenAfterSplash = false;
+    await _manager.showAppOpenOnce(isPro: _isPro);
   }
 
   Future<bool> showInterstitialAfterSearch() async {
     final prefs = ref.read(localStorageProvider).prefs;
     final last = prefs.getInt(StorageKeys.adsLastInterstitialAt) ?? 0;
-    var shown = false;
-    shown = await _manager.showInterstitialIfReady(
+    return _manager.showInterstitialIfReady(
       isPro: _isPro,
       lastShownMs: last,
       onShown: (ms) => prefs.setInt(StorageKeys.adsLastInterstitialAt, ms),
     );
-    return shown;
   }
 
   void onAppResume() {
-    if (!state.ready) return;
-    final lastInterstitial = ref.read(localStorageProvider).prefs.getInt(
-          StorageKeys.adsLastInterstitialAt,
-        ) ??
-        0;
-    unawaited(
-      _manager.showAppOpenIfReady(
-        isPro: _isPro,
-        lastInterstitialMs: lastInterstitial,
-      ),
-    );
+    // App-open is once per session after splash only.
   }
 
-  void _refreshNativeSlot() {
-    if (!_manager.adsAllowed(isPro: _isPro)) {
+  void _publishNativeFromPool(bool nativeEnabled) {
+    if (!_manager.adsAllowed(isPro: _isPro) || !nativeEnabled) {
       state = state.copyWith(showNativeBottom: false, clearNative: true);
       return;
     }
-    final ad = _manager.takeNativeAd(isPro: _isPro) ?? _manager.peekNativeAd();
+    final ad = _manager.peekNativeAd();
     state = state.copyWith(
-      showNativeBottom: _manager.settings.nativeBottomEnabled && ad != null,
+      showNativeBottom: ad != null,
       nativeAd: ad,
     );
   }
 
   void attachNativeIfNeeded() {
     if (state.nativeAd != null) return;
-    _refreshNativeSlot();
+    _publishNativeFromPool(_manager.settings.nativeBottomEnabled);
   }
 }

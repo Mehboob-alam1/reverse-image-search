@@ -80,6 +80,12 @@ class AppTheme {
         actionsIconTheme: const IconThemeData(color: Colors.white),
         titleTextStyle: textTheme.titleMedium?.copyWith(fontSize: 18, color: Colors.white),
       ),
+      tabBarTheme: const TabBarThemeData(
+        labelColor: Colors.white,
+        unselectedLabelColor: Colors.white70,
+        indicatorColor: Colors.white,
+        indicatorSize: TabBarIndicatorSize.label,
+      ),
       cardTheme: CardThemeData(
         color: isDark ? AppColors.cardDark : AppColors.cardLight,
         elevation: 0,

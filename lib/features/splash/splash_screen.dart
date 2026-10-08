@@ -69,8 +69,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     }
 
     if (!mounted) return;
-    await ref.read(adsControllerProvider.notifier).completeSplashAndShowAppOpen();
-    if (!mounted) return;
     if (GoRouter.maybeOf(context) == null) return;
 
     final storage = ref.read(localStorageProvider);

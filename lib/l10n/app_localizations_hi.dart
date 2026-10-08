@@ -758,6 +758,14 @@ class AppLocalizationsHi extends AppLocalizations {
       '3 दिन का मुफ़्त ट्रायल खत्म होने के बाद साप्ताहिक सदस्यता शुरू होगी। नवीनीकरण से 24 घंटे पहले कभी भी रद्द करें';
 
   @override
+  String get subscriptionFreeTierNote =>
+      'Free: 5 lifetime searches on all modes.';
+
+  @override
+  String get subscriptionMonthlyNote =>
+      'Monthly: 120 searches every 30 days, billed through the store.';
+
+  @override
   String get continueForFree => 'मुफ़्त जारी रखें  →';
 
   @override

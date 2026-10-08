@@ -517,6 +517,7 @@ class ResultCard extends StatelessWidget {
     required this.onShare,
     required this.onFavorite,
     this.isFavorite = false,
+    this.compact = false,
   });
 
   final SearchResult result;
@@ -524,48 +525,107 @@ class ResultCard extends StatelessWidget {
   final VoidCallback onShare;
   final VoidCallback onFavorite;
   final bool isFavorite;
+  final bool compact;
+
+  String _categoryLabel(String category) {
+    return switch (category) {
+      'exact_match' => 'Exact',
+      'product' => 'Product',
+      'visual_match' => 'Visual',
+      _ => 'Match',
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Card(
-      clipBehavior: Clip.antiAlias,
+    return Material(
+      color: AppColors.card(context),
+      elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadii.md),
-        side: AppColors.cardBorderSide,
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+        side: BorderSide(
+          color: isFavorite
+              ? AppColors.error.withValues(alpha: 0.35)
+              : AppColors.border(context),
+        ),
       ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onOpen,
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(compact ? 10 : 14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  NetworkThumb(url: result.thumbnail ?? result.imageUrl),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: NetworkThumb(
+                      url: result.thumbnail ?? result.imageUrl,
+                      size: compact ? 72 : 88,
+                    ),
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(99),
+                          ),
+                          child: Text(
+                            _categoryLabel(result.category),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
                         Text(
                           result.title,
-                          maxLines: 2,
+                          maxLines: compact ? 2 : 3,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                height: 1.25,
+                              ),
                         ),
                         if (result.sourceDomain != null) ...[
-                          const SizedBox(height: 4),
-                          Text(l10n.sourceLabel(result.sourceDomain!)),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.language,
+                                size: 14,
+                                color: AppColors.muted(context),
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  result.sourceDomain!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                         if (result.price != null) ...[
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Text(
                             result.price!,
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                   color: AppColors.success,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w800,
                                 ),
                           ),
                         ],
@@ -574,31 +634,47 @@ class ResultCard extends StatelessWidget {
                   ),
                 ],
               ),
-              if (result.description != null && result.description!.isNotEmpty) ...[
-                const SizedBox(height: 10),
-                Text(result.description!, maxLines: 2, overflow: TextOverflow.ellipsis),
+              if (!compact &&
+                  result.description != null &&
+                  result.description!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  result.description!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColors.muted(context),
+                    height: 1.35,
+                    fontSize: 13,
+                  ),
+                ),
               ],
               const SizedBox(height: 8),
-              Row(
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  IconButton(
+                  _ResultIconAction(
                     tooltip: isFavorite ? l10n.unfavorite : l10n.favorite,
                     onPressed: onFavorite,
-                    icon: Icon(
-                      Icons.favorite,
-                      color: isFavorite
-                          ? AppColors.error
-                          : AppColors.brandIconMuted(context),
+                    icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? AppColors.error : AppColors.brandIcon(context),
+                  ),
+                  if (!compact)
+                    _ResultIconAction(
+                      tooltip: l10n.share,
+                      onPressed: onShare,
+                      icon: Icons.share_outlined,
+                      color: AppColors.brandIcon(context),
                     ),
-                  ),
-                  IconButton(
-                    tooltip: l10n.share,
-                    onPressed: onShare,
-                    icon: Icon(Icons.share, color: AppColors.brandIcon(context)),
-                  ),
-                  const Spacer(),
-                  TextButton(
+                  FilledButton.tonal(
                     onPressed: onOpen,
+                    style: FilledButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
                     child: Text(result.isProduct ? l10n.viewProduct : l10n.open),
                   ),
                 ],
@@ -607,6 +683,29 @@ class ResultCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ResultIconAction extends StatelessWidget {
+  const _ResultIconAction({
+    required this.tooltip,
+    required this.onPressed,
+    required this.icon,
+    required this.color,
+  });
+
+  final String tooltip;
+  final VoidCallback onPressed;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: tooltip,
+      onPressed: onPressed,
+      icon: Icon(icon, color: color),
     );
   }
 }

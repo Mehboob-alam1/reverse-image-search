@@ -531,14 +531,18 @@ class SerpApiService {
   ) {
     final inline = _list(raw['inline_images']);
     final pages = _list(raw['image_results']);
+    final visual = _list(raw['visual_matches']);
+    final mergedVisual = visual.isNotEmpty
+        ? visual
+        : [...inline, ...pages, ..._list(raw['related_content'])];
     return SearchResponse(
       searchId: const Uuid().v4(),
       queryImage: queryImage,
       searchType: searchType,
       results: SearchResultsBundle(
         visualMatches: [
-          for (var i = 0; i < inline.length; i++)
-            _item(inline[i], 'visual_match', i),
+          for (var i = 0; i < mergedVisual.length; i++)
+            _item(mergedVisual[i], 'visual_match', i),
         ],
         exactMatches: [
           for (var i = 0; i < pages.length; i++)
@@ -555,8 +559,20 @@ class SerpApiService {
     String queryImage,
     SearchType searchType,
   ) {
-    final visual = _list(raw['visual_matches']);
-    final exact = _list(raw['exact_matches']);
+    var visual = _list(raw['visual_matches']);
+    if (visual.isEmpty) {
+      visual = [
+        ..._list(raw['inline_images']),
+        ..._list(raw['image_results']),
+        ..._list(raw['related_content']),
+        ..._list(raw['pages_with_matching_images']),
+        ..._list(raw['organic_results']),
+      ];
+    }
+    var exact = _list(raw['exact_matches']);
+    if (exact.isEmpty) {
+      exact = _list(raw['image_results']);
+    }
     final products = _list(raw['shopping_results']).isNotEmpty
         ? _list(raw['shopping_results'])
         : visual.where((item) => item['price'] != null).toList();

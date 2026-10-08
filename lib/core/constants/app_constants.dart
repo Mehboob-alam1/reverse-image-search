@@ -1,4 +1,5 @@
 import 'api_config.dart';
+import 'subscription_config.dart';
 
 class AppConstants {
   AppConstants._();
@@ -11,8 +12,11 @@ class AppConstants {
   static const Duration connectTimeout = Duration(seconds: 20);
 
   static const int maxImageBytes = 25 * 1024 * 1024;
-  static const int freeSearchLimit = 50;
-  static const int proSearchLimit = 5000;
+  /// Free searches per install — see [SubscriptionConfig.freeLifetimeSearches].
+  static const int freeSearchCredits = SubscriptionConfig.freeLifetimeSearches;
+
+  /// Legacy display cap; subscribers use period allowances in [SubscriptionConfig].
+  static const int proSearchLimit = SubscriptionConfig.weeklySearchAllowance;
   static const int recentSearchLimit = 20;
 
   static const List<String> supportedImageExtensions = [
@@ -29,8 +33,9 @@ class AppConstants {
     'image/webp',
   ];
 
-  static const String monthlyProductId = 'reverse_image_search_pro_monthly';
-  static const String yearlyProductId = 'reverse_image_search_pro_yearly';
+  static const String weeklyProductId = SubscriptionConfig.weeklyProductId;
+  static const String monthlyProductId = SubscriptionConfig.monthlyProductId;
+  static const String yearlyProductId = SubscriptionConfig.yearlyProductId;
 
   static const String supportEmail = 'support@reverseimagesearch.app';
   static const String privacyUrl = 'https://reverseimagesearch.app/privacy';

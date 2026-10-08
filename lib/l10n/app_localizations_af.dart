@@ -765,6 +765,14 @@ class AppLocalizationsAf extends AppLocalizations {
       'Na 3 dae eindig die gratis proeftydperk en die weeklikse intekening begin. Kanselleer enige tyd 24 uur voor hernuwing';
 
   @override
+  String get subscriptionFreeTierNote =>
+      'Free: 5 lifetime searches on all modes.';
+
+  @override
+  String get subscriptionMonthlyNote =>
+      'Monthly: 120 searches every 30 days, billed through the store.';
+
+  @override
   String get continueForFree => 'GAAN GRATIS VOORT  →';
 
   @override

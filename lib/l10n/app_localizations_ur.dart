@@ -764,6 +764,14 @@ class AppLocalizationsUr extends AppLocalizations {
       '3 دن کے مفت ٹرائل کے بعد ہفتہ وار سبسکرپشن شروع ہو گی۔ تجدید سے 24 گھنٹے پہلے کسی بھی وقت منسوخ کریں';
 
   @override
+  String get subscriptionFreeTierNote =>
+      'Free: 5 lifetime searches on all modes.';
+
+  @override
+  String get subscriptionMonthlyNote =>
+      'Monthly: 120 searches every 30 days, billed through the store.';
+
+  @override
   String get continueForFree => 'مفت جاری رکھیں  ←';
 
   @override

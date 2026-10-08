@@ -12,6 +12,7 @@ import '../../features/results/results_screen.dart';
 import '../../features/search/searching_screen.dart';
 import '../../features/search/social_search_screen.dart';
 import '../../features/splash/splash_screen.dart';
+import '../../features/favorites/favorites_screen.dart';
 import '../../features/subscription/pro_screen.dart';
 import '../../models/search_result.dart';
 
@@ -34,6 +35,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const SearchingScreen(),
       ),
       GoRoute(path: '/results', builder: (_, _) => const ResultsScreen()),
+      GoRoute(path: '/favorites', builder: (_, _) => const FavoritesScreen()),
       GoRoute(
         path: '/result-details',
         builder: (_, state) => ResultDetailsScreen(result: state.extra as SearchResult),

@@ -11,6 +11,7 @@ class AdBottomScaffold extends StatelessWidget {
     this.backgroundColor,
     this.drawer,
     this.floatingActionButton,
+    this.nativeAdSlotKey = 'default',
   });
 
   final PreferredSizeWidget? appBar;
@@ -18,6 +19,8 @@ class AdBottomScaffold extends StatelessWidget {
   final Color? backgroundColor;
   final Widget? drawer;
   final Widget? floatingActionButton;
+  /// Unique per screen so each route owns its own native ad instance.
+  final String nativeAdSlotKey;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class AdBottomScaffold extends StatelessWidget {
       drawer: drawer,
       floatingActionButton: floatingActionButton,
       body: body,
-      bottomNavigationBar: const NativeAdBar(),
+      bottomNavigationBar: NativeAdBar(key: ValueKey('native-$nativeAdSlotKey')),
     );
   }
 }

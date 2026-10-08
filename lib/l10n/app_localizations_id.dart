@@ -765,6 +765,14 @@ class AppLocalizationsId extends AppLocalizations {
       'Setelah uji coba gratis 3 hari berakhir, langganan mingguan dimulai. Batalkan kapan saja 24 jam sebelum perpanjangan';
 
   @override
+  String get subscriptionFreeTierNote =>
+      'Free: 5 lifetime searches on all modes.';
+
+  @override
+  String get subscriptionMonthlyNote =>
+      'Monthly: 120 searches every 30 days, billed through the store.';
+
+  @override
   String get continueForFree => 'LANJUT GRATIS  →';
 
   @override

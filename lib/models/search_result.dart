@@ -52,4 +52,10 @@ class SearchResult {
       };
 
   bool get isProduct => category == 'product';
+
+  /// Stable key for local favorites/history when [id] is missing or duplicated.
+  String get favoriteId {
+    if (id.isNotEmpty) return id;
+    return 'h_${Object.hash(title, sourceUrl, imageUrl, thumbnail, category)}';
+  }
 }

@@ -1555,8 +1555,20 @@ abstract class AppLocalizations {
   /// No description provided for @proTrialWeekly.
   ///
   /// In en, this message translates to:
-  /// **'After 3 days Free trial ends, Weekly subscription will start. Cancel anytime 24 hours before renewal'**
+  /// **'3-day free trial includes 12 searches on the weekly plan. After the trial, billing continues at the weekly price unless you cancel at least 24 hours before renewal in Google Play or App Store settings.'**
   String get proTrialWeekly;
+
+  /// No description provided for @subscriptionFreeTierNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Free: 5 lifetime searches on all modes.'**
+  String get subscriptionFreeTierNote;
+
+  /// No description provided for @subscriptionMonthlyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly: 120 searches every 30 days, billed through the store.'**
+  String get subscriptionMonthlyNote;
 
   /// No description provided for @continueForFree.
   ///

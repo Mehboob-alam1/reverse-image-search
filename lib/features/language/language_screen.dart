@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/deferred_app_open.dart';
 import '../../core/storage/local_storage.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
@@ -48,13 +49,26 @@ String _languageName(AppLocalizations l10n, String code) {
   }
 }
 
-class LanguageScreen extends ConsumerWidget {
+class LanguageScreen extends ConsumerStatefulWidget {
   const LanguageScreen({super.key, this.fromSettings = false});
 
   final bool fromSettings;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LanguageScreen> createState() => _LanguageScreenState();
+}
+
+class _LanguageScreenState extends ConsumerState<LanguageScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (!widget.fromSettings) {
+      scheduleDeferredAppOpen(ref);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final selected = ref.watch(localeProvider).languageCode;
 
@@ -67,7 +81,7 @@ class LanguageScreen extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            if (fromSettings || Navigator.of(context).canPop()) {
+            if (widget.fromSettings || Navigator.of(context).canPop()) {
               context.pop();
             }
           },
@@ -90,7 +104,7 @@ class LanguageScreen extends ConsumerWidget {
               onPressed: () async {
                 await ref.read(localeProvider.notifier).setLanguage(selected);
                 if (!context.mounted) return;
-                if (fromSettings) {
+                if (widget.fromSettings) {
                   context.pop();
                 } else if (!ref.read(localStorageProvider).hasSeenPro) {
                   context.go('/pro');

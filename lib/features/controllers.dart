@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -99,6 +100,7 @@ class AuthController extends Notifier<AuthState> {
 
   Future<void> initialize() async {
     final storage = ref.read(localStorageProvider);
+    await storage.refreshSubscriptionState();
     try {
       final repo = ref.read(userRepositoryProvider);
       final usage = await repo.usage();
@@ -116,7 +118,7 @@ class AuthController extends Notifier<AuthState> {
     } catch (_) {
       state = AuthState(
         profile: UserProfile(uid: storage.guestId(), isAnonymous: true),
-        usage: const UsageStats(used: 0, limit: 50, remaining: 50, isPro: false),
+        usage: storage.buildUsageStats(),
         subscription: const SubscriptionInfo(isPro: false),
         ready: true,
       );
@@ -126,6 +128,13 @@ class AuthController extends Notifier<AuthState> {
   Future<void> clearLocalData() async {
     await ref.read(localStorageProvider).clearAuthScopedData();
     await initialize();
+  }
+
+  Future<void> refreshUsage() => initialize();
+
+  Future<void> consumeSearchCredit() async {
+    await ref.read(localStorageProvider).incrementSearchCreditsUsed();
+    await refreshUsage();
   }
 }
 
@@ -231,11 +240,26 @@ class SearchController extends Notifier<SearchSession> {
 
     final type = state.homeSearchMode.searchType;
 
-    final usage = ref.read(authControllerProvider).usage;
+    final auth = ref.read(authControllerProvider);
+    final usage = auth.usage;
     if (!ref.read(featureAccessProvider).canSearch(usage)) {
-      throw const AppException(
+      final tier = usage?.tier;
+      final message = tier == UsageTier.free
+          ? 'Free searches used. Start a free trial or subscribe for more.'
+          : 'Search allowance used for this period. Tokens reset when your plan renews.';
+      throw AppException(
         code: AppErrorCode.rateLimit,
-        message: 'Search limit reached.',
+        message: message,
+      );
+    }
+
+    final storage = ref.read(localStorageProvider);
+    final cooldown = storage.cooldownBeforeNextSearch();
+    if (cooldown != null) {
+      throw AppException(
+        code: AppErrorCode.rateLimit,
+        message:
+            'Please wait ${cooldown.inSeconds}s before the next search (API fair use).',
       );
     }
 
@@ -247,19 +271,19 @@ class SearchController extends Notifier<SearchSession> {
       final result = pending.hasLocal
           ? await repo.searchImage(file: File(pending.localPath!), searchType: type)
           : await repo.searchByUrl(url: pending.remoteUrl!, searchType: type);
-      final filtered = result.forSites(state.siteFilter);
       ref.read(searchDebugLogProvider.notifier).log(
-            'Site filter: ${state.siteFilter.isEmpty ? 'none' : state.siteFilter.join(', ')}',
+            'Full SerpApi results (all matches shown; mode=${state.homeSearchMode.name})',
           );
-      state = state.copyWith(loading: false, response: filtered);
+      state = state.copyWith(loading: false, response: result);
+      await ref.read(authControllerProvider.notifier).consumeSearchCredit();
       await ref.read(analyticsServiceProvider).searchCompleted(
             type.apiValue,
             result.results.all.length,
           );
       if (ref.read(localStorageProvider).saveHistoryAutomatically) {
-        await ref.read(historyControllerProvider.notifier).addFromSearch(filtered);
+        await ref.read(historyControllerProvider.notifier).addFromSearch(result);
       }
-      return filtered;
+      return result;
     } on AppException catch (error) {
       ref.read(searchDebugLogProvider.notifier).log('Search error: ${error.message}');
       state = state.copyWith(loading: false, error: error);
@@ -330,14 +354,17 @@ class FavoritesController extends AsyncNotifier<List<FavoriteItem>> {
     return ref.read(favoritesRepositoryProvider).list();
   }
 
-  bool isFavorite(String id) {
-    return state.value?.any((item) => item.id == id || item.result.id == id) ??
-        ref.read(favoritesRepositoryProvider).isFavorite(id);
+  bool isFavoriteResult(SearchResult result) {
+    final key = result.favoriteId;
+    return state.value?.any(
+          (item) => item.id == key || item.result.favoriteId == key,
+        ) ??
+        ref.read(favoritesRepositoryProvider).isFavoriteResult(result);
   }
 
   Future<void> toggle(SearchResult result) async {
-    if (isFavorite(result.id)) {
-      await ref.read(favoritesRepositoryProvider).remove(result.id);
+    if (isFavoriteResult(result)) {
+      await ref.read(favoritesRepositoryProvider).removeResult(result);
     } else {
       await ref.read(favoritesRepositoryProvider).add(result);
       await ref.read(analyticsServiceProvider).resultFavorited();
@@ -372,8 +399,16 @@ final iapControllerProvider =
     NotifierProvider<IapController, IapState>(IapController.new);
 
 class IapController extends Notifier<IapState> {
+  StreamSubscription<List<PurchaseDetails>>? _purchaseSub;
+
   @override
   IapState build() {
+    _purchaseSub?.cancel();
+    _purchaseSub = InAppPurchase.instance.purchaseStream.listen(
+      _onPurchaseUpdates,
+      onError: (_) {},
+    );
+    ref.onDispose(() => _purchaseSub?.cancel());
     Future.microtask(load);
     return const IapState(loading: true);
   }
@@ -386,13 +421,24 @@ class IapController extends Notifier<IapState> {
       return;
     }
     final response = await store.queryProductDetails({
+      AppConstants.weeklyProductId,
       AppConstants.monthlyProductId,
       AppConstants.yearlyProductId,
+    });
+    final products = List<ProductDetails>.from(response.productDetails);
+    products.sort((a, b) {
+      int rank(String id) {
+        if (id == AppConstants.weeklyProductId) return 0;
+        if (id == AppConstants.monthlyProductId) return 1;
+        return 2;
+      }
+
+      return rank(a.id).compareTo(rank(b.id));
     });
     state = IapState(
       available: true,
       loading: false,
-      products: response.productDetails,
+      products: products,
     );
   }
 
@@ -400,11 +446,47 @@ class IapController extends Notifier<IapState> {
     await InAppPurchase.instance.buyNonConsumable(
       purchaseParam: PurchaseParam(productDetails: product),
     );
-    await ref.read(analyticsServiceProvider).subscriptionStarted();
   }
 
   Future<void> restore() async {
     await InAppPurchase.instance.restorePurchases();
-    await ref.read(analyticsServiceProvider).subscriptionRestored();
+  }
+
+  Future<void> grantProAfterPurchase({String? productId}) async {
+    await ref.read(localStorageProvider).activateSubscriptionFromPurchase(
+          productId: productId ?? AppConstants.weeklyProductId,
+          restored: false,
+        );
+    await ref.read(authControllerProvider.notifier).refreshUsage();
+    await ref.read(analyticsServiceProvider).subscriptionStarted();
+  }
+
+  Future<void> _onPurchaseUpdates(List<PurchaseDetails> purchases) async {
+    for (final purchase in purchases) {
+      switch (purchase.status) {
+        case PurchaseStatus.pending:
+          break;
+        case PurchaseStatus.error:
+          break;
+        case PurchaseStatus.canceled:
+          break;
+        case PurchaseStatus.purchased:
+        case PurchaseStatus.restored:
+          await ref.read(localStorageProvider).activateSubscriptionFromPurchase(
+                productId: purchase.productID,
+                restored: purchase.status == PurchaseStatus.restored,
+              );
+          await ref.read(authControllerProvider.notifier).refreshUsage();
+          if (purchase.status == PurchaseStatus.restored) {
+            await ref.read(analyticsServiceProvider).subscriptionRestored();
+          } else {
+            await ref.read(analyticsServiceProvider).subscriptionStarted();
+          }
+          break;
+      }
+      if (purchase.pendingCompletePurchase) {
+        await InAppPurchase.instance.completePurchase(purchase);
+      }
+    }
   }
 }

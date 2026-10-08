@@ -19,4 +19,13 @@ class StorageKeys {
   static const adsRemoteConfigJson = 'adsRemoteConfigJson';
   static const adsRemoteConfigFetchedAt = 'adsRemoteConfigFetchedAt';
   static const adsLastInterstitialAt = 'adsLastInterstitialAt';
+  static const searchCreditsUsed = 'searchCreditsUsed';
+  static const isProEntitled = 'isProEntitled';
+  static const subscriptionPlan = 'subscriptionPlan';
+  static const subscriptionExpiresAt = 'subscriptionExpiresAt';
+  static const subscriptionPeriodStartAt = 'subscriptionPeriodStartAt';
+  static const subscriptionPeriodSearchAllowance = 'subscriptionPeriodSearchAllowance';
+  static const subscriptionPeriodSearchesUsed = 'subscriptionPeriodSearchesUsed';
+  static const hasStartedIntroTrial = 'hasStartedIntroTrial';
+  static const lastSearchAtMs = 'lastSearchAtMs';
 }

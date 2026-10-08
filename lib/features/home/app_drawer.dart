@@ -58,6 +58,13 @@ class AppDrawer extends StatelessWidget {
                 }),
               ),
               _DrawerItem(
+                icon: Icons.favorite,
+                label: l10n.navFavorites,
+                color: textColor,
+                iconColor: iconColor,
+                onTap: () => _open(context, () => context.push('/favorites')),
+              ),
+              _DrawerItem(
                 icon: Icons.translate,
                 label: l10n.selectLanguageTitle,
                 color: textColor,

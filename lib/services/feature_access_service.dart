@@ -34,7 +34,6 @@ class FeatureAccessService {
 
   bool canSearch(UsageStats? usage) {
     if (usage == null) return true;
-    if (usage.isPro) return true;
     return usage.remaining > 0;
   }
 }

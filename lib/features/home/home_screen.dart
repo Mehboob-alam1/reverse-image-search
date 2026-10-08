@@ -14,7 +14,11 @@ import '../../l10n/app_localizations.dart';
 import '../../models/home_search_mode.dart';
 import '../../models/user_models.dart';
 import '../../services/analytics_service.dart';
+import '../../app/deferred_app_open.dart';
+import '../../services/ads/ads_controller.dart';
+import '../../services/feature_access_service.dart';
 import '../controllers.dart';
+import 'credits_chip.dart';
 import 'app_drawer.dart';
 import 'home_icons.dart';
 import 'image_source_sheet.dart';
@@ -51,6 +55,15 @@ class _HomeMode {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _name = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    scheduleDeferredAppOpen(ref);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(adsControllerProvider.notifier).attachNativeIfNeeded();
+    });
+  }
+
   List<_HomeMode> _modes(AppLocalizations l10n) => [
         _HomeMode(
           title: l10n.modeFaceTitle,
@@ -78,8 +91,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           subtitle: l10n.modeSimilarSubtitle,
           icon: HomeIconKind.photo,
           searchMode: HomeSearchMode.similar,
-          badge: l10n.badgePro,
-          pro: true,
         ),
         _HomeMode(
           title: l10n.modeWebTitle,
@@ -102,7 +113,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _openMode(_HomeMode mode) async {
-    if (mode.pro) {
+    final usage = ref.read(authControllerProvider).usage;
+    if (!ref.read(featureAccessProvider).canSearch(usage)) {
+      if (!mounted) return;
       context.push('/subscription');
       return;
     }
@@ -160,6 +173,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final cardColor = AppColors.card(context);
 
     return AdBottomScaffold(
+      nativeAdSlotKey: 'home',
       backgroundColor: AppColors.page(context),
       drawer: const AppDrawer(),
       body: Column(
@@ -201,12 +215,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: 72,
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: ProChip(onTap: () => context.push('/subscription')),
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const CreditsChip(),
+                            const SizedBox(width: 6),
+                            ProChip(onTap: () => context.push('/subscription')),
+                          ],
                         ),
                       ],
                     ),

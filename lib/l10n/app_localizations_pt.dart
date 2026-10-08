@@ -766,6 +766,14 @@ class AppLocalizationsPt extends AppLocalizations {
       'Após 3 dias o teste grátis termina e a assinatura semanal começa. Cancele a qualquer momento 24 horas antes da renovação';
 
   @override
+  String get subscriptionFreeTierNote =>
+      'Free: 5 lifetime searches on all modes.';
+
+  @override
+  String get subscriptionMonthlyNote =>
+      'Monthly: 120 searches every 30 days, billed through the store.';
+
+  @override
   String get continueForFree => 'CONTINUAR GRÁTIS  →';
 
   @override

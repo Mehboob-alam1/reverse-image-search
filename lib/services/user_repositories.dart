@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/constants/app_constants.dart';
 import '../core/constants/storage_keys.dart';
 import '../core/storage/local_storage.dart';
 import '../models/favorite_item.dart';
@@ -17,7 +18,7 @@ final favoritesRepositoryProvider = Provider<FavoritesRepository>((ref) {
 });
 
 final userRepositoryProvider = Provider<UserRepository>((ref) {
-  return UserRepository();
+  return UserRepository(ref.watch(localStorageProvider));
 });
 
 class HistoryRepository {
@@ -82,11 +83,17 @@ class FavoritesRepository {
   }
 
   Future<void> add(SearchResult result) async {
+    final key = result.favoriteId;
     final current = _storage.readJsonList(StorageKeys.localFavorites);
-    current.removeWhere((e) => e['id'] == result.id || e['result']?['id'] == result.id);
+    current.removeWhere(
+      (e) =>
+          e['id'] == key ||
+          e['result']?['id'] == result.id ||
+          e['result']?['favoriteId'] == key,
+    );
     current.insert(
       0,
-      FavoriteItem(id: result.id, result: result, createdAt: DateTime.now()).toJson(),
+      FavoriteItem(id: key, result: result, createdAt: DateTime.now()).toJson(),
     );
     await _storage.writeJsonList(StorageKeys.localFavorites, current);
   }
@@ -97,6 +104,10 @@ class FavoritesRepository {
     await _storage.writeJsonList(StorageKeys.localFavorites, current);
   }
 
+  Future<void> removeResult(SearchResult result) => remove(result.favoriteId);
+
+  bool isFavoriteResult(SearchResult result) => isFavorite(result.favoriteId);
+
   bool isFavorite(String id) {
     return _storage.readJsonList(StorageKeys.localFavorites).any(
           (e) => e['id'] == id || e['result']?['id'] == id,
@@ -105,18 +116,30 @@ class FavoritesRepository {
 }
 
 class UserRepository {
+  UserRepository(this._storage);
+
+  final LocalStorage _storage;
+
   Future<UserProfile?> profile() async => null;
 
   Future<UsageStats> usage() async {
-    return const UsageStats(used: 0, limit: 50, remaining: 50, isPro: false);
+    await _storage.refreshSubscriptionState();
+    return _storage.buildUsageStats();
   }
 
   Future<SubscriptionInfo> subscription() async {
-    return const SubscriptionInfo(isPro: false);
+    await _storage.refreshSubscriptionState();
+    return _storage.buildSubscriptionInfo();
   }
 
   Future<SubscriptionInfo> verify(Map<String, dynamic> payload) async {
-    return const SubscriptionInfo(isPro: false);
+    final productId =
+        payload['productId']?.toString() ?? AppConstants.weeklyProductId;
+    await _storage.activateSubscriptionFromPurchase(
+      productId: productId,
+      restored: payload['restored'] == true,
+    );
+    return subscription();
   }
 
   Future<void> deleteAccount() async {}
