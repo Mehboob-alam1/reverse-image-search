@@ -31,7 +31,8 @@ Pass the SerpApi key at compile time. Do not commit a real key.
 
 | Define | Default | Purpose |
 | --- | --- | --- |
-| `SERPAPI_KEY` | empty | SerpApi Google Lens key |
+| `APIFY_TOKEN` | empty | Apify token (primary Google Lens actor) |
+| `SERPAPI_KEY` | empty | SerpApi fallback when Apify fails |
 | `FLAVOR` | `development` | `development`, `staging`, or `production` |
 
 For local runs, copy `dart_defines.dev.json.example` to `dart_defines.dev.json` (gitignored), add your key, then use `--dart-define-from-file=dart_defines.dev.json`. VS Code/Cursor launch configs already use that file.

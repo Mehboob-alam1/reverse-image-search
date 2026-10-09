@@ -53,6 +53,30 @@ class SearchResult {
 
   bool get isProduct => category == 'product';
 
+  static bool _isLoadableImageUrl(String? value) {
+    if (value == null || value.isEmpty) return false;
+    final u = value.trim();
+    return u.startsWith('http://') || u.startsWith('https://');
+  }
+
+  /// Thumbnail first (same order as result list), then full image URL.
+  List<String> get imageCandidateUrls {
+    final seen = <String>{};
+    final out = <String>[];
+    for (final candidate in [thumbnail, imageUrl]) {
+      if (candidate == null) continue;
+      final url = candidate.trim();
+      if (!_isLoadableImageUrl(url)) continue;
+      if (seen.add(url)) out.add(url);
+    }
+    return out;
+  }
+
+  String? get displayImageUrl {
+    final urls = imageCandidateUrls;
+    return urls.isEmpty ? null : urls.first;
+  }
+
   /// Stable key for local favorites/history when [id] is missing or duplicated.
   String get favoriteId {
     if (id.isNotEmpty) return id;

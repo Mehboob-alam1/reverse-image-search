@@ -467,17 +467,99 @@ class ImagePreview extends StatelessWidget {
   }
 }
 
+/// Loads result images with browser-like headers and tries [urls] in order.
+class MatchNetworkImage extends StatefulWidget {
+  const MatchNetworkImage({
+    super.key,
+    required this.urls,
+    this.fit = BoxFit.cover,
+    this.alignment = Alignment.center,
+    this.placeholder,
+    this.error,
+  });
+
+  final List<String> urls;
+  final BoxFit fit;
+  final Alignment alignment;
+  final Widget? placeholder;
+  final Widget? error;
+
+  static const Map<String, String> imageHeaders = {
+    'User-Agent':
+        'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+    'Accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+  };
+
+  @override
+  State<MatchNetworkImage> createState() => _MatchNetworkImageState();
+}
+
+class _MatchNetworkImageState extends State<MatchNetworkImage> {
+  int _index = 0;
+
+  @override
+  void didUpdateWidget(MatchNetworkImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.urls != widget.urls) {
+      _index = 0;
+    }
+  }
+
+  void _advance() {
+    if (!mounted) return;
+    if (_index + 1 < widget.urls.length) {
+      setState(() => _index++);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.urls.isEmpty) {
+      return widget.error ?? const SizedBox.shrink();
+    }
+    final url = widget.urls[_index.clamp(0, widget.urls.length - 1)];
+    final loading = widget.placeholder ??
+        const Center(child: CircularProgressIndicator(strokeWidth: 2));
+    final failed = widget.error ??
+        Icon(Icons.broken_image, color: AppColors.brandIcon(context));
+
+    return CachedNetworkImage(
+      key: ValueKey('$url#$_index'),
+      imageUrl: url,
+      fit: widget.fit,
+      alignment: widget.alignment,
+      httpHeaders: MatchNetworkImage.imageHeaders,
+      placeholder: (_, _) => loading,
+      errorWidget: (_, _, _) {
+        if (_index + 1 < widget.urls.length) {
+          WidgetsBinding.instance.addPostFrameCallback((_) => _advance());
+          return loading;
+        }
+        return failed;
+      },
+    );
+  }
+}
+
 class NetworkThumb extends StatelessWidget {
   const NetworkThumb({
     super.key,
-    required this.url,
+    this.url,
+    this.urls,
     this.size = 84,
     this.filePath,
   });
 
   final String? url;
+  final List<String>? urls;
   final String? filePath;
   final double size;
+
+  List<String> get _resolvedUrls {
+    if (urls != null && urls!.isNotEmpty) return urls!;
+    if (url != null && url!.trim().isNotEmpty) return [url!.trim()];
+    return const [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -493,16 +575,15 @@ class NetworkThumb extends StatelessWidget {
                 errorBuilder: (_, _, _) =>
                     Icon(Icons.image, color: AppColors.brandIcon(context)),
               )
-            : url == null || url!.isEmpty
+            : _resolvedUrls.isEmpty
                 ? const ColoredBox(
                     color: Color(0x11000000),
                     child: Icon(Icons.image, color: AppColors.primary),
                   )
-                : CachedNetworkImage(
-                    imageUrl: url!,
+                : MatchNetworkImage(
+                    urls: _resolvedUrls,
                     fit: BoxFit.cover,
-                    errorWidget: (_, _, _) =>
-            Icon(Icons.broken_image, color: AppColors.brandIcon(context)),
+                    error: Icon(Icons.broken_image, color: AppColors.brandIcon(context)),
                   ),
       ),
     );
@@ -564,7 +645,7 @@ class ResultCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(14),
                     child: NetworkThumb(
-                      url: result.thumbnail ?? result.imageUrl,
+                      urls: result.imageCandidateUrls,
                       size: compact ? 72 : 88,
                     ),
                   ),

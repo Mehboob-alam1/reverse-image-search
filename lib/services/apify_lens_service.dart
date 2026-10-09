@@ -212,6 +212,18 @@ class ApifyLensService {
     }
   }
 
+  String? _httpField(Map<String, dynamic> row, List<String> keys) {
+    for (final key in keys) {
+      final value = row[key]?.toString().trim();
+      if (value != null &&
+          value.isNotEmpty &&
+          (value.startsWith('http://') || value.startsWith('https://'))) {
+        return value;
+      }
+    }
+    return null;
+  }
+
   SearchResult _mapRow(Map<String, dynamic> row, String searchType) {
     final position = row['position']?.toString() ?? '0';
     final category = switch (searchType) {
@@ -220,15 +232,29 @@ class ApifyLensService {
       _ => 'visual_match',
     };
     final price = row['price'];
+    final thumbnail = _httpField(row, [
+      'thumbnail',
+      'thumbnailUrl',
+      'thumb',
+      'image_thumbnail',
+    ]);
+    final imageUrl = _httpField(row, [
+          'image',
+          'imageUrl',
+          'image_url',
+          'original',
+          'contentUrl',
+        ]) ??
+        thumbnail;
     return SearchResult(
       id: 'apify_${category}_$position',
       title: row['title']?.toString() ??
           row['source']?.toString() ??
           'Web match',
       category: category,
-      thumbnail: row['thumbnail']?.toString(),
-      imageUrl: row['image']?.toString() ?? row['thumbnail']?.toString(),
-      sourceUrl: row['url']?.toString(),
+      thumbnail: thumbnail,
+      imageUrl: imageUrl,
+      sourceUrl: _httpField(row, ['url', 'link', 'sourceUrl']),
       sourceDomain: row['source']?.toString(),
       description: row['title']?.toString(),
       price: price?.toString(),

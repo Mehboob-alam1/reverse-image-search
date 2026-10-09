@@ -1,4 +1,5 @@
 {
   "FLAVOR": "development",
-  "SERPAPI_KEY": "paste_your_serpapi_key_here"
+  "APIFY_TOKEN": "paste_your_apify_token_here",
+  "SERPAPI_KEY": "optional_serpapi_fallback_key"
 }

@@ -6,6 +6,7 @@ class ApiConfig {
   static const bool showSearchDebugLog = false;
 
   /// Apify API token — preferred when set (Google Lens actor).
+  /// Prefer gitignored [dart_defines.dev.json] or `--dart-define=APIFY_TOKEN=...`.
   /// https://console.apify.com/account/integrations
   static const String apifyToken = '';
 

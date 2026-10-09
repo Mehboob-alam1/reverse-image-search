@@ -775,7 +775,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get selectImage => 'Görsel seç';
 
   @override
-  String get uploadingSerpApi => 'Analyzing your image with Google Lens…';
+  String get uploadingSerpApi => 'Görsel yükleniyor ve SerpApi ile aranıyor';
 
   @override
   String get resultsOpenHint =>

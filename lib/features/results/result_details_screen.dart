@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,7 +69,7 @@ class ResultDetailsScreen extends ConsumerWidget {
     final isFav = favorites.any((e) => e.result.favoriteId == result.favoriteId);
     final url = _pageUrl ?? '';
     final domain = result.sourceDomain ?? _host(url);
-    final imageUrl = result.imageUrl ?? result.thumbnail;
+    final imageUrls = result.imageCandidateUrls;
     final style = _matchStyle();
     final textTheme = Theme.of(context).textTheme;
 
@@ -122,7 +121,7 @@ class ResultDetailsScreen extends ConsumerWidget {
             child: CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
-                  child: _HeroImage(imageUrl: imageUrl, domain: domain),
+                  child: _HeroImage(imageUrls: imageUrls, domain: domain),
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
@@ -250,9 +249,9 @@ class _MatchStyle {
 }
 
 class _HeroImage extends StatelessWidget {
-  const _HeroImage({required this.imageUrl, this.domain});
+  const _HeroImage({required this.imageUrls, this.domain});
 
-  final String? imageUrl;
+  final List<String> imageUrls;
   final String? domain;
 
   @override
@@ -262,20 +261,23 @@ class _HeroImage extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (imageUrl != null && imageUrl!.isNotEmpty)
-            CachedNetworkImage(
-              imageUrl: imageUrl!,
-              fit: BoxFit.cover,
-              placeholder: (_, _) => Container(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                child: const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              ),
-              errorWidget: (_, _, _) => const _HeroFallback(),
-            )
-          else
-            const _HeroFallback(),
+          ColoredBox(
+            color: Colors.black,
+            child: imageUrls.isNotEmpty
+                ? MatchNetworkImage(
+                    urls: imageUrls,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,
+                    placeholder: Container(
+                      color: AppColors.primary.withValues(alpha: 0.08),
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                    error: const _HeroFallback(),
+                  )
+                : const _HeroFallback(),
+          ),
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
