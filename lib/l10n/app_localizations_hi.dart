@@ -789,6 +789,20 @@ class AppLocalizationsHi extends AppLocalizations {
   String get searchProviderSerp => 'Google Lens';
 
   @override
+  String get openInGoogleLens => 'Open in Google Lens (free)';
+
+  @override
+  String get searchStackAiOnly => 'AI insights';
+
+  @override
+  String get searchResultsOverview => 'Match overview';
+
+  @override
+  String insightsPoweredBy(String provider) {
+    return 'Insights powered by $provider';
+  }
+
+  @override
   String get communityGuidelinesBody =>
       'Deep Image Search का उपयोग केवल वैध इमेज खोज के लिए करें।\n\nइस ऐप का उपयोग किसी को परेशान करने, पीछा करने, पहचान चुराने या शोषण करने के लिए न करें। नाबालिगों से जुड़ी यौन सामग्री न खोजें और न साझा करें।\n\nदूसरों की गोपनीयता और मिली इमेज के कॉपीराइट का सम्मान करें। परिणाम तीसरे पक्ष की वेबसाइटों से आते हैं और उनके नियमों के अधीन रहते हैं।\n\nसेवा का दुरुपयोग करने वाली खोजों को हम सीमित या अस्वीकार कर सकते हैं।';
 

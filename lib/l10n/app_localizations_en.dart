@@ -527,7 +527,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noResultsBody =>
-      'We couldn\'t find matching results for this image.\nTry another image.';
+      'Web matches live in Google Lens (free). Tap \"Open in Google Lens\" above, or check the About tab for AI image insights.';
 
   @override
   String get searchFailedTitle => 'Search Failed';
@@ -794,12 +794,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchProviderSerp => 'Google Lens';
 
   @override
+  String get openInGoogleLens => 'Open in Google Lens (free)';
+
+  @override
+  String get searchStackAiOnly => 'AI insights';
+
+  @override
+  String get searchResultsOverview => 'Match overview';
+
+  @override
+  String insightsPoweredBy(String provider) {
+    return 'Insights powered by $provider';
+  }
+
+  @override
   String get communityGuidelinesBody =>
       'Use Deep Image Search for lawful image lookup only.\n\nDo not use this app to harass, stalk, impersonate, or exploit anyone. Do not search for or share sexual content involving minors.\n\nRespect other people\'s privacy and the copyright of images you find. Results come from third-party websites and remain under those sites\' terms.\n\nWe may limit or refuse searches that abuse the service.';
 
   @override
   String get privacyPolicyBody =>
-      'Deep Image Search processes images you pick, capture, or provide by URL so we can perform reverse image searches through Google Lens (via Apify or SerpApi, depending on configuration).\n\nLocal photos may be sent as encoded data or uploaded to a temporary file host so the search provider can read them. We do not keep uploaded images on a custom server.\n\nSearch results are retrieved from third-party websites. Those websites remain the source of the images and may have their own copyright and terms.\n\nHistory and favorites stay on this device. Analytics events such as app opens, search started, and search completed may be collected. We do not collect image contents in analytics.\n\nSubscriptions are processed by Apple or Google. We do not store payment card details.\n\nYou can delete local history and remove favorites from the app.';
+      'Deep Image Search processes images you pick, capture, or provide by URL. Gallery photos may be uploaded briefly to a temporary public file host so Google Lens (web) can open them. We do not keep images on our own server.\n\nIn-app About insights may use OpenAI (GPT-4o mini) and/or Qwen-VL when you configure API keys; image data is sent only to those providers for analysis.\n\nGoogle Lens web results come from Google and linked websites with their own terms.\n\nHistory and favorites stay on this device. Subscriptions are processed by Apple or Google.';
 
   @override
   String get allowPhotoAccess => 'Allow photo access to search from gallery.';

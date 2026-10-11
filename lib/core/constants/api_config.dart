@@ -5,14 +5,13 @@ class ApiConfig {
   /// In-app search trace on Searching + Results screens.
   static const bool showSearchDebugLog = false;
 
-  /// Apify API token — preferred when set (Google Lens actor).
-  /// Prefer gitignored [dart_defines.dev.json] or `--dart-define=APIFY_TOKEN=...`.
-  /// https://console.apify.com/account/integrations
-  static const String apifyToken = '';
+  /// **ChatGPT mini** — About tab + summaries (`gpt-4o-mini`).
+  /// Prefer gitignored `dart_defines.dev.json` or `--dart-define=OPENAI_API_KEY=...`.
+  static const String openAiApiKey = '';
 
-  /// SerpApi fallback when Apify token is empty.
-  /// https://serpapi.com/manage-api-key
-  static const String serpApiKey = '';
+  /// **Qwen-VL** on DashScope — multilingual insights fallback.
+  /// https://dashscope.aliyun.com/
+  static const String qwenApiKey = '';
 
   /// Bing Visual Search — sends the photo from the phone (no tmpfiles/catbox upload).
   /// Create a Bing Search v7 resource in Azure Portal and paste the key here.

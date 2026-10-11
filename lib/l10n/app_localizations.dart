@@ -1111,7 +1111,7 @@ abstract class AppLocalizations {
   /// No description provided for @noResultsBody.
   ///
   /// In en, this message translates to:
-  /// **'We couldn\'t find matching results for this image.\nTry another image.'**
+  /// **'Web matches live in Google Lens (free). Tap \"Open in Google Lens\" above, or check the About tab for AI image insights.'**
   String get noResultsBody;
 
   /// No description provided for @searchFailedTitle.
@@ -1612,6 +1612,30 @@ abstract class AppLocalizations {
   /// **'Google Lens'**
   String get searchProviderSerp;
 
+  /// No description provided for @openInGoogleLens.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Google Lens (free)'**
+  String get openInGoogleLens;
+
+  /// No description provided for @searchStackAiOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'AI insights'**
+  String get searchStackAiOnly;
+
+  /// No description provided for @searchResultsOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Match overview'**
+  String get searchResultsOverview;
+
+  /// No description provided for @insightsPoweredBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights powered by {provider}'**
+  String insightsPoweredBy(String provider);
+
   /// No description provided for @communityGuidelinesBody.
   ///
   /// In en, this message translates to:
@@ -1621,7 +1645,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyPolicyBody.
   ///
   /// In en, this message translates to:
-  /// **'Deep Image Search processes images you pick, capture, or provide by URL so we can perform reverse image searches through Google Lens (via Apify or SerpApi, depending on configuration).\n\nLocal photos may be sent as encoded data or uploaded to a temporary file host so the search provider can read them. We do not keep uploaded images on a custom server.\n\nSearch results are retrieved from third-party websites. Those websites remain the source of the images and may have their own copyright and terms.\n\nHistory and favorites stay on this device. Analytics events such as app opens, search started, and search completed may be collected. We do not collect image contents in analytics.\n\nSubscriptions are processed by Apple or Google. We do not store payment card details.\n\nYou can delete local history and remove favorites from the app.'**
+  /// **'Deep Image Search processes images you pick, capture, or provide by URL. Gallery photos may be uploaded briefly to a temporary public file host so Google Lens (web) can open them. We do not keep images on our own server.\n\nIn-app About insights may use OpenAI (GPT-4o mini) and/or Qwen-VL when you configure API keys; image data is sent only to those providers for analysis.\n\nGoogle Lens web results come from Google and linked websites with their own terms.\n\nHistory and favorites stay on this device. Subscriptions are processed by Apple or Google.'**
   String get privacyPolicyBody;
 
   /// No description provided for @allowPhotoAccess.

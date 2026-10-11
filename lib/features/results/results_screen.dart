@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/constants/search_stack_config.dart';
 import '../../core/errors/app_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/ad_bottom_scaffold.dart';
@@ -304,9 +305,9 @@ class _ResultsQueryHeader extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final pending = session.pending;
     final queryUrl = pending?.remoteUrl ?? session.response?.queryImage;
-    final providerLabel = AppEnv.useApifySearch
-        ? l10n.searchProviderApify
-        : l10n.searchProviderSerp;
+    final about = session.response?.results.aboutImage;
+    final providerLabel = _stackLabel(l10n, about);
+    final lensWebUrl = about?.metadata[SearchStackConfig.metadataLensWebUrl];
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
@@ -351,9 +352,28 @@ class _ResultsQueryHeader extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
+          if (lensWebUrl != null && lensWebUrl.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              onPressed: () => const UrlService().openExternal(lensWebUrl),
+              icon: const Icon(Icons.open_in_new, size: 18),
+              label: Text(l10n.openInGoogleLens),
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  String _stackLabel(AppLocalizations l10n, AboutImageInfo? about) {
+    final parts = <String>[SearchStackConfig.lensEngineLabel];
+    final ai = about?.metadata[SearchStackConfig.metadataInsightsProvider];
+    if (ai != null && ai.isNotEmpty) {
+      parts.add(ai);
+    } else if (!AppEnv.useAiInsights) {
+      parts.add(l10n.searchStackAiOnly);
+    }
+    return parts.join(' · ');
   }
 }
 
@@ -365,6 +385,8 @@ class _AboutTab extends ConsumerWidget {
     if (about == null || !about.hasContent) {
       return EmptyState(title: l10n.aboutUnavailable, body: '', icon: Icons.info_outline);
     }
+    final summary = about.metadata[SearchStackConfig.metadataResultsSummary];
+    final aiProvider = about.metadata[SearchStackConfig.metadataInsightsProvider];
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -380,6 +402,29 @@ class _AboutTab extends ConsumerWidget {
           Text(about.possibleSource!),
           const SizedBox(height: 16),
         ],
+        if (summary != null && summary.isNotEmpty) ...[
+          Text(l10n.searchResultsOverview, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Text(summary),
+          const SizedBox(height: 16),
+        ],
+        if (about.relatedSearches.isNotEmpty) ...[
+          Text(l10n.relatedSearches, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: about.relatedSearches
+                .map(
+                  (q) => Chip(
+                    label: Text(q),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                )
+                .toList(),
+          ),
+          const SizedBox(height: 16),
+        ],
         if (about.relatedWebsites.isNotEmpty) ...[
           Text(l10n.relatedWebsites, style: Theme.of(context).textTheme.titleMedium),
           ...about.relatedWebsites.map(
@@ -387,6 +432,13 @@ class _AboutTab extends ConsumerWidget {
               title: Text(url),
               onTap: () => const UrlService().openExternal(url),
             ),
+          ),
+        ],
+        if (aiProvider != null && aiProvider.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Text(
+            l10n.insightsPoweredBy(aiProvider),
+            style: TextStyle(fontSize: 12, color: AppColors.muted(context)),
           ),
         ],
       ],

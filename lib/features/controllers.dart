@@ -196,7 +196,7 @@ class SearchController extends Notifier<SearchSession> {
     if (image.hasLocal) {
       log.log('Local image on device: ${image.localPath}');
       log.log(
-        'Next: Apify base64 (≤4 MB) or temporary public URL for Google Lens',
+        'Next: Google Lens match search + GPT-4o mini / Qwen insights',
       );
     } else {
       log.log('Image URL (no upload): ${image.remoteUrl}');
@@ -267,10 +267,19 @@ class SearchController extends Notifier<SearchSession> {
         );
     await ref.read(analyticsServiceProvider).searchStarted(type.apiValue);
     try {
+      final localeCode = ref.read(localeProvider).languageCode;
       final repo = ref.read(searchRepositoryProvider);
       final result = pending.hasLocal
-          ? await repo.searchImage(file: File(pending.localPath!), searchType: type)
-          : await repo.searchByUrl(url: pending.remoteUrl!, searchType: type);
+          ? await repo.searchImage(
+              file: File(pending.localPath!),
+              searchType: type,
+              localeCode: localeCode,
+            )
+          : await repo.searchByUrl(
+              url: pending.remoteUrl!,
+              searchType: type,
+              localeCode: localeCode,
+            );
       ref.read(searchDebugLogProvider.notifier).log(
             'Results ready (${result.results.all.length} matches; mode=${state.homeSearchMode.name})',
           );

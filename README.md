@@ -1,22 +1,18 @@
 # Deep Image Search
 
-Flutter + Dart reverse image search app. The app calls SerpApi Google Lens directly — there is no custom backend.
+Flutter reverse image search — **free Google Lens (web)** + **GPT-4o mini** / **Qwen-VL** insights. No SerpApi, no custom backend.
 
 ## Features
 
-- First-launch flow: Splash → Language → Pro → Home
 - Gallery, camera, and image URL search
-- Crop, rotate, flip, and zoom before searching
-- Visual, exact, product, and about-this-image results
-- History, favorites, settings, and dark mode
-- Localized UI with a screenshot-style language picker
-- Guest-only local history and favorites
+- **Open in Google Lens (free)** for full web matches
+- **About** tab: AI image context (OpenAI and/or Qwen)
+- History, favorites, subscriptions, AdMob (Android)
 
 ## Requirements
 
 - Flutter 3.35+ / Dart 3.9+
-- Android SDK 24+
-- A [SerpApi](https://serpapi.com/) key
+- Optional: `OPENAI_API_KEY` and/or `QWEN_API_KEY` for in-app About insights
 
 ## Setup
 
@@ -25,75 +21,41 @@ flutter pub get
 flutter gen-l10n
 ```
 
-## Environment
+Copy `dart_defines.dev.json.example` → `dart_defines.dev.json` (gitignored):
 
-Pass the SerpApi key at compile time. Do not commit a real key.
-
-| Define | Default | Purpose |
-| --- | --- | --- |
-| `APIFY_TOKEN` | empty | Apify token (primary Google Lens actor) |
-| `SERPAPI_KEY` | empty | SerpApi fallback when Apify fails |
-| `FLAVOR` | `development` | `development`, `staging`, or `production` |
-
-For local runs, copy `dart_defines.dev.json.example` to `dart_defines.dev.json` (gitignored), add your key, then use `--dart-define-from-file=dart_defines.dev.json`. VS Code/Cursor launch configs already use that file.
-
-## Running the app
+```json
+{
+  "FLAVOR": "development",
+  "OPENAI_API_KEY": "...",
+  "QWEN_API_KEY": "..."
+}
+```
 
 ```bash
 flutter run --dart-define-from-file=dart_defines.dev.json
 ```
 
-Android emulator and physical devices both work with that command. Local files are hosted briefly on tmpfiles.org so Google Lens can read a public image URL.
+Gallery photos get a **temporary public URL** (catbox / tmpfiles / 0x0.st) so **lens.google.com** can load them.
 
-## Building
+## Environment
 
-```bash
-flutter build apk --release --dart-define=FLAVOR=production --dart-define=SERPAPI_KEY=your_key
-flutter build appbundle --release --dart-define=FLAVOR=production --dart-define=SERPAPI_KEY=your_key
-flutter build ipa --release --dart-define=FLAVOR=production --dart-define=SERPAPI_KEY=your_key
-```
-
-## Android ads (AdMob)
-
-Ads run on **Android only** (native bottom banner, interstitial after search, app open after splash / resume).
-
-| Control | Location |
+| Define | Purpose |
 | --- | --- |
-| Master switch | `AdConfig.enableAdsOnAndroid` in `lib/core/constants/ad_config.dart` |
-| Remote toggles | HTTPS JSON at `AdConfig.remoteConfigUrl` (cached 6h). Keys match `assets/ads/remote_config_defaults.json` |
-| Test IDs | Default Google sample units; replace `androidAdMobAppId` and unit IDs before release |
+| `OPENAI_API_KEY` | GPT-4o mini — About tab, summaries |
+| `QWEN_API_KEY` | Qwen-VL (DashScope) — multilingual / fallback |
+| `FLAVOR` | `development` or `production` |
 
-Remote JSON example:
+## Architecture
 
-```json
-{
-  "ads_enabled": true,
-  "native_bottom_enabled": true,
-  "interstitial_enabled": true,
-  "app_open_enabled": true,
-  "interstitial_interval_seconds": 90,
-  "splash_min_ms": 2800
-}
+```text
+Flutter app
+  → temporary image host (gallery only)
+  → Google Lens web (free) — user taps "Open in Google Lens"
+  → GPT-4o mini / Qwen-VL — in-app About insights
 ```
-
-Ads preload during the splash screen. Pro subscribers (`isPro`) do not see ads.
-
-## Accounts
-
-The app does not use Firebase Authentication. Anyone can search without signing in. History and favorites stay on the device.
 
 ## Testing
 
 ```bash
 flutter test
 ```
-
-## Architecture
-
-```text
-Flutter app
-  → tmpfiles.org (local photo hosting)
-  → SerpApi Google Lens
-```
-
-State management is Riverpod. Navigation is go_router. Search calls go through `SerpApiService`.

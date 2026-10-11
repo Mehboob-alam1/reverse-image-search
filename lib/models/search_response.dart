@@ -23,6 +23,34 @@ class AboutImageInfo {
       relatedSearches.isNotEmpty ||
       metadata.isNotEmpty;
 
+  AboutImageInfo copyWith({
+    String? summary,
+    String? possibleSource,
+    List<String>? relatedWebsites,
+    List<String>? relatedSearches,
+    Map<String, String>? metadata,
+  }) {
+    return AboutImageInfo(
+      summary: summary ?? this.summary,
+      possibleSource: possibleSource ?? this.possibleSource,
+      relatedWebsites: relatedWebsites ?? this.relatedWebsites,
+      relatedSearches: relatedSearches ?? this.relatedSearches,
+      metadata: metadata ?? this.metadata,
+    );
+  }
+
+  AboutImageInfo merge(AboutImageInfo other) {
+    return AboutImageInfo(
+      summary: (summary != null && summary!.isNotEmpty) ? summary : other.summary,
+      possibleSource: (possibleSource != null && possibleSource!.isNotEmpty)
+          ? possibleSource
+          : other.possibleSource,
+      relatedWebsites: relatedWebsites.isNotEmpty ? relatedWebsites : other.relatedWebsites,
+      relatedSearches: relatedSearches.isNotEmpty ? relatedSearches : other.relatedSearches,
+      metadata: {...other.metadata, ...metadata},
+    );
+  }
+
   Map<String, dynamic> toJson() => {
         'summary': summary,
         'possibleSource': possibleSource,
@@ -118,6 +146,22 @@ class SearchResponse {
   final SearchType searchType;
   final SearchResultsBundle results;
   final bool success;
+
+  SearchResponse copyWith({
+    String? searchId,
+    String? queryImage,
+    SearchType? searchType,
+    SearchResultsBundle? results,
+    bool? success,
+  }) {
+    return SearchResponse(
+      searchId: searchId ?? this.searchId,
+      queryImage: queryImage ?? this.queryImage,
+      searchType: searchType ?? this.searchType,
+      results: results ?? this.results,
+      success: success ?? this.success,
+    );
+  }
 
   SearchResponse forSites(List<String> domains) {
     if (domains.isEmpty) return this;

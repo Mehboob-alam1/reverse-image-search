@@ -50,18 +50,18 @@ class AppEnv {
     defaultValue: 'development',
   );
 
-  static const String _apifyTokenFromDefine =
-      String.fromEnvironment('APIFY_TOKEN');
-  static const String _serpApiKeyFromDefine = String.fromEnvironment('SERPAPI_KEY');
+  static const String _openAiKeyFromDefine =
+      String.fromEnvironment('OPENAI_API_KEY');
+  static const String _qwenKeyFromDefine = String.fromEnvironment('QWEN_API_KEY');
 
-  static String get apifyToken =>
-      _apifyTokenFromDefine.isNotEmpty ? _apifyTokenFromDefine : ApiConfig.apifyToken;
+  static String get openAiApiKey =>
+      _openAiKeyFromDefine.isNotEmpty ? _openAiKeyFromDefine : ApiConfig.openAiApiKey;
 
-  /// Non-empty `--dart-define=SERPAPI_KEY=...` wins; otherwise [ApiConfig.serpApiKey].
-  static String get serpApiKey =>
-      _serpApiKeyFromDefine.isNotEmpty ? _serpApiKeyFromDefine : ApiConfig.serpApiKey;
+  static String get qwenApiKey =>
+      _qwenKeyFromDefine.isNotEmpty ? _qwenKeyFromDefine : ApiConfig.qwenApiKey;
 
-  static bool get useApifySearch => apifyToken.isNotEmpty;
+  static bool get useAiInsights =>
+      openAiApiKey.isNotEmpty || qwenApiKey.isNotEmpty;
 
   static bool get isProduction => flavor == 'production';
   static bool get isDevelopment => flavor == 'development';

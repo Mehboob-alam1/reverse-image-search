@@ -795,6 +795,20 @@ class AppLocalizationsAf extends AppLocalizations {
   String get searchProviderSerp => 'Google Lens';
 
   @override
+  String get openInGoogleLens => 'Open in Google Lens (free)';
+
+  @override
+  String get searchStackAiOnly => 'AI insights';
+
+  @override
+  String get searchResultsOverview => 'Match overview';
+
+  @override
+  String insightsPoweredBy(String provider) {
+    return 'Insights powered by $provider';
+  }
+
+  @override
   String get communityGuidelinesBody =>
       'Gebruik Deep Image Search slegs vir wettige beeldsoektogte.\n\nMoenie hierdie program gebruik om iemand te teister, dophou, naboots of uitbuit nie. Moenie seksuele inhoud wat kinders betrek soek of deel nie.\n\nRespekteer ander se privaatheid en die kopiereg van beelde wat jy vind. Resultate kom van derdeparty-webwerwe en bly onder daardie werwe se voorwaardes.\n\nOns kan soektogte wat die diens misbruik beperk of weier.';
 
