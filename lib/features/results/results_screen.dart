@@ -366,7 +366,11 @@ class _ResultsQueryHeader extends StatelessWidget {
   }
 
   String _stackLabel(AppLocalizations l10n, AboutImageInfo? about) {
-    final parts = <String>[SearchStackConfig.lensEngineLabel];
+    final parts = <String>[
+      AppEnv.useApifySearch
+          ? '${SearchStackConfig.lensEngineLabel} · Apify'
+          : SearchStackConfig.lensEngineLabel,
+    ];
     final ai = about?.metadata[SearchStackConfig.metadataInsightsProvider];
     if (ai != null && ai.isNotEmpty) {
       parts.add(ai);

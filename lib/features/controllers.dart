@@ -196,7 +196,7 @@ class SearchController extends Notifier<SearchSession> {
     if (image.hasLocal) {
       log.log('Local image on device: ${image.localPath}');
       log.log(
-        'Next: Google Lens match search + GPT-4o mini / Qwen insights',
+        'Next: Apify Google Lens matches + GPT-4o mini / Qwen insights',
       );
     } else {
       log.log('Image URL (no upload): ${image.remoteUrl}');

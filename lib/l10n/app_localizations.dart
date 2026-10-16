@@ -1111,7 +1111,7 @@ abstract class AppLocalizations {
   /// No description provided for @noResultsBody.
   ///
   /// In en, this message translates to:
-  /// **'Web matches live in Google Lens (free). Tap \"Open in Google Lens\" above, or check the About tab for AI image insights.'**
+  /// **'No web matches for this image yet. Try another photo, or tap Open in Google Lens.'**
   String get noResultsBody;
 
   /// No description provided for @searchFailedTitle.

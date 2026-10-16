@@ -1,6 +1,6 @@
 # Deep Image Search
 
-Flutter reverse image search — **free Google Lens (web)** + **GPT-4o mini** / **Qwen-VL** insights. No SerpApi, no custom backend.
+Flutter reverse image search — **Apify Google Lens** (in-app matches) + **GPT-4o mini** / **Qwen-VL** About insights + optional free Lens web link.
 
 ## Features
 
@@ -12,7 +12,8 @@ Flutter reverse image search — **free Google Lens (web)** + **GPT-4o mini** / 
 ## Requirements
 
 - Flutter 3.35+ / Dart 3.9+
-- Optional: `OPENAI_API_KEY` and/or `QWEN_API_KEY` for in-app About insights
+- `APIFY_TOKEN` for Visual / Exact / Products match lists
+- Optional: `OPENAI_API_KEY` and/or `QWEN_API_KEY` for About insights
 
 ## Setup
 
@@ -26,6 +27,7 @@ Copy `dart_defines.dev.json.example` → `dart_defines.dev.json` (gitignored):
 ```json
 {
   "FLAVOR": "development",
+  "APIFY_TOKEN": "...",
   "OPENAI_API_KEY": "...",
   "QWEN_API_KEY": "..."
 }
@@ -41,6 +43,7 @@ Gallery photos get a **temporary public URL** (catbox / tmpfiles / 0x0.st) so **
 
 | Define | Purpose |
 | --- | --- |
+| `APIFY_TOKEN` | Apify `johnvc/google-lens-api` — in-app match lists |
 | `OPENAI_API_KEY` | GPT-4o mini — About tab, summaries |
 | `QWEN_API_KEY` | Qwen-VL (DashScope) — multilingual / fallback |
 | `FLAVOR` | `development` or `production` |
@@ -49,9 +52,9 @@ Gallery photos get a **temporary public URL** (catbox / tmpfiles / 0x0.st) so **
 
 ```text
 Flutter app
-  → temporary image host (gallery only)
-  → Google Lens web (free) — user taps "Open in Google Lens"
-  → GPT-4o mini / Qwen-VL — in-app About insights
+  → Apify Google Lens actor (visual / exact / products)
+  → GPT-4o mini / Qwen-VL (About insights)
+  → optional "Open in Google Lens" (free web)
 ```
 
 ## Testing

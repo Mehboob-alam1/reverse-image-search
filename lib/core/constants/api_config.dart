@@ -5,6 +5,11 @@ class ApiConfig {
   /// In-app search trace on Searching + Results screens.
   static const bool showSearchDebugLog = false;
 
+  /// **Apify** Google Lens actor — fills Visual / Exact / Products lists.
+  /// Prefer gitignored `dart_defines.dev.json` or `--dart-define=APIFY_TOKEN=...`.
+  /// https://console.apify.com/account/integrations
+  static const String apifyToken = '';
+
   /// **ChatGPT mini** — About tab + summaries (`gpt-4o-mini`).
   /// Prefer gitignored `dart_defines.dev.json` or `--dart-define=OPENAI_API_KEY=...`.
   static const String openAiApiKey = '';

@@ -527,7 +527,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noResultsBody =>
-      'Web matches live in Google Lens (free). Tap \"Open in Google Lens\" above, or check the About tab for AI image insights.';
+      'No web matches for this image yet. Try another photo, or tap Open in Google Lens.';
 
   @override
   String get searchFailedTitle => 'Search Failed';

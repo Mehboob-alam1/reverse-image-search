@@ -50,15 +50,22 @@ class AppEnv {
     defaultValue: 'development',
   );
 
+  static const String _apifyTokenFromDefine =
+      String.fromEnvironment('APIFY_TOKEN');
   static const String _openAiKeyFromDefine =
       String.fromEnvironment('OPENAI_API_KEY');
   static const String _qwenKeyFromDefine = String.fromEnvironment('QWEN_API_KEY');
+
+  static String get apifyToken =>
+      _apifyTokenFromDefine.isNotEmpty ? _apifyTokenFromDefine : ApiConfig.apifyToken;
 
   static String get openAiApiKey =>
       _openAiKeyFromDefine.isNotEmpty ? _openAiKeyFromDefine : ApiConfig.openAiApiKey;
 
   static String get qwenApiKey =>
       _qwenKeyFromDefine.isNotEmpty ? _qwenKeyFromDefine : ApiConfig.qwenApiKey;
+
+  static bool get useApifySearch => apifyToken.isNotEmpty;
 
   static bool get useAiInsights =>
       openAiApiKey.isNotEmpty || qwenApiKey.isNotEmpty;
