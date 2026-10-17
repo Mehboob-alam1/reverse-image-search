@@ -136,6 +136,12 @@ class AuthController extends Notifier<AuthState> {
     await ref.read(localStorageProvider).incrementSearchCreditsUsed();
     await refreshUsage();
   }
+
+  /// Grants +1 search credit after a completed rewarded ad.
+  Future<void> grantRewardedSearchCredit() async {
+    await ref.read(localStorageProvider).addRewardedBonusCredit();
+    await refreshUsage();
+  }
 }
 
 class SearchSession {
@@ -196,7 +202,7 @@ class SearchController extends Notifier<SearchSession> {
     if (image.hasLocal) {
       log.log('Local image on device: ${image.localPath}');
       log.log(
-        'Next: Apify Google Lens matches + GPT-4o mini / Qwen insights',
+        'Next: Railway reverse-image API (web + AI analysis)',
       );
     } else {
       log.log('Image URL (no upload): ${image.remoteUrl}');
@@ -243,7 +249,7 @@ class SearchController extends Notifier<SearchSession> {
     if (!ref.read(featureAccessProvider).canSearch(usage)) {
       final tier = usage?.tier;
       final message = tier == UsageTier.free
-          ? 'Free searches used. Start a free trial or subscribe for more.'
+          ? 'Credits expired. Watch an ad for +1 search, or upgrade to Pro.'
           : 'Search allowance used for this period. Tokens reset when your plan renews.';
       throw AppException(
         code: AppErrorCode.rateLimit,

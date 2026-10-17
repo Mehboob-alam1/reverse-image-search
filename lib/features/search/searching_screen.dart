@@ -6,12 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/errors/app_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/app_widgets.dart';
-import '../../core/widgets/native_ad_bar.dart';
+import '../../core/widgets/collapsible_banner_ad.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/ads/ads_controller.dart';
 import '../controllers.dart';
+import '../subscription/credits_exhausted_sheet.dart';
 
 class SearchingScreen extends ConsumerStatefulWidget {
   const SearchingScreen({super.key});
@@ -61,7 +63,20 @@ class _SearchingScreenState extends ConsumerState<SearchingScreen>
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (!mounted) return;
         if (next.response != null) {
-          await ref.read(adsControllerProvider.notifier).showInterstitialAfterSearch();
+          await ref
+              .read(adsControllerProvider.notifier)
+              .showInterstitialAfterSearch();
+          if (!mounted) return;
+          context.go('/results');
+          return;
+        }
+        if (next.error?.code == AppErrorCode.rateLimit) {
+          if (!mounted) return;
+          context.go('/home');
+          await Future<void>.delayed(const Duration(milliseconds: 120));
+          if (!mounted) return;
+          await showCreditsExhaustedSheet(context, ref);
+          return;
         }
         if (!mounted) return;
         context.go('/results');
@@ -80,112 +95,119 @@ class _SearchingScreenState extends ConsumerState<SearchingScreen>
 
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
-      bottomNavigationBar: const NativeAdBar(key: ValueKey('native-searching')),
-      body: Stack(
-        fit: StackFit.expand,
+      body: Column(
         children: [
-          if (pending != null)
-            ImagePreview(
-              filePath: pending.localPath,
-              networkUrl: pending.remoteUrl,
-              expand: true,
-              radius: 0,
-            )
-          else
-            const ColoredBox(color: AppColors.darkBackground),
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-            child: Container(color: Colors.black.withValues(alpha: 0.4)),
-          ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.primaryDark.withValues(alpha: 0.7),
-                  Colors.black.withValues(alpha: 0.85),
-                ],
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+          Expanded(
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    onPressed: () => context.go('/home'),
-                    icon: const Icon(Icons.close_rounded, color: Colors.white),
-                  ),
+                if (pending != null)
+                  ImagePreview(
+                    filePath: pending.localPath,
+                    networkUrl: pending.remoteUrl,
+                    expand: true,
+                    radius: 0,
+                  )
+                else
+                  const ColoredBox(color: AppColors.darkBackground),
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                  child: Container(color: Colors.black.withValues(alpha: 0.4)),
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-                    child: Column(
-                      children: [
-                        if (pending != null) ...[
-                          ScaleTransition(
-                            scale: Tween<double>(begin: 0.96, end: 1.04).animate(
-                              CurvedAnimation(
-                                parent: _pulseCtrl,
-                                curve: Curves.easeInOut,
-                              ),
-                            ),
-                            child: SizedBox(
-                              width: 132,
-                              height: 132,
-                              child: ClipOval(
-                                child: ImagePreview(
-                                  filePath: pending.localPath,
-                                  networkUrl: pending.remoteUrl,
-                                  height: 132,
-                                  radius: 0,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                        const SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          stepLabel,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.plusJakartaSans(
-                            color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            height: 1.3,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          l10n.uploadingSerpApi,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.75),
-                            fontSize: 13,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        _SearchStepRow(current: _step, labels: steps),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.primaryDark.withValues(alpha: 0.7),
+                        Colors.black.withValues(alpha: 0.85),
                       ],
                     ),
+                  ),
+                ),
+                SafeArea(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          onPressed: () => context.go('/home'),
+                          icon: const Icon(Icons.close_rounded, color: Colors.white),
+                        ),
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                          child: Column(
+                            children: [
+                              if (pending != null) ...[
+                                ScaleTransition(
+                                  scale: Tween<double>(begin: 0.96, end: 1.04)
+                                      .animate(
+                                    CurvedAnimation(
+                                      parent: _pulseCtrl,
+                                      curve: Curves.easeInOut,
+                                    ),
+                                  ),
+                                  child: SizedBox(
+                                    width: 132,
+                                    height: 132,
+                                    child: ClipOval(
+                                      child: ImagePreview(
+                                        filePath: pending.localPath,
+                                        networkUrl: pending.remoteUrl,
+                                        height: 132,
+                                        radius: 0,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                              ],
+                              const SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                stepLabel,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: Colors.white,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.3,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.uploadingSerpApi,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.75),
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              _SearchStepRow(current: _step, labels: steps),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
+          const CollapsibleBannerAd(key: ValueKey('banner-searching')),
         ],
       ),
     );

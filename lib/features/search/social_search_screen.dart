@@ -16,6 +16,7 @@ import '../../services/analytics_service.dart';
 import '../../services/feature_access_service.dart';
 import '../controllers.dart';
 import '../home/image_source_sheet.dart';
+import '../subscription/credits_exhausted_sheet.dart';
 
 class SocialPlatform {
   const SocialPlatform({
@@ -73,7 +74,8 @@ class SocialSearchScreen extends ConsumerWidget {
   Future<void> _search(BuildContext context, WidgetRef ref, SocialPlatform platform) async {
     final usage = ref.read(authControllerProvider).usage;
     if (!ref.read(featureAccessProvider).canSearch(usage)) {
-      if (context.mounted) context.push('/subscription');
+      if (!context.mounted) return;
+      await showCreditsExhaustedSheet(context, ref);
       return;
     }
     final source = await ImageSourceSheet.show(context);

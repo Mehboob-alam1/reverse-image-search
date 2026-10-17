@@ -550,11 +550,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unsupportedImageBody => 'Please select a JPG, PNG, or WEBP image.';
 
   @override
-  String get rateLimitTitle => 'Search Limit Reached';
+  String get rateLimitTitle => 'Credits expired';
 
   @override
   String get rateLimitBody =>
-      'You\'ve reached your current search limit.\nUpgrade to Pro or try again later.';
+      'You\'ve used all your search credits.\nWatch a short video for +1 credit, or upgrade to Pro.';
+
+  @override
+  String get creditsExpiredTitle => 'Your search credits expired';
+
+  @override
+  String creditsExpiredBody(int used, int limit) {
+    return 'You\'ve used $used of $limit searches. Watch an ad for 1 more credit, or subscribe for a larger allowance.';
+  }
+
+  @override
+  String get watchAdForCredit => 'Watch ad for +1 credit';
+
+  @override
+  String rewardedCreditEarned(int remaining) {
+    return 'Credit earned! You have $remaining left.';
+  }
+
+  @override
+  String get rewardedAdFailed =>
+      'Ad not available. Try again or upgrade to Pro.';
 
   @override
   String get fileTooLarge =>
@@ -781,7 +801,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectImage => 'Select image';
 
   @override
-  String get uploadingSerpApi => 'Analyzing your image with Google Lens…';
+  String get uploadingSerpApi => 'Searching the web and analyzing your image…';
 
   @override
   String get resultsOpenHint =>

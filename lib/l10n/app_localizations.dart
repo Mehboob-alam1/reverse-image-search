@@ -1153,14 +1153,44 @@ abstract class AppLocalizations {
   /// No description provided for @rateLimitTitle.
   ///
   /// In en, this message translates to:
-  /// **'Search Limit Reached'**
+  /// **'Credits expired'**
   String get rateLimitTitle;
 
   /// No description provided for @rateLimitBody.
   ///
   /// In en, this message translates to:
-  /// **'You\'ve reached your current search limit.\nUpgrade to Pro or try again later.'**
+  /// **'You\'ve used all your search credits.\nWatch a short video for +1 credit, or upgrade to Pro.'**
   String get rateLimitBody;
+
+  /// No description provided for @creditsExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your search credits expired'**
+  String get creditsExpiredTitle;
+
+  /// No description provided for @creditsExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used {used} of {limit} searches. Watch an ad for 1 more credit, or subscribe for a larger allowance.'**
+  String creditsExpiredBody(int used, int limit);
+
+  /// No description provided for @watchAdForCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch ad for +1 credit'**
+  String get watchAdForCredit;
+
+  /// No description provided for @rewardedCreditEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit earned! You have {remaining} left.'**
+  String rewardedCreditEarned(int remaining);
+
+  /// No description provided for @rewardedAdFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad not available. Try again or upgrade to Pro.'**
+  String get rewardedAdFailed;
 
   /// No description provided for @fileTooLarge.
   ///
@@ -1591,7 +1621,7 @@ abstract class AppLocalizations {
   /// No description provided for @uploadingSerpApi.
   ///
   /// In en, this message translates to:
-  /// **'Analyzing your image with Google Lens…'**
+  /// **'Searching the web and analyzing your image…'**
   String get uploadingSerpApi;
 
   /// No description provided for @resultsOpenHint.

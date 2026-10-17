@@ -20,14 +20,17 @@ class AdsManager {
   InterstitialAd? _interstitial;
   AppOpenAd? _appOpen;
   NativeAd? _nativeAd;
+  RewardedAd? _rewarded;
   bool _isLoadingInterstitial = false;
   bool _isLoadingAppOpen = false;
   bool _isLoadingNative = false;
+  bool _isLoadingRewarded = false;
   bool _isShowingFullScreen = false;
   bool _appOpenShownThisSession = false;
   int _interstitialRetry = 0;
   int _appOpenRetry = 0;
   int _nativeRetry = 0;
+  int _rewardedRetry = 0;
 
   AdsRemoteSettings get settings => _settings;
 
@@ -57,7 +60,22 @@ class AdsManager {
       _waitForInterstitial(isPro: isPro),
       _waitForAppOpen(isPro: isPro),
       _waitForNative(isPro: isPro),
+      _waitForRewarded(isPro: isPro),
     ]);
+  }
+
+  Future<void> _waitForRewarded({required bool isPro}) async {
+    if (!adsAllowed(isPro: isPro) || !_settings.rewardedEnabled) return;
+    if (_rewarded != null) return;
+    final done = Completer<void>();
+    unawaited(_loadRewarded(isPro: isPro, onReady: () {
+      if (!done.isCompleted) done.complete();
+    }));
+    try {
+      await done.future.timeout(AdConfig.adLoadTimeout);
+    } on Object {
+      if (!done.isCompleted) done.complete();
+    }
   }
 
   Future<void> _waitForInterstitial({required bool isPro}) async {
@@ -117,7 +135,10 @@ class AdsManager {
 
   /// Loads a native ad owned by the caller (e.g. one [NativeAdBar] instance).
   /// Must be [dispose]d when the widget is removed — never share one ad across widgets.
-  Future<NativeAd?> createDedicatedNativeAd({required bool isPro}) async {
+  Future<NativeAd?> createDedicatedNativeAd({
+    required bool isPro,
+    TemplateType templateType = TemplateType.small,
+  }) async {
     if (!adsAllowed(isPro: isPro) || !_settings.nativeBottomEnabled) {
       return null;
     }
@@ -139,7 +160,7 @@ class AdsManager {
         },
       ),
       nativeTemplateStyle: NativeTemplateStyle(
-        templateType: TemplateType.small,
+        templateType: templateType,
         mainBackgroundColor: const Color(0xFFF5F5F5),
         cornerRadius: 12,
       ),
@@ -367,9 +388,136 @@ class AdsManager {
     return true;
   }
 
+  Future<BannerAd?> createBannerAd({
+    required bool isPro,
+    int? widthDp,
+  }) async {
+    if (!adsAllowed(isPro: isPro) || !_settings.bannerEnabled) return null;
+    await initializeMobileAds();
+    final completer = Completer<BannerAd?>();
+    AdSize size = AdSize.banner;
+    if (widthDp != null && widthDp > 0) {
+      final adaptive =
+          await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+        widthDp,
+      );
+      if (adaptive != null) size = adaptive;
+    }
+    late BannerAd ad;
+    ad = BannerAd(
+      adUnitId: _settings.bannerUnitId,
+      size: size,
+      // AdMob collapsible banner (expand/collapse handled by the SDK, no custom bar).
+      request: const AdRequest(extras: {'collapsible': 'bottom'}),
+      listener: BannerAdListener(
+        onAdLoaded: (loaded) {
+          if (!completer.isCompleted) completer.complete(loaded as BannerAd);
+        },
+        onAdFailedToLoad: (failed, error) {
+          failed.dispose();
+          if (!completer.isCompleted) completer.complete(null);
+        },
+      ),
+    );
+    try {
+      await ad.load().timeout(AdConfig.adLoadTimeout, onTimeout: () {
+        ad.dispose();
+        throw TimeoutException('banner ad');
+      });
+    } on Object {
+      if (!completer.isCompleted) completer.complete(null);
+    }
+    try {
+      return await completer.future.timeout(
+        AdConfig.adLoadTimeout,
+        onTimeout: () {
+          ad.dispose();
+          return null;
+        },
+      );
+    } on Object {
+      return null;
+    }
+  }
+
+  Future<void> _loadRewarded({
+    required bool isPro,
+    VoidCallback? onReady,
+  }) async {
+    if (!adsAllowed(isPro: isPro) || !_settings.rewardedEnabled) {
+      onReady?.call();
+      return;
+    }
+    if (_rewarded != null) {
+      onReady?.call();
+      return;
+    }
+    if (_isLoadingRewarded) return;
+    _isLoadingRewarded = true;
+    await RewardedAd.load(
+      adUnitId: _settings.rewardedUnitId,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          _rewarded = ad;
+          _rewardedRetry = 0;
+          _isLoadingRewarded = false;
+          onReady?.call();
+        },
+        onAdFailedToLoad: (_) {
+          _isLoadingRewarded = false;
+          onReady?.call();
+          if (_rewardedRetry < 3) {
+            _rewardedRetry++;
+            Future.delayed(Duration(seconds: 5 * _rewardedRetry), () {
+              _loadRewarded(isPro: isPro);
+            });
+          }
+        },
+      ),
+    );
+  }
+
+  /// Shows a rewarded ad. Returns true only if the user earned the reward.
+  Future<bool> showRewardedAd({required bool isPro}) async {
+    if (!adsAllowed(isPro: isPro) || !_settings.rewardedEnabled) return false;
+    if (_isShowingFullScreen) return false;
+    if (_rewarded == null) {
+      await _waitForRewarded(isPro: isPro);
+    }
+    final ad = _rewarded;
+    if (ad == null) return false;
+    _rewarded = null;
+
+    final done = Completer<bool>();
+    var didEarn = false;
+    _isShowingFullScreen = true;
+    ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (dismissed) {
+        dismissed.dispose();
+        _isShowingFullScreen = false;
+        _loadRewarded(isPro: isPro);
+        if (!done.isCompleted) done.complete(didEarn);
+      },
+      onAdFailedToShowFullScreenContent: (failed, _) {
+        failed.dispose();
+        _isShowingFullScreen = false;
+        _loadRewarded(isPro: isPro);
+        if (!done.isCompleted) done.complete(false);
+      },
+    );
+    ad.show(
+      onUserEarnedReward: (_, __) {
+        didEarn = true;
+      },
+    );
+    return done.future;
+  }
+
   void dispose() {
     _interstitial?.dispose();
     _appOpen?.dispose();
     _nativeAd?.dispose();
+    _rewarded?.dispose();
   }
 }

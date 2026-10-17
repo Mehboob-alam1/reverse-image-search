@@ -20,6 +20,8 @@ class StorageKeys {
   static const adsRemoteConfigFetchedAt = 'adsRemoteConfigFetchedAt';
   static const adsLastInterstitialAt = 'adsLastInterstitialAt';
   static const searchCreditsUsed = 'searchCreditsUsed';
+  /// Extra free searches earned by watching rewarded ads.
+  static const rewardedBonusCredits = 'rewardedBonusCredits';
   static const isProEntitled = 'isProEntitled';
   static const subscriptionPlan = 'subscriptionPlan';
   static const subscriptionExpiresAt = 'subscriptionExpiresAt';

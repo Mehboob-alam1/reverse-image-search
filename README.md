@@ -1,6 +1,6 @@
 # Deep Image Search
 
-Flutter reverse image search — **Apify Google Lens** (in-app matches) + **GPT-4o mini** / **Qwen-VL** About insights + optional free Lens web link.
+Flutter reverse image search — primary **Railway reverse-image API** (web matches + AI analysis), with optional Apify / free Lens fallbacks.
 
 ## Features
 
@@ -12,8 +12,8 @@ Flutter reverse image search — **Apify Google Lens** (in-app matches) + **GPT-
 ## Requirements
 
 - Flutter 3.35+ / Dart 3.9+
-- `APIFY_TOKEN` for Visual / Exact / Products match lists
-- Optional: `OPENAI_API_KEY` and/or `QWEN_API_KEY` for About insights
+- Railway API (no key for `/api/search`) — see `RailwaySearchConfig`
+- Optional fallbacks: `APIFY_TOKEN`, `OPENAI_API_KEY`, `QWEN_API_KEY`
 
 ## Setup
 
@@ -52,9 +52,9 @@ Gallery photos get a **temporary public URL** (catbox / tmpfiles / 0x0.st) so **
 
 ```text
 Flutter app
-  → Apify Google Lens actor (visual / exact / products)
-  → GPT-4o mini / Qwen-VL (About insights)
-  → optional "Open in Google Lens" (free web)
+  → Railway POST /api/search (multipart file, web=true)
+  → maps matches / similar_web / analysis / engines
+  → optional Apify or free Lens fallback
 ```
 
 ## Testing

@@ -100,6 +100,14 @@ class AdsController extends Notifier<AdsUiState> {
     );
   }
 
+  /// Watch a rewarded video → +1 search credit. Returns true if credit granted.
+  Future<bool> watchRewardedForCredit() async {
+    final earned = await _manager.showRewardedAd(isPro: _isPro);
+    if (!earned) return false;
+    await ref.read(authControllerProvider.notifier).grantRewardedSearchCredit();
+    return true;
+  }
+
   void onAppResume() {
     // App-open is once per session after splash only.
   }

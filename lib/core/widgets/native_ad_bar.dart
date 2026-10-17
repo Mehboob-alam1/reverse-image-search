@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import '../theme/app_colors.dart';
 import '../../features/controllers.dart';
 import '../../services/ads/ads_controller.dart';
 
@@ -59,26 +58,15 @@ class _NativeAdBarState extends ConsumerState<NativeAdBar> {
   @override
   Widget build(BuildContext context) {
     final ad = _ad;
-    if (ad == null) {
-      return const SizedBox.shrink();
-    }
+    if (ad == null) return const SizedBox.shrink();
 
-    return Material(
-      elevation: 6,
-      color: Theme.of(context).colorScheme.surface,
-      child: SafeArea(
-        top: false,
-        child: Container(
-          height: 76,
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(color: AppColors.border(context), width: 1),
-            ),
-          ),
-          child: AdWidget(ad: ad),
-        ),
+    // No padding/clip around AdWidget — assets must stay inside NativeAdView.
+    return SafeArea(
+      top: false,
+      child: SizedBox(
+        height: 120,
+        width: double.infinity,
+        child: AdWidget(ad: ad),
       ),
     );
   }

@@ -189,8 +189,24 @@
   "serviceUnavailableBody": "Please try again later.",
   "unsupportedImageTitle": "Unsupported Image",
   "unsupportedImageBody": "Please select a JPG, PNG, or WEBP image.",
-  "rateLimitTitle": "Search Limit Reached",
-  "rateLimitBody": "You've reached your current search limit.\nUpgrade to Pro or try again later.",
+  "rateLimitTitle": "Credits expired",
+  "rateLimitBody": "You've used all your search credits.\nWatch a short video for +1 credit, or upgrade to Pro.",
+  "creditsExpiredTitle": "Your search credits expired",
+  "creditsExpiredBody": "You've used {used} of {limit} searches. Watch an ad for 1 more credit, or subscribe for a larger allowance.",
+  "@creditsExpiredBody": {
+    "placeholders": {
+      "used": {"type": "int"},
+      "limit": {"type": "int"}
+    }
+  },
+  "watchAdForCredit": "Watch ad for +1 credit",
+  "rewardedCreditEarned": "Credit earned! You have {remaining} left.",
+  "@rewardedCreditEarned": {
+    "placeholders": {
+      "remaining": {"type": "int"}
+    }
+  },
+  "rewardedAdFailed": "Ad not available. Try again or upgrade to Pro.",
   "fileTooLarge": "This image is too large. Please choose a smaller file.",
   "signIn": "Sign In",
   "signUp": "Sign Up",
@@ -269,7 +285,7 @@
   "continueForFree": "CONTINUE FOR FREE  →",
   "noPaymentNow": "No payment Now",
   "selectImage": "Select image",
-  "uploadingSerpApi": "Analyzing your image with Google Lens…",
+  "uploadingSerpApi": "Searching the web and analyzing your image…",
   "resultsOpenHint": "Tap a card for full details, source link, and share",
   "searchProviderApify": "Google Lens · Apify",
   "searchProviderSerp": "Google Lens",

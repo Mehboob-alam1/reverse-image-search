@@ -6,6 +6,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/user_models.dart';
 import '../controllers.dart';
+import '../subscription/credits_exhausted_sheet.dart';
 
 String _premiumLabel(UsageStats? usage, int remaining, int limit) {
   if (usage?.trialActive == true) return 'Trial $remaining/$limit';
@@ -23,9 +24,19 @@ class CreditsChip extends ConsumerWidget {
     final usage = auth.usage;
     final remaining = usage?.remaining ?? AppConstants.freeSearchCredits;
     final limit = usage?.limit ?? AppConstants.freeSearchCredits;
+    final exhausted = remaining <= 0;
+
+    Future<void> onTap() async {
+      if (exhausted && !auth.isPro) {
+        await showCreditsExhaustedSheet(context, ref);
+        return;
+      }
+      if (context.mounted) context.push('/subscription');
+    }
+
     if (auth.isPro) {
       return GestureDetector(
-        onTap: () => context.push('/subscription'),
+        onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
@@ -44,18 +55,20 @@ class CreditsChip extends ConsumerWidget {
       );
     }
     return GestureDetector(
-      onTap: () => context.push('/subscription'),
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
+          color: exhausted
+              ? AppColors.error.withValues(alpha: 0.85)
+              : Colors.white.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(99),
         ),
         child: Text(
-          '$remaining left',
+          exhausted ? '0 · expired' : '$remaining left',
           style: const TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             fontSize: 11,
           ),
         ),

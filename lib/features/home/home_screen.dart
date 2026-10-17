@@ -18,6 +18,7 @@ import '../../app/deferred_app_open.dart';
 import '../../services/ads/ads_controller.dart';
 import '../../services/feature_access_service.dart';
 import '../controllers.dart';
+import '../subscription/credits_exhausted_sheet.dart';
 import 'credits_chip.dart';
 import 'app_drawer.dart';
 import 'home_icons.dart';
@@ -116,7 +117,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final usage = ref.read(authControllerProvider).usage;
     if (!ref.read(featureAccessProvider).canSearch(usage)) {
       if (!mounted) return;
-      context.push('/subscription');
+      await showCreditsExhaustedSheet(context, ref);
       return;
     }
     if (mode.social) {

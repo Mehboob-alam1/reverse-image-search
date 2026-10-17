@@ -1,7 +1,8 @@
-/// Production search stack: Google Lens matches + AI insights (OpenAI mini / Qwen).
+/// Production search stack labels.
 class SearchStackConfig {
   SearchStackConfig._();
 
+  static const String railwayEngineLabel = 'Reverse Image API';
   static const String lensEngineLabel = 'Google Lens';
   static const String insightsOpenAiLabel = 'GPT-4o mini';
   static const String insightsQwenLabel = 'Qwen-VL';

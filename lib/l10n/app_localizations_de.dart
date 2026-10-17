@@ -560,6 +560,26 @@ class AppLocalizationsDe extends AppLocalizations {
       'Sie haben Ihr aktuelles Suchlimit erreicht.\nUpgraden Sie auf Pro oder versuchen Sie es später.';
 
   @override
+  String get creditsExpiredTitle => 'Your search credits expired';
+
+  @override
+  String creditsExpiredBody(int used, int limit) {
+    return 'You\'ve used $used of $limit searches. Watch an ad for 1 more credit, or subscribe for a larger allowance.';
+  }
+
+  @override
+  String get watchAdForCredit => 'Watch ad for +1 credit';
+
+  @override
+  String rewardedCreditEarned(int remaining) {
+    return 'Credit earned! You have $remaining left.';
+  }
+
+  @override
+  String get rewardedAdFailed =>
+      'Ad not available. Try again or upgrade to Pro.';
+
+  @override
   String get fileTooLarge =>
       'Dieses Bild ist zu groß. Bitte wählen Sie eine kleinere Datei.';
 

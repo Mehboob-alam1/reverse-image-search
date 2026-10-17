@@ -14,11 +14,15 @@ class AdsRemoteSettings {
     required this.nativeBottomEnabled,
     required this.interstitialEnabled,
     required this.appOpenEnabled,
+    required this.bannerEnabled,
+    required this.rewardedEnabled,
     required this.interstitialIntervalSeconds,
     required this.splashMinMs,
     required this.nativeUnitId,
     required this.interstitialUnitId,
     required this.appOpenUnitId,
+    required this.bannerUnitId,
+    required this.rewardedUnitId,
   });
 
   factory AdsRemoteSettings.defaults() {
@@ -27,11 +31,15 @@ class AdsRemoteSettings {
       nativeBottomEnabled: true,
       interstitialEnabled: true,
       appOpenEnabled: true,
+      bannerEnabled: true,
+      rewardedEnabled: true,
       interstitialIntervalSeconds: AdConfig.defaultInterstitialIntervalSeconds,
       splashMinMs: AdConfig.splashMinDuration.inMilliseconds,
       nativeUnitId: AdConfig.androidNativeUnitId,
       interstitialUnitId: AdConfig.androidInterstitialUnitId,
       appOpenUnitId: AdConfig.androidAppOpenUnitId,
+      bannerUnitId: AdConfig.androidBannerUnitId,
+      rewardedUnitId: AdConfig.androidRewardedUnitId,
     );
   }
 
@@ -52,6 +60,10 @@ class AdsRemoteSettings {
       ),
       appOpenEnabled:
           _bool(map[AdsRemoteConfigKeys.appOpenEnabled], defaults.appOpenEnabled),
+      bannerEnabled:
+          _bool(map[AdsRemoteConfigKeys.bannerEnabled], defaults.bannerEnabled),
+      rewardedEnabled:
+          _bool(map[AdsRemoteConfigKeys.rewardedEnabled], defaults.rewardedEnabled),
       interstitialIntervalSeconds: _int(
         map[AdsRemoteConfigKeys.interstitialIntervalSec],
         defaults.interstitialIntervalSeconds,
@@ -62,6 +74,9 @@ class AdsRemoteSettings {
       interstitialUnitId:
           unit(AdsRemoteConfigKeys.interstitialUnitId, defaults.interstitialUnitId),
       appOpenUnitId: unit(AdsRemoteConfigKeys.appOpenUnitId, defaults.appOpenUnitId),
+      bannerUnitId: unit(AdsRemoteConfigKeys.bannerUnitId, defaults.bannerUnitId),
+      rewardedUnitId:
+          unit(AdsRemoteConfigKeys.rewardedUnitId, defaults.rewardedUnitId),
     );
   }
 
@@ -69,11 +84,15 @@ class AdsRemoteSettings {
   final bool nativeBottomEnabled;
   final bool interstitialEnabled;
   final bool appOpenEnabled;
+  final bool bannerEnabled;
+  final bool rewardedEnabled;
   final int interstitialIntervalSeconds;
   final int splashMinMs;
   final String nativeUnitId;
   final String interstitialUnitId;
   final String appOpenUnitId;
+  final String bannerUnitId;
+  final String rewardedUnitId;
 
   static bool _bool(Object? value, bool fallback) {
     if (value == null) return fallback;
@@ -161,11 +180,15 @@ class AdsRemoteConfigLoader {
         AdsRemoteConfigKeys.nativeEnabled: s.nativeBottomEnabled,
         AdsRemoteConfigKeys.interstitialEnabled: s.interstitialEnabled,
         AdsRemoteConfigKeys.appOpenEnabled: s.appOpenEnabled,
+        AdsRemoteConfigKeys.bannerEnabled: s.bannerEnabled,
+        AdsRemoteConfigKeys.rewardedEnabled: s.rewardedEnabled,
         AdsRemoteConfigKeys.interstitialIntervalSec: s.interstitialIntervalSeconds,
         AdsRemoteConfigKeys.splashMinMs: s.splashMinMs,
         AdsRemoteConfigKeys.nativeUnitId: s.nativeUnitId,
         AdsRemoteConfigKeys.interstitialUnitId: s.interstitialUnitId,
         AdsRemoteConfigKeys.appOpenUnitId: s.appOpenUnitId,
+        AdsRemoteConfigKeys.bannerUnitId: s.bannerUnitId,
+        AdsRemoteConfigKeys.rewardedUnitId: s.rewardedUnitId,
       };
 
   Map<String, dynamic>? _readCache() {

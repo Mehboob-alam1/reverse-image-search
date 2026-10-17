@@ -9,12 +9,18 @@ import '../models/search_type.dart';
 import 'apify_lens_service.dart';
 import 'google_lens_search_service.dart';
 import 'image_insights_service.dart';
+import 'railway_search_service.dart';
 import 'search_debug_log.dart';
 import 'temporary_image_host_service.dart';
 
 final temporaryImageHostServiceProvider = Provider<TemporaryImageHostService>((ref) {
   final logger = ref.read(searchDebugLogProvider.notifier);
   return TemporaryImageHostService(onLog: logger.log);
+});
+
+final railwaySearchServiceProvider = Provider<RailwaySearchService>((ref) {
+  final logger = ref.read(searchDebugLogProvider.notifier);
+  return RailwaySearchService(onLog: logger.log);
 });
 
 final apifyLensServiceProvider = Provider<ApifyLensService>((ref) {
@@ -40,6 +46,7 @@ final imageInsightsServiceProvider = Provider<ImageInsightsService>((ref) {
 
 final searchRepositoryProvider = Provider<SearchRepository>((ref) {
   return SearchRepository(
+    railway: ref.watch(railwaySearchServiceProvider),
     apify: ref.watch(apifyLensServiceProvider),
     freeLens: ref.watch(googleLensSearchServiceProvider),
     insights: ref.watch(imageInsightsServiceProvider),
@@ -49,15 +56,18 @@ final searchRepositoryProvider = Provider<SearchRepository>((ref) {
 
 class SearchRepository {
   SearchRepository({
+    required RailwaySearchService railway,
     required ApifyLensService apify,
     required GoogleLensSearchService freeLens,
     required ImageInsightsService insights,
     required SearchLogCallback log,
-  })  : _apify = apify,
+  })  : _railway = railway,
+        _apify = apify,
         _freeLens = freeLens,
         _insights = insights,
         _log = log;
 
+  final RailwaySearchService _railway;
   final ApifyLensService _apify;
   final GoogleLensSearchService _freeLens;
   final ImageInsightsService _insights;
@@ -70,14 +80,14 @@ class SearchRepository {
   }) async {
     final response = await _runMatchSearch(
       searchType: searchType,
+      railway: () => _railway.searchByUrl(url: url, searchType: searchType),
       apify: () => _apify.searchByUrl(url: url, searchType: searchType),
       freeLens: () => _freeLens.searchByUrl(url: url, searchType: searchType),
     );
-    return _insights.enrich(
+    return _maybeEnrich(
       response: response,
       imageUrl: url,
       localeCode: localeCode,
-      topResults: response.results.all,
     );
   }
 
@@ -89,6 +99,12 @@ class SearchRepository {
   }) async {
     final response = await _runMatchSearch(
       searchType: searchType,
+      railway: () {
+        if (file != null) {
+          return _railway.searchFile(file: file, searchType: searchType);
+        }
+        return _railway.searchByUrl(url: imageUrl ?? '', searchType: searchType);
+      },
       apify: () {
         if (file != null) {
           return _apify.searchFile(file: file, searchType: searchType);
@@ -107,10 +123,33 @@ class SearchRepository {
         ? response.queryImage
         : imageUrl;
 
-    return _insights.enrich(
+    return _maybeEnrich(
       response: response,
       file: file,
       imageUrl: enrichUrl,
+      localeCode: localeCode,
+    );
+  }
+
+  /// Skip OpenAI when Railway already returned analysis (saves cost).
+  Future<SearchResponse> _maybeEnrich({
+    required SearchResponse response,
+    File? file,
+    String? imageUrl,
+    required String localeCode,
+  }) async {
+    final about = response.results.aboutImage;
+    final hasApiAnalysis = about != null &&
+        ((about.summary != null && about.summary!.isNotEmpty) ||
+            about.relatedSearches.isNotEmpty);
+    if (hasApiAnalysis) {
+      _log('Skipping GPT enrich — Railway analysis already present.');
+      return response;
+    }
+    return _insights.enrich(
+      response: response,
+      file: file,
+      imageUrl: imageUrl,
       localeCode: localeCode,
       topResults: response.results.all,
     );
@@ -118,36 +157,37 @@ class SearchRepository {
 
   Future<SearchResponse> _runMatchSearch({
     required SearchType searchType,
+    required Future<SearchResponse> Function() railway,
     required Future<SearchResponse> Function() apify,
     required Future<SearchResponse> Function() freeLens,
   }) async {
-    if (ApifyLensService.isConfigured) {
-      _log(
-        'Search stack: Apify Google Lens matches + '
-        '${SearchStackConfig.insightsOpenAiLabel} insights',
-      );
-      try {
-        final result = await apify();
-        if (!result.results.isEmpty) {
-          _log(
-            'Apify matches: ${result.results.all.length} '
-            '(visual=${result.results.visualMatches.length}, '
-            'exact=${result.results.exactMatches.length}, '
-            'products=${result.results.products.length})',
-          );
-          return result;
-        }
-        _log('Apify returned 0 matches — falling back to free Lens + AI.');
-      } on AppException catch (error) {
-        _log('Apify failed → free Lens fallback: ${error.message}');
+    _log('Search stack: Railway reverse-image API (primary)…');
+    try {
+      final result = await railway();
+      if (!result.results.isEmpty || (result.results.aboutImage?.hasContent ?? false)) {
+        _log(
+          'Railway matches: ${result.results.all.length} '
+          '(exact=${result.results.exactMatches.length}, '
+          'visual=${result.results.visualMatches.length})',
+        );
+        return result;
       }
-    } else {
-      _log(
-        'No APIFY_TOKEN — in-app match list needs Apify. '
-        'Using free Lens link + AI About only.',
-      );
+      _log('Railway returned empty — trying fallbacks…');
+    } on AppException catch (error) {
+      _log('Railway failed → fallback: ${error.message}');
     }
 
+    if (ApifyLensService.isConfigured) {
+      _log('Fallback: Apify Google Lens…');
+      try {
+        final result = await apify();
+        if (!result.results.isEmpty) return result;
+      } on AppException catch (error) {
+        _log('Apify failed: ${error.message}');
+      }
+    }
+
+    _log('Fallback: free Lens prepare + ${SearchStackConfig.insightsOpenAiLabel}');
     return freeLens();
   }
 

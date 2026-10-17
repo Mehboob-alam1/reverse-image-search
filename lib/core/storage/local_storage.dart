@@ -110,6 +110,16 @@ class LocalStorage {
   int get searchCreditsUsed =>
       _prefs.getInt(StorageKeys.searchCreditsUsed) ?? 0;
 
+  int get rewardedBonusCredits =>
+      _prefs.getInt(StorageKeys.rewardedBonusCredits) ?? 0;
+
+  Future<void> addRewardedBonusCredit({int amount = 1}) async {
+    await _prefs.setInt(
+      StorageKeys.rewardedBonusCredits,
+      rewardedBonusCredits + amount,
+    );
+  }
+
   bool get hasStartedIntroTrial =>
       _prefs.getBool(StorageKeys.hasStartedIntroTrial) ?? false;
 
@@ -312,7 +322,7 @@ class LocalStorage {
       );
     }
 
-    final limit = AppConstants.freeSearchCredits;
+    final limit = AppConstants.freeSearchCredits + rewardedBonusCredits;
     final used = searchCreditsUsed;
     final remaining = (limit - used).clamp(0, limit);
     return UsageStats(

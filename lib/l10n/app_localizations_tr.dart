@@ -553,6 +553,26 @@ class AppLocalizationsTr extends AppLocalizations {
       'Mevcut arama sınırına ulaştınız.\nPro\'ya yükseltin veya daha sonra deneyin.';
 
   @override
+  String get creditsExpiredTitle => 'Your search credits expired';
+
+  @override
+  String creditsExpiredBody(int used, int limit) {
+    return 'You\'ve used $used of $limit searches. Watch an ad for 1 more credit, or subscribe for a larger allowance.';
+  }
+
+  @override
+  String get watchAdForCredit => 'Watch ad for +1 credit';
+
+  @override
+  String rewardedCreditEarned(int remaining) {
+    return 'Credit earned! You have $remaining left.';
+  }
+
+  @override
+  String get rewardedAdFailed =>
+      'Ad not available. Try again or upgrade to Pro.';
+
+  @override
   String get fileTooLarge => 'Bu görsel çok büyük. Daha küçük bir dosya seçin.';
 
   @override
