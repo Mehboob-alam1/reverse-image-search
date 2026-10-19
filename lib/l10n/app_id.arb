@@ -280,5 +280,43 @@
         "type": "String"
       }
     }
+  },
+  "creditsExpiredTitle": "Kredit pencarian Anda habis",
+  "creditsExpiredBody": "Anda telah memakai {used} dari {limit} pencarian. Tonton iklan untuk 1 kredit lagi, atau berlangganan untuk lebih banyak.",
+  "@creditsExpiredBody": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "watchAdForCredit": "Tonton iklan untuk +1 kredit",
+  "rewardedCreditEarned": "Kredit didapat! Sisa {remaining}.",
+  "@rewardedCreditEarned": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardedAdFailed": "Iklan tidak tersedia. Coba lagi atau upgrade ke Pro.",
+  "subscriptionFreeTierNote": "Gratis: 5 pencarian seumur hidup di semua mode.",
+  "subscriptionMonthlyNote": "Bulanan: 120 pencarian setiap 30 hari, ditagih lewat toko.",
+  "resultsOpenHint": "Ketuk kartu untuk detail, tautan sumber, dan bagikan",
+  "searchProviderApify": "Google Lens · Apify",
+  "searchProviderSerp": "Google Lens",
+  "openInGoogleLens": "Buka di Google Lens (gratis)",
+  "searchStackAiOnly": "Wawasan AI",
+  "searchResultsOverview": "Ringkasan kecocokan",
+  "insightsPoweredBy": "Wawasan didukung {provider}",
+  "@insightsPoweredBy": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
   }
 }

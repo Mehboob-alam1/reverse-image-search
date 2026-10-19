@@ -280,5 +280,43 @@
         "type": "String"
       }
     }
+  },
+  "creditsExpiredTitle": "Vos crédits de recherche ont expiré",
+  "creditsExpiredBody": "Vous avez utilisé {used} sur {limit} recherches. Regardez une pub pour 1 crédit de plus, ou abonnez-vous.",
+  "@creditsExpiredBody": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "watchAdForCredit": "Regarder une pub pour +1 crédit",
+  "rewardedCreditEarned": "Crédit gagné ! Il vous reste {remaining}.",
+  "@rewardedCreditEarned": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardedAdFailed": "Publicité indisponible. Réessayez ou passez à Pro.",
+  "subscriptionFreeTierNote": "Gratuit : 5 recherches à vie sur tous les modes.",
+  "subscriptionMonthlyNote": "Mensuel : 120 recherches tous les 30 jours, facturées via le store.",
+  "resultsOpenHint": "Touchez une carte pour les détails, le lien et le partage",
+  "searchProviderApify": "Google Lens · Apify",
+  "searchProviderSerp": "Google Lens",
+  "openInGoogleLens": "Ouvrir dans Google Lens (gratuit)",
+  "searchStackAiOnly": "Analyses IA",
+  "searchResultsOverview": "Aperçu des correspondances",
+  "insightsPoweredBy": "Analyses proposées par {provider}",
+  "@insightsPoweredBy": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
   }
 }

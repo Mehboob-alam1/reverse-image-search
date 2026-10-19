@@ -280,5 +280,43 @@
         "type": "String"
       }
     }
+  },
+  "creditsExpiredTitle": "Deine Suchguthaben sind abgelaufen",
+  "creditsExpiredBody": "Du hast {used} von {limit} Suchen verwendet. Sieh dir eine Anzeige für 1 Extra-Guthaben an oder abonniere für mehr.",
+  "@creditsExpiredBody": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "watchAdForCredit": "Anzeige ansehen für +1 Guthaben",
+  "rewardedCreditEarned": "Guthaben erhalten! Du hast noch {remaining}.",
+  "@rewardedCreditEarned": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardedAdFailed": "Anzeige nicht verfügbar. Versuch es erneut oder upgrade auf Pro.",
+  "subscriptionFreeTierNote": "Kostenlos: 5 lebenslange Suchen in allen Modi.",
+  "subscriptionMonthlyNote": "Monatlich: 120 Suchen alle 30 Tage, Abrechnung über den Store.",
+  "resultsOpenHint": "Tippe auf eine Karte für Details, Quelllink und Teilen",
+  "searchProviderApify": "Google Lens · Apify",
+  "searchProviderSerp": "Google Lens",
+  "openInGoogleLens": "In Google Lens öffnen (kostenlos)",
+  "searchStackAiOnly": "KI-Einblicke",
+  "searchResultsOverview": "Trefferübersicht",
+  "insightsPoweredBy": "Einblicke powered by {provider}",
+  "@insightsPoweredBy": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
   }
 }

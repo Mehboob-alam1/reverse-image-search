@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/in_app_review_service.dart';
 import '../../services/url_service.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
 
   Future<void> _open(BuildContext context, VoidCallback action) async {
@@ -16,7 +18,7 @@ class AppDrawer extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     const textColor = AppColors.brandIconOnHero;
     const iconColor = AppColors.brandIconOnHero;
@@ -96,9 +98,7 @@ class AppDrawer extends StatelessWidget {
                 color: textColor,
                 iconColor: iconColor,
                 onTap: () => _open(context, () {
-                  const UrlService().openStore(
-                    'https://play.google.com/store/apps/details?id=${AppConstants.packageName}',
-                  );
+                  ref.read(inAppReviewServiceProvider).requestReviewOrOpenStore();
                 }),
               ),
               _DrawerItem(

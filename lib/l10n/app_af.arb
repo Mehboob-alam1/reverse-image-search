@@ -280,5 +280,43 @@
         "type": "String"
       }
     }
+  },
+  "creditsExpiredTitle": "Jou soekkrediete het verstryk",
+  "creditsExpiredBody": "Jy het {used} van {limit} soektogte gebruik. Kyk na 'n advertensie vir 1 ekstra krediet, of teken in vir meer.",
+  "@creditsExpiredBody": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "watchAdForCredit": "Kyk advertensie vir +1 krediet",
+  "rewardedCreditEarned": "Krediet verdien! Jy het {remaining} oor.",
+  "@rewardedCreditEarned": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardedAdFailed": "Advertensie nie beskikbaar nie. Probeer weer of gradeer op na Pro.",
+  "subscriptionFreeTierNote": "Gratis: 5 leeftydsoektogte op alle modusse.",
+  "subscriptionMonthlyNote": "Maandeliks: 120 soektogte elke 30 dae, gefaktureer deur die winkel.",
+  "resultsOpenHint": "Tik 'n kaart vir volle besonderhede, bronskakel en deel",
+  "searchProviderApify": "Google Lens · Apify",
+  "searchProviderSerp": "Google Lens",
+  "openInGoogleLens": "Maak oop in Google Lens (gratis)",
+  "searchStackAiOnly": "KI-insigte",
+  "searchResultsOverview": "Ooreenkoms-oorsig",
+  "insightsPoweredBy": "Insigte aangedryf deur {provider}",
+  "@insightsPoweredBy": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
   }
 }

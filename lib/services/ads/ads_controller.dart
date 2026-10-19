@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import '../../core/storage/local_storage.dart';
+import '../../core/constants/railway_search_config.dart';
 import '../../core/constants/storage_keys.dart';
+import '../../core/storage/local_storage.dart';
 import '../../features/controllers.dart';
 import 'ads_manager.dart';
 import 'ads_remote_config.dart';
@@ -61,6 +62,7 @@ class AdsController extends Notifier<AdsUiState> {
   Future<void> bootstrapForSplash() async {
     state = state.copyWith(bootstrapMessage: 'Loading…');
     final settings = await ref.read(adsRemoteSettingsProvider.future);
+    RailwaySearchConfig.applyRemoteBaseUrl(settings.apiBaseUrl);
     await _manager.applyRemoteSettings(settings);
 
     if (!_manager.adsAllowed(isPro: _isPro)) {
@@ -91,6 +93,7 @@ class AdsController extends Notifier<AdsUiState> {
   }
 
   Future<bool> showInterstitialAfterSearch() async {
+    if (!_manager.settings.interstitialAfterSearch) return false;
     final prefs = ref.read(localStorageProvider).prefs;
     final last = prefs.getInt(StorageKeys.adsLastInterstitialAt) ?? 0;
     return _manager.showInterstitialIfReady(

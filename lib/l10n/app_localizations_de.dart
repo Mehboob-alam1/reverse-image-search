@@ -560,24 +560,24 @@ class AppLocalizationsDe extends AppLocalizations {
       'Sie haben Ihr aktuelles Suchlimit erreicht.\nUpgraden Sie auf Pro oder versuchen Sie es später.';
 
   @override
-  String get creditsExpiredTitle => 'Your search credits expired';
+  String get creditsExpiredTitle => 'Deine Suchguthaben sind abgelaufen';
 
   @override
   String creditsExpiredBody(int used, int limit) {
-    return 'You\'ve used $used of $limit searches. Watch an ad for 1 more credit, or subscribe for a larger allowance.';
+    return 'Du hast $used von $limit Suchen verwendet. Sieh dir eine Anzeige für 1 Extra-Guthaben an oder abonniere für mehr.';
   }
 
   @override
-  String get watchAdForCredit => 'Watch ad for +1 credit';
+  String get watchAdForCredit => 'Anzeige ansehen für +1 Guthaben';
 
   @override
   String rewardedCreditEarned(int remaining) {
-    return 'Credit earned! You have $remaining left.';
+    return 'Guthaben erhalten! Du hast noch $remaining.';
   }
 
   @override
   String get rewardedAdFailed =>
-      'Ad not available. Try again or upgrade to Pro.';
+      'Anzeige nicht verfügbar. Versuch es erneut oder upgrade auf Pro.';
 
   @override
   String get fileTooLarge =>
@@ -790,11 +790,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get subscriptionFreeTierNote =>
-      'Free: 5 lifetime searches on all modes.';
+      'Kostenlos: 5 lebenslange Suchen in allen Modi.';
 
   @override
   String get subscriptionMonthlyNote =>
-      'Monthly: 120 searches every 30 days, billed through the store.';
+      'Monatlich: 120 Suchen alle 30 Tage, Abrechnung über den Store.';
 
   @override
   String get continueForFree => 'KOSTENLOS FORTFAHREN  →';
@@ -811,7 +811,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get resultsOpenHint =>
-      'Tap a card for full details, source link, and share';
+      'Tippe auf eine Karte für Details, Quelllink und Teilen';
 
   @override
   String get searchProviderApify => 'Google Lens · Apify';
@@ -820,17 +820,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get searchProviderSerp => 'Google Lens';
 
   @override
-  String get openInGoogleLens => 'Open in Google Lens (free)';
+  String get openInGoogleLens => 'In Google Lens öffnen (kostenlos)';
 
   @override
-  String get searchStackAiOnly => 'AI insights';
+  String get searchStackAiOnly => 'KI-Einblicke';
 
   @override
-  String get searchResultsOverview => 'Match overview';
+  String get searchResultsOverview => 'Trefferübersicht';
 
   @override
   String insightsPoweredBy(String provider) {
-    return 'Insights powered by $provider';
+    return 'Einblicke powered by $provider';
   }
 
   @override

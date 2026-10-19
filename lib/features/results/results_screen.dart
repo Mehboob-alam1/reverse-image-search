@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/ad_config.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/search_stack_config.dart';
 import '../../core/errors/app_exception.dart';
@@ -13,6 +12,7 @@ import '../../core/widgets/inline_native_ad.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/search_response.dart';
 import '../../models/search_result.dart';
+import '../../services/ads/ads_controller.dart';
 import '../../services/analytics_service.dart';
 import '../../services/share_service.dart';
 import '../../services/url_service.dart';
@@ -83,16 +83,17 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     };
   }
 
-  /// Result tiles + native ads every [AdConfig.resultsNativeAdEvery] items.
+  /// Result tiles + native ads every N items (from remote ads config).
   List<_FeedRow> _feedRows(List<SearchResult> items) {
     final rows = <_FeedRow>[];
-    final every = AdConfig.resultsNativeAdEvery;
+    final every = ref.read(adsManagerProvider).settings.nativeEveryNResults;
+    final isPro = ref.watch(authControllerProvider).isPro;
     for (var i = 0; i < items.length; i++) {
       rows.add(_FeedRow.result(items[i]));
       if (every > 0 &&
           (i + 1) % every == 0 &&
           i + 1 < items.length &&
-          !ref.watch(authControllerProvider).isPro) {
+          !isPro) {
         rows.add(_FeedRow.ad('n$i'));
       }
     }

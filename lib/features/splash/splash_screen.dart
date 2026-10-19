@@ -13,6 +13,8 @@ import '../../l10n/app_localizations.dart';
 import '../../services/ads/ads_controller.dart';
 import '../../services/ads/ads_remote_config.dart';
 import '../../services/analytics_service.dart';
+import '../../services/fcm_service.dart';
+import '../../services/in_app_update_service.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -48,6 +50,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Future<void> _boot() async {
     await ref.read(analyticsServiceProvider).appOpened();
     final started = DateTime.now();
+
+    // FCM + Play in-app update (best-effort; never block splash).
+    unawaited(ref.read(fcmServiceProvider).initialize());
+    unawaited(ref.read(inAppUpdateServiceProvider).checkAndUpdate());
 
     await ref.read(adsControllerProvider.notifier).bootstrapForSplash();
 

@@ -280,5 +280,43 @@
         "type": "String"
       }
     }
+  },
+  "creditsExpiredTitle": "Arama kredileriniz bitti",
+  "creditsExpiredBody": "{limit} aramanın {used} tanesini kullandınız. +1 kredi için reklam izleyin veya daha fazlası için abone olun.",
+  "@creditsExpiredBody": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "watchAdForCredit": "+1 kredi için reklam izle",
+  "rewardedCreditEarned": "Kredi kazanıldı! {remaining} kaldı.",
+  "@rewardedCreditEarned": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardedAdFailed": "Reklam yok. Tekrar deneyin veya Pro'ya geçin.",
+  "subscriptionFreeTierNote": "Ücretsiz: tüm modlarda ömür boyu 5 arama.",
+  "subscriptionMonthlyNote": "Aylık: her 30 günde 120 arama, mağaza üzerinden faturalandırılır.",
+  "resultsOpenHint": "Ayrıntı, kaynak bağlantısı ve paylaşım için bir karta dokunun",
+  "searchProviderApify": "Google Lens · Apify",
+  "searchProviderSerp": "Google Lens",
+  "openInGoogleLens": "Google Lens'te aç (ücretsiz)",
+  "searchStackAiOnly": "YZ içgörüleri",
+  "searchResultsOverview": "Eşleşme özeti",
+  "insightsPoweredBy": "İçgörüler: {provider}",
+  "@insightsPoweredBy": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
   }
 }

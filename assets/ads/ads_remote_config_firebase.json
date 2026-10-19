@@ -1,0 +1,135 @@
+{
+  "parameters": {
+    "ads_enabled": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Master switch turn all AdMob ads on off",
+      "valueType": "BOOLEAN"
+    },
+    "api_base_url": {
+      "defaultValue": {
+        "value": "https://reverse-image-search-api-production-7116.up.railway.app"
+      },
+      "description": "Railway reverse image API base URL",
+      "valueType": "STRING"
+    },
+    "native_bottom_enabled": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "In-feed native ads",
+      "valueType": "BOOLEAN"
+    },
+    "interstitial_enabled": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Interstitial after successful search",
+      "valueType": "BOOLEAN"
+    },
+    "app_open_enabled": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "App-open once per session",
+      "valueType": "BOOLEAN"
+    },
+    "banner_enabled": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Collapsible bottom banner",
+      "valueType": "BOOLEAN"
+    },
+    "rewarded_enabled": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Rewarded for plus one search credit",
+      "valueType": "BOOLEAN"
+    },
+    "interstitial_after_search": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Show interstitial when search succeeds",
+      "valueType": "BOOLEAN"
+    },
+    "interstitial_cooldown_sec": {
+      "defaultValue": {
+        "value": "75"
+      },
+      "description": "Minimum seconds between interstitial shows",
+      "valueType": "NUMBER"
+    },
+    "fullscreen_min_gap_seconds": {
+      "defaultValue": {
+        "value": "40"
+      },
+      "description": "Min seconds between any fullscreen ads",
+      "valueType": "NUMBER"
+    },
+    "interstitial_load_wait_ms": {
+      "defaultValue": {
+        "value": "2500"
+      },
+      "description": "Max wait for interstitial to load",
+      "valueType": "NUMBER"
+    },
+    "native_every_n_results": {
+      "defaultValue": {
+        "value": "4"
+      },
+      "description": "Insert native every N result cards",
+      "valueType": "NUMBER"
+    },
+    "splash_min_ms": {
+      "defaultValue": {
+        "value": "2800"
+      },
+      "description": "Minimum splash duration in ms",
+      "valueType": "NUMBER"
+    },
+    "banner": {
+      "defaultValue": {
+        "value": "ca-app-pub-3940256099942544/2014213617"
+      },
+      "description": "Android AdMob banner unit ID",
+      "valueType": "STRING"
+    },
+    "interstitial": {
+      "defaultValue": {
+        "value": "ca-app-pub-3940256099942544/1033173712"
+      },
+      "description": "Android AdMob interstitial unit ID",
+      "valueType": "STRING"
+    },
+    "rewarded": {
+      "defaultValue": {
+        "value": "ca-app-pub-3940256099942544/5224354917"
+      },
+      "description": "Android AdMob rewarded unit ID",
+      "valueType": "STRING"
+    },
+    "app_open": {
+      "defaultValue": {
+        "value": "ca-app-pub-3940256099942544/9257395921"
+      },
+      "description": "Android AdMob app-open unit ID",
+      "valueType": "STRING"
+    },
+    "native": {
+      "defaultValue": {
+        "value": "ca-app-pub-3940256099942544/2247696110"
+      },
+      "description": "Android AdMob native unit ID",
+      "valueType": "STRING"
+    }
+  },
+  "parameterGroups": {},
+  "version": {
+    "versionNumber": "1",
+    "description": "Deep Image Search Android ads via Remote Config"
+  }
+}

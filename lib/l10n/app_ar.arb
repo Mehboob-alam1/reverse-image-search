@@ -280,5 +280,43 @@
         "type": "String"
       }
     }
+  },
+  "creditsExpiredTitle": "انتهت أرصدة البحث الخاصة بك",
+  "creditsExpiredBody": "لقد استخدمت {used} من {limit} عمليات بحث. شاهد إعلانًا للحصول على رصيد إضافي، أو اشترك للحصول على المزيد.",
+  "@creditsExpiredBody": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "watchAdForCredit": "شاهد إعلانًا للحصول على +1 رصيد",
+  "rewardedCreditEarned": "تم كسب الرصيد! يتبقى لديك {remaining}.",
+  "@rewardedCreditEarned": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardedAdFailed": "الإعلان غير متاح. حاول مرة أخرى أو ترقَّ إلى Pro.",
+  "subscriptionFreeTierNote": "مجاني: 5 عمليات بحث مدى الحياة لجميع الأوضاع.",
+  "subscriptionMonthlyNote": "شهري: 120 عملية بحث كل 30 يومًا، تُفوتر عبر المتجر.",
+  "resultsOpenHint": "اضغط على بطاقة للتفاصيل الكاملة والرابط والمشاركة",
+  "searchProviderApify": "Google Lens · Apify",
+  "searchProviderSerp": "Google Lens",
+  "openInGoogleLens": "فتح في Google Lens (مجاني)",
+  "searchStackAiOnly": "رؤى الذكاء الاصطناعي",
+  "searchResultsOverview": "نظرة عامة على التطابقات",
+  "insightsPoweredBy": "الرؤى مقدمة من {provider}",
+  "@insightsPoweredBy": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
   }
 }

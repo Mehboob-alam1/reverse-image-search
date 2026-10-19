@@ -1,0 +1,57 @@
+{
+  "parameters": {
+    "ads_enabled": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "valueType": "BOOLEAN"
+    },
+    "interstitial_cooldown_sec": {
+      "defaultValue": {
+        "value": "18"
+      },
+      "valueType": "NUMBER"
+    },
+    "api_base_url": {
+      "defaultValue": {
+        "value": "https://reverse-image-search-api-production-7116.up.railway.app"
+      },
+      "valueType": "STRING"
+    },
+    "banner": {
+      "defaultValue": {
+        "value": "ca-app-pub-3940256099942544/2014213617"
+      },
+      "valueType": "STRING"
+    },
+    "interstitial": {
+      "defaultValue": {
+        "value": "ca-app-pub-3940256099942544/1033173712"
+      },
+      "valueType": "STRING"
+    },
+    "rewarded": {
+      "defaultValue": {
+        "value": "ca-app-pub-3940256099942544/5224354917"
+      },
+      "valueType": "STRING"
+    },
+    "app_open": {
+      "defaultValue": {
+        "value": "ca-app-pub-3940256099942544/9257395921"
+      },
+      "valueType": "STRING"
+    },
+    "native": {
+      "defaultValue": {
+        "value": "ca-app-pub-3940256099942544/2247696110"
+      },
+      "valueType": "STRING"
+    }
+  },
+  "parameterGroups": {},
+  "version": {
+    "versionNumber": "1",
+    "description": "Deep Image Search Android ads"
+  }
+}

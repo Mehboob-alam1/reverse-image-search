@@ -280,5 +280,43 @@
         "type": "String"
       }
     }
+  },
+  "creditsExpiredTitle": "آپ کے تلاش کریڈٹس ختم ہو گئے",
+  "creditsExpiredBody": "آپ نے {limit} میں سے {used} تلاشیں استعمال کیں۔ +1 کریڈٹ کے لیے اشتہار دیکھیں، یا مزید کے لیے سبسکرپشن لیں۔",
+  "@creditsExpiredBody": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "watchAdForCredit": "+1 کریڈٹ کے لیے اشتہار دیکھیں",
+  "rewardedCreditEarned": "کریڈٹ مل گیا! آپ کے پاس {remaining} باقی ہیں۔",
+  "@rewardedCreditEarned": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardedAdFailed": "اشتہار دستیاب نہیں۔ دوبارہ کوشش کریں یا Pro لیں۔",
+  "subscriptionFreeTierNote": "مفت: تمام موڈز پر 5 تاحیات تلاشیں۔",
+  "subscriptionMonthlyNote": "ماہانہ: ہر 30 دن میں 120 تلاشیں، اسٹور کے ذریعے بل۔",
+  "resultsOpenHint": "تفصیل، ماخذ لنک اور شیئر کے لیے کارڈ پر ٹیپ کریں",
+  "searchProviderApify": "Google Lens · Apify",
+  "searchProviderSerp": "Google Lens",
+  "openInGoogleLens": "Google Lens میں کھولیں (مفت)",
+  "searchStackAiOnly": "AI بصیرتیں",
+  "searchResultsOverview": "میچ کا جائزہ",
+  "insightsPoweredBy": "{provider} سے بصیرتیں",
+  "@insightsPoweredBy": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
   }
 }

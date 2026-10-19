@@ -553,24 +553,24 @@ class AppLocalizationsHi extends AppLocalizations {
       'आप वर्तमान खोज सीमा तक पहुँच गए हैं।\nप्रो में अपग्रेड करें या बाद में कोशिश करें।';
 
   @override
-  String get creditsExpiredTitle => 'Your search credits expired';
+  String get creditsExpiredTitle => 'आपके खोज क्रेडिट समाप्त हो गए';
 
   @override
   String creditsExpiredBody(int used, int limit) {
-    return 'You\'ve used $used of $limit searches. Watch an ad for 1 more credit, or subscribe for a larger allowance.';
+    return 'आपने $limit में से $used खोजें उपयोग कीं। +1 क्रेडिट के लिए विज्ञापन देखें, या अधिक के लिए सदस्यता लें।';
   }
 
   @override
-  String get watchAdForCredit => 'Watch ad for +1 credit';
+  String get watchAdForCredit => '+1 क्रेडिट के लिए विज्ञापन देखें';
 
   @override
   String rewardedCreditEarned(int remaining) {
-    return 'Credit earned! You have $remaining left.';
+    return 'क्रेडिट मिला! आपके पास $remaining बचे हैं।';
   }
 
   @override
   String get rewardedAdFailed =>
-      'Ad not available. Try again or upgrade to Pro.';
+      'विज्ञापन उपलब्ध नहीं। फिर कोशिश करें या Pro लें।';
 
   @override
   String get fileTooLarge => 'यह छवि बहुत बड़ी है। छोटी फ़ाइल चुनें।';
@@ -778,12 +778,11 @@ class AppLocalizationsHi extends AppLocalizations {
       '3 दिन का मुफ़्त ट्रायल खत्म होने के बाद साप्ताहिक सदस्यता शुरू होगी। नवीनीकरण से 24 घंटे पहले कभी भी रद्द करें';
 
   @override
-  String get subscriptionFreeTierNote =>
-      'Free: 5 lifetime searches on all modes.';
+  String get subscriptionFreeTierNote => 'मुफ़्त: सभी मोड पर 5 आजीवन खोजें।';
 
   @override
   String get subscriptionMonthlyNote =>
-      'Monthly: 120 searches every 30 days, billed through the store.';
+      'मासिक: हर 30 दिन में 120 खोजें, स्टोर के ज़रिए बिल।';
 
   @override
   String get continueForFree => 'मुफ़्त जारी रखें  →';
@@ -800,7 +799,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get resultsOpenHint =>
-      'Tap a card for full details, source link, and share';
+      'विवरण, स्रोत लिंक और शेयर के लिए कार्ड टैप करें';
 
   @override
   String get searchProviderApify => 'Google Lens · Apify';
@@ -809,17 +808,17 @@ class AppLocalizationsHi extends AppLocalizations {
   String get searchProviderSerp => 'Google Lens';
 
   @override
-  String get openInGoogleLens => 'Open in Google Lens (free)';
+  String get openInGoogleLens => 'Google Lens में खोलें (मुफ़्त)';
 
   @override
-  String get searchStackAiOnly => 'AI insights';
+  String get searchStackAiOnly => 'AI अंतर्दृष्टि';
 
   @override
-  String get searchResultsOverview => 'Match overview';
+  String get searchResultsOverview => 'मैच अवलोकन';
 
   @override
   String insightsPoweredBy(String provider) {
-    return 'Insights powered by $provider';
+    return '$provider द्वारा संचालित अंतर्दृष्टि';
   }
 
   @override

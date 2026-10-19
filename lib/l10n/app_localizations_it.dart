@@ -557,24 +557,24 @@ class AppLocalizationsIt extends AppLocalizations {
       'You\'ve reached your current search limit.\nUpgrade to Pro or try again later.';
 
   @override
-  String get creditsExpiredTitle => 'Your search credits expired';
+  String get creditsExpiredTitle => 'I tuoi crediti di ricerca sono scaduti';
 
   @override
   String creditsExpiredBody(int used, int limit) {
-    return 'You\'ve used $used of $limit searches. Watch an ad for 1 more credit, or subscribe for a larger allowance.';
+    return 'Hai usato $used di $limit ricerche. Guarda un annuncio per 1 credito in più, o abbonati.';
   }
 
   @override
-  String get watchAdForCredit => 'Watch ad for +1 credit';
+  String get watchAdForCredit => 'Guarda annuncio per +1 credito';
 
   @override
   String rewardedCreditEarned(int remaining) {
-    return 'Credit earned! You have $remaining left.';
+    return 'Credito ottenuto! Ti restano $remaining.';
   }
 
   @override
   String get rewardedAdFailed =>
-      'Ad not available. Try again or upgrade to Pro.';
+      'Annuncio non disponibile. Riprova o passa a Pro.';
 
   @override
   String get fileTooLarge =>
@@ -785,11 +785,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get subscriptionFreeTierNote =>
-      'Free: 5 lifetime searches on all modes.';
+      'Gratis: 5 ricerche a vita in tutte le modalità.';
 
   @override
   String get subscriptionMonthlyNote =>
-      'Monthly: 120 searches every 30 days, billed through the store.';
+      'Mensile: 120 ricerche ogni 30 giorni, addebitate dallo store.';
 
   @override
   String get continueForFree => 'CONTINUA GRATIS  →';
@@ -806,7 +806,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get resultsOpenHint =>
-      'Tap a card for full details, source link, and share';
+      'Tocca una scheda per dettagli, link e condivisione';
 
   @override
   String get searchProviderApify => 'Google Lens · Apify';
@@ -815,17 +815,17 @@ class AppLocalizationsIt extends AppLocalizations {
   String get searchProviderSerp => 'Google Lens';
 
   @override
-  String get openInGoogleLens => 'Open in Google Lens (free)';
+  String get openInGoogleLens => 'Apri in Google Lens (gratis)';
 
   @override
-  String get searchStackAiOnly => 'AI insights';
+  String get searchStackAiOnly => 'Approfondimenti IA';
 
   @override
-  String get searchResultsOverview => 'Match overview';
+  String get searchResultsOverview => 'Panoramica corrispondenze';
 
   @override
   String insightsPoweredBy(String provider) {
-    return 'Insights powered by $provider';
+    return 'Approfondimenti di $provider';
   }
 
   @override

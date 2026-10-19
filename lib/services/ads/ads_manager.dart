@@ -27,6 +27,7 @@ class AdsManager {
   bool _isLoadingRewarded = false;
   bool _isShowingFullScreen = false;
   bool _appOpenShownThisSession = false;
+  int _lastFullscreenAtMs = 0;
   int _interstitialRetry = 0;
   int _appOpenRetry = 0;
   int _nativeRetry = 0;
@@ -45,6 +46,21 @@ class AdsManager {
 
   Future<void> applyRemoteSettings(AdsRemoteSettings settings) async {
     _settings = settings;
+    // Remote disable (or iOS / Pro path) must drop any preloaded creatives.
+    if (!adsAllowed(isPro: false) || !settings.adsEnabled) {
+      _disposeLoadedAds();
+    }
+  }
+
+  void _disposeLoadedAds() {
+    _interstitial?.dispose();
+    _interstitial = null;
+    _appOpen?.dispose();
+    _appOpen = null;
+    _nativeAd?.dispose();
+    _nativeAd = null;
+    _rewarded?.dispose();
+    _rewarded = null;
   }
 
   Future<void> initializeMobileAds() async {
@@ -358,32 +374,63 @@ class AdsManager {
     if (!_splashFinished) return false;
     if (_appOpenShownThisSession) return false;
     if (_isShowingFullScreen || _appOpen == null) return false;
+    if (!_fullscreenGapOk()) return false;
     _appOpenShownThisSession = true;
     final ad = _appOpen!;
     _appOpen = null;
-    _isShowingFullScreen = true;
+    _markFullscreenShown();
     ad.show();
     return true;
   }
 
   bool get hasPreloadedNative => _nativeAd != null;
 
+  bool _fullscreenGapOk() {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final gap = _settings.fullscreenMinGapSeconds * 1000;
+    return now - _lastFullscreenAtMs >= gap;
+  }
+
+  void _markFullscreenShown() {
+    _isShowingFullScreen = true;
+    _lastFullscreenAtMs = DateTime.now().millisecondsSinceEpoch;
+  }
+
+  /// After successful search: wait briefly for a loaded interstitial, respect
+  /// interval + fullscreen gap, show if ready (never blocks navigation long).
   Future<bool> showInterstitialIfReady({
     required bool isPro,
     required int lastShownMs,
     required void Function(int shownAtMs) onShown,
   }) async {
-    if (!adsAllowed(isPro: isPro) || !_settings.interstitialEnabled) {
+    if (!adsAllowed(isPro: isPro) ||
+        !_settings.interstitialEnabled ||
+        !_settings.interstitialAfterSearch) {
       return false;
     }
     final now = DateTime.now().millisecondsSinceEpoch;
     final minGap = _settings.interstitialIntervalSeconds * 1000;
     if (now - lastShownMs < minGap) return false;
-    if (_isShowingFullScreen || _interstitial == null) return false;
-    final ad = _interstitial!;
+    if (_isShowingFullScreen) return false;
+    if (!_fullscreenGapOk()) return false;
+
+    if (_interstitial == null) {
+      unawaited(_loadInterstitial(isPro: isPro));
+      final deadline = DateTime.now().add(
+        Duration(milliseconds: _settings.interstitialLoadWaitMs),
+      );
+      while (_interstitial == null && DateTime.now().isBefore(deadline)) {
+        await Future<void>.delayed(const Duration(milliseconds: 120));
+        if (!adsAllowed(isPro: isPro) || _isShowingFullScreen) return false;
+      }
+    }
+
+    final ad = _interstitial;
+    if (ad == null) return false;
     _interstitial = null;
-    _isShowingFullScreen = true;
-    onShown(now);
+    final shownAt = DateTime.now().millisecondsSinceEpoch;
+    _markFullscreenShown();
+    onShown(shownAt);
     ad.show();
     return true;
   }
@@ -491,7 +538,7 @@ class AdsManager {
 
     final done = Completer<bool>();
     var didEarn = false;
-    _isShowingFullScreen = true;
+    _markFullscreenShown();
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdDismissedFullScreenContent: (dismissed) {
         dismissed.dispose();
@@ -515,9 +562,6 @@ class AdsManager {
   }
 
   void dispose() {
-    _interstitial?.dispose();
-    _appOpen?.dispose();
-    _nativeAd?.dispose();
-    _rewarded?.dispose();
+    _disposeLoadedAds();
   }
 }

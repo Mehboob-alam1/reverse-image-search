@@ -33,7 +33,12 @@ class RailwaySearchService {
 
   void _log(String message) => onLog?.call(message);
 
+  void _syncBaseUrl() {
+    _dio.options.baseUrl = RailwaySearchConfig.baseUrl;
+  }
+
   Future<bool> health() async {
+    _syncBaseUrl();
     try {
       final response = await _dio.get<Map<String, dynamic>>(
         RailwaySearchConfig.healthPath,
@@ -123,8 +128,10 @@ class RailwaySearchService {
     required String queryImageLabel,
     required SearchType searchType,
   }) async {
+    _syncBaseUrl();
     _log(
-      'Railway API: POST /api/search (web=${RailwaySearchConfig.defaultWeb}, '
+      'Railway API: POST ${RailwaySearchConfig.baseUrl}/api/search '
+      '(web=${RailwaySearchConfig.defaultWeb}, '
       'k=${RailwaySearchConfig.defaultK}, ${bytes.length} bytes)…',
     );
     try {

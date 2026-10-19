@@ -18,12 +18,8 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(":app")
 }
-// in_app_purchase_android 0.4.0+10 targets Billing Library 8 APIs but still declares 7.1.1.
-subprojects {
-    configurations.configureEach {
-        resolutionStrategy.force("com.android.billingclient:billing:8.0.0")
-    }
-}
+// Do not force Billing Library 8 here: in_app_purchase_android 0.4.x targets 7.1.1.
+// Forcing 8.0.0 breaks Java compile (QueryProductDetailsResult / queryPurchaseHistoryAsync).
 
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)

@@ -280,5 +280,43 @@
         "type": "String"
       }
     }
+  },
+  "creditsExpiredTitle": "Seus créditos de busca expiraram",
+  "creditsExpiredBody": "Você usou {used} de {limit} buscas. Assista a um anúncio por 1 crédito a mais, ou assine para ter mais.",
+  "@creditsExpiredBody": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "watchAdForCredit": "Assistir anúncio por +1 crédito",
+  "rewardedCreditEarned": "Crédito ganho! Você tem {remaining} restantes.",
+  "@rewardedCreditEarned": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardedAdFailed": "Anúncio indisponível. Tente de novo ou atualize para Pro.",
+  "subscriptionFreeTierNote": "Grátis: 5 buscas vitalícias em todos os modos.",
+  "subscriptionMonthlyNote": "Mensal: 120 buscas a cada 30 dias, cobradas pela loja.",
+  "resultsOpenHint": "Toque em um card para detalhes, link e compartilhar",
+  "searchProviderApify": "Google Lens · Apify",
+  "searchProviderSerp": "Google Lens",
+  "openInGoogleLens": "Abrir no Google Lens (grátis)",
+  "searchStackAiOnly": "Insights de IA",
+  "searchResultsOverview": "Visão geral das correspondências",
+  "insightsPoweredBy": "Insights com tecnologia {provider}",
+  "@insightsPoweredBy": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
   }
 }

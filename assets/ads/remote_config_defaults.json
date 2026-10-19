@@ -5,11 +5,16 @@
   "app_open_enabled": true,
   "banner_enabled": true,
   "rewarded_enabled": true,
-  "interstitial_interval_seconds": 90,
+  "interstitial_after_search": true,
+  "interstitial_cooldown_sec": 75,
+  "fullscreen_min_gap_seconds": 40,
+  "interstitial_load_wait_ms": 2500,
+  "native_every_n_results": 4,
   "splash_min_ms": 2800,
-  "android_native_unit_id": "",
-  "android_interstitial_unit_id": "",
-  "android_app_open_unit_id": "",
-  "android_banner_unit_id": "",
-  "android_rewarded_unit_id": ""
+  "api_base_url": "https://reverse-image-search-api-production-7116.up.railway.app",
+  "banner": "ca-app-pub-3940256099942544/2014213617",
+  "interstitial": "ca-app-pub-3940256099942544/1033173712",
+  "rewarded": "ca-app-pub-3940256099942544/5224354917",
+  "app_open": "ca-app-pub-3940256099942544/9257395921",
+  "native": "ca-app-pub-3940256099942544/2247696110"
 }
