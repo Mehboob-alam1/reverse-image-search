@@ -222,40 +222,28 @@ class _SplashLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 112,
-      height: 112,
+      width: 128,
+      height: 128,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white.withValues(alpha: 0.12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+            color: Colors.black.withValues(alpha: 0.22),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
           ),
         ],
       ),
-      child: Center(
-        child: Container(
-          width: 72,
-          height: 72,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 4),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primaryLight.withValues(alpha: 0.45),
-                blurRadius: 16,
-              ),
-            ],
-          ),
-          child: ClipOval(
-            child: Row(
-              children: [
-                Expanded(child: Container(color: AppColors.primaryLight)),
-                Expanded(child: Container(color: AppColors.primaryDark)),
-              ],
-            ),
+      child: ClipOval(
+        child: Image.asset(
+          'assets/images/app_logo.png',
+          fit: BoxFit.cover,
+          width: 128,
+          height: 128,
+          errorBuilder: (_, __, ___) => Container(
+            color: Colors.white.withValues(alpha: 0.12),
+            alignment: Alignment.center,
+            child: const Icon(Icons.search_rounded, color: Colors.white, size: 56),
           ),
         ),
       ),
