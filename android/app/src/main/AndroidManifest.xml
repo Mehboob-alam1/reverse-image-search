@@ -5,9 +5,11 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+    <!-- Required for Google Play Billing / subscriptions -->
+    <uses-permission android:name="com.android.vending.BILLING"/>
 
     <application
-        android:label="Deep Image Search"
+        android:label="Reverse Image Search"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

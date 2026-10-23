@@ -9,7 +9,7 @@ class AppLocalizationsAf extends AppLocalizations {
   AppLocalizationsAf([String locale = 'af']) : super(locale);
 
   @override
-  String get appName => 'Deep Image Search';
+  String get appName => 'Reverse Image Search';
 
   @override
   String get appTagline => 'Search the web using any image.';
@@ -830,11 +830,11 @@ class AppLocalizationsAf extends AppLocalizations {
 
   @override
   String get communityGuidelinesBody =>
-      'Gebruik Deep Image Search slegs vir wettige beeldsoektogte.\n\nMoenie hierdie program gebruik om iemand te teister, dophou, naboots of uitbuit nie. Moenie seksuele inhoud wat kinders betrek soek of deel nie.\n\nRespekteer ander se privaatheid en die kopiereg van beelde wat jy vind. Resultate kom van derdeparty-webwerwe en bly onder daardie werwe se voorwaardes.\n\nOns kan soektogte wat die diens misbruik beperk of weier.';
+      'Gebruik Reverse Image Search slegs vir wettige beeldsoektogte.\n\nMoenie hierdie program gebruik om iemand te teister, dophou, naboots of uitbuit nie. Moenie seksuele inhoud wat kinders betrek soek of deel nie.\n\nRespekteer ander se privaatheid en die kopiereg van beelde wat jy vind. Resultate kom van derdeparty-webwerwe en bly onder daardie werwe se voorwaardes.\n\nOns kan soektogte wat die diens misbruik beperk of weier.';
 
   @override
   String get privacyPolicyBody =>
-      'Deep Image Search verwerk beelde wat jy kies, neem of per URL gee sodat ons omgekeerde beeldsoektogte deur SerpApi Google Lens kan doen.\n\nPlaaslike foto\'s word na \'n tydelike lêergasheer opgelaai sodat die soekverskaffer dit kan lees. Ons hou nie opgelaaide beelde op \'n eie bediener nie.\n\nSoekresultate kom van derdeparty-webwerwe. Daardie webwerwe bly die bron van die beelde en kan hul eie kopiereg en voorwaardes hê.\n\nGeskiedenis en gunstelinge bly op hierdie toestel. Analise-gebeure soos programopeninge, soektog begin en soektog voltooi kan versamel word. Ons versamel nie beeldinhoud in analise nie.\n\nIntekeninge word deur Apple of Google verwerk. Ons stoor nie kaartbesonderhede nie.\n\nJy kan plaaslike geskiedenis uitvee en gunstelinge in die program verwyder.';
+      'Reverse Image Search verwerk beelde wat jy kies, neem of per URL gee sodat ons omgekeerde beeldsoektogte deur SerpApi Google Lens kan doen.\n\nPlaaslike foto\'s word na \'n tydelike lêergasheer opgelaai sodat die soekverskaffer dit kan lees. Ons hou nie opgelaaide beelde op \'n eie bediener nie.\n\nSoekresultate kom van derdeparty-webwerwe. Daardie webwerwe bly die bron van die beelde en kan hul eie kopiereg en voorwaardes hê.\n\nGeskiedenis en gunstelinge bly op hierdie toestel. Analise-gebeure soos programopeninge, soektog begin en soektog voltooi kan versamel word. Ons versamel nie beeldinhoud in analise nie.\n\nIntekeninge word deur Apple of Google verwerk. Ons stoor nie kaartbesonderhede nie.\n\nJy kan plaaslike geskiedenis uitvee en gunstelinge in die program verwyder.';
 
   @override
   String get allowPhotoAccess =>
@@ -849,6 +849,6 @@ class AppLocalizationsAf extends AppLocalizations {
 
   @override
   String shareAppMessage(String url) {
-    return 'Probeer Deep Image Search: $url';
+    return 'Probeer Reverse Image Search: $url';
   }
 }

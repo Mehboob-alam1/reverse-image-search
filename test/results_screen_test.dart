@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:reverse_image_search/core/storage/local_storage.dart';
+import 'package:reverse_image_search/core/storage/subscription_vault.dart';
 import 'package:reverse_image_search/features/controllers.dart';
 import 'package:reverse_image_search/features/results/results_screen.dart';
 import 'package:reverse_image_search/l10n/app_localizations.dart';
@@ -40,6 +41,7 @@ void main() {
       ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
+          subscriptionVaultProvider.overrideWithValue(SubscriptionVault.memory()),
           favoritesControllerProvider.overrideWith(_EmptyFavorites.new),
           searchControllerProvider.overrideWith(() => _SeededSearch(response)),
         ],

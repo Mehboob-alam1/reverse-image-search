@@ -830,11 +830,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get communityGuidelinesBody =>
-      'Usa Deep Image Search solo para búsquedas de imágenes legales.\n\nNo uses esta app para acosar, acechar, suplantar o explotar a nadie. No busques ni compartas contenido sexual de menores.\n\nRespeta la privacidad de otras personas y los derechos de autor de las imágenes que encuentres. Los resultados vienen de sitios de terceros y siguen sus términos.\n\nPodemos limitar o rechazar búsquedas que abusen del servicio.';
+      'Usa Reverse Image Search solo para búsquedas de imágenes legales.\n\nNo uses esta app para acosar, acechar, suplantar o explotar a nadie. No busques ni compartas contenido sexual de menores.\n\nRespeta la privacidad de otras personas y los derechos de autor de las imágenes que encuentres. Los resultados vienen de sitios de terceros y siguen sus términos.\n\nPodemos limitar o rechazar búsquedas que abusen del servicio.';
 
   @override
   String get privacyPolicyBody =>
-      'Deep Image Search procesa las imágenes que eliges, capturas o proporcionas por URL para hacer búsquedas inversas a través de SerpApi Google Lens.\n\nLas fotos locales se suben a un host temporal para que el proveedor de búsqueda pueda leerlas. No guardamos las imágenes subidas en un servidor propio.\n\nLos resultados se obtienen de sitios de terceros. Esos sitios siguen siendo la fuente de las imágenes y pueden tener copyright y términos propios.\n\nEl historial y los favoritos permanecen en este dispositivo. Pueden recopilarse eventos de analítica como apertura de la app, inicio y fin de búsqueda. No recopilamos el contenido de las imágenes en analítica.\n\nLas suscripciones las procesan Apple o Google. No almacenamos datos de tarjetas.\n\nPuedes borrar el historial local y quitar favoritos desde la app.';
+      'Reverse Image Search procesa las imágenes que eliges, capturas o proporcionas por URL para hacer búsquedas inversas a través de SerpApi Google Lens.\n\nLas fotos locales se suben a un host temporal para que el proveedor de búsqueda pueda leerlas. No guardamos las imágenes subidas en un servidor propio.\n\nLos resultados se obtienen de sitios de terceros. Esos sitios siguen siendo la fuente de las imágenes y pueden tener copyright y términos propios.\n\nEl historial y los favoritos permanecen en este dispositivo. Pueden recopilarse eventos de analítica como apertura de la app, inicio y fin de búsqueda. No recopilamos el contenido de las imágenes en analítica.\n\nLas suscripciones las procesan Apple o Google. No almacenamos datos de tarjetas.\n\nPuedes borrar el historial local y quitar favoritos desde la app.';
 
   @override
   String get allowPhotoAccess =>
@@ -849,6 +849,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String shareAppMessage(String url) {
-    return 'Prueba Deep Image Search: $url';
+    return 'Prueba Reverse Image Search: $url';
   }
 }

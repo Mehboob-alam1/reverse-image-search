@@ -1,5 +1,5 @@
 name: reverse_image_search
-description: Deep Image Search — find visually similar images, exact matches, products, and sources.
+description: Reverse Image Search — find visually similar images, exact matches, products, and sources.
 publish_to: "none"
 version: 1.0.0+1
 
@@ -28,10 +28,13 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.1
   uuid: ^4.5.1
-  in_app_purchase: ^3.2.1
-  font_awesome_flutter: ^10.8.0
-  google_mobile_ads: ^5.3.0
-  firebase_core: ^5.0.0
+  in_app_purchase: ^3.3.1
+  # Pin Android Billing Library 8.0.0 (0.5.5+ jumps to Billing 9.x).
+  in_app_purchase_android: 0.5.3
+  flutter_secure_storage: ^9.2.4
+  font_awesome_flutter: ^11.0.0
+  google_mobile_ads: ^7.0.0
+  firebase_core: ^5.1.0
   firebase_analytics: ^13.0.0
   firebase_messaging: ^17.0.0
   in_app_review: ^2.0.12
@@ -41,8 +44,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  integration_test:
-    sdk: flutter
+  # Keep integration_test out of pubspec — it gets into GeneratedPluginRegistrant
+  # and breaks Android Studio / release builds. Add temporarily when running:
+  #   flutter test integration_test/
 
 flutter:
   generate: true

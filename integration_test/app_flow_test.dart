@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:reverse_image_search/app/app.dart';
 import 'package:reverse_image_search/core/storage/local_storage.dart';
+import 'package:reverse_image_search/core/storage/subscription_vault.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -16,11 +17,12 @@ void main() {
       ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
+          subscriptionVaultProvider.overrideWithValue(SubscriptionVault.memory()),
         ],
         child: const ReverseImageSearchApp(),
       ),
     );
-    expect(find.text('Deep Image Search'), findsWidgets);
+    expect(find.text('Reverse Image Search'), findsWidgets);
     await tester.pump(const Duration(seconds: 2));
     expect(find.text('Select Language'), findsOneWidget);
   });

@@ -4,22 +4,27 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:reverse_image_search/core/constants/app_constants.dart';
 import 'package:reverse_image_search/core/constants/subscription_config.dart';
 import 'package:reverse_image_search/core/storage/local_storage.dart';
+import 'package:reverse_image_search/core/storage/subscription_vault.dart';
 import 'package:reverse_image_search/models/user_models.dart';
+
+Future<LocalStorage> _readyStorage() async {
+  SharedPreferences.setMockInitialValues({});
+  final prefs = await SharedPreferences.getInstance();
+  return LocalStorage(prefs, SubscriptionVault.memory());
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('free tier uses lifetime search cap', () async {
-    SharedPreferences.setMockInitialValues({});
-    final storage = LocalStorage(await SharedPreferences.getInstance());
+    final storage = await _readyStorage();
     final stats = storage.buildUsageStats();
     expect(stats.tier, UsageTier.free);
     expect(stats.remaining, AppConstants.freeSearchCredits);
   });
 
   test('weekly purchase grants period allowance', () async {
-    SharedPreferences.setMockInitialValues({});
-    final storage = LocalStorage(await SharedPreferences.getInstance());
+    final storage = await _readyStorage();
     await storage.activateSubscriptionFromPurchase(
       productId: AppConstants.weeklyProductId,
       restored: true,
@@ -31,8 +36,7 @@ void main() {
   });
 
   test('monthly purchase grants 30-day allowance', () async {
-    SharedPreferences.setMockInitialValues({});
-    final storage = LocalStorage(await SharedPreferences.getInstance());
+    final storage = await _readyStorage();
     await storage.activateSubscriptionFromPurchase(
       productId: AppConstants.monthlyProductId,
       restored: false,
@@ -45,8 +49,7 @@ void main() {
   });
 
   test('intro trial only once for new weekly buyers', () async {
-    SharedPreferences.setMockInitialValues({});
-    final storage = LocalStorage(await SharedPreferences.getInstance());
+    final storage = await _readyStorage();
     await storage.activateSubscriptionFromPurchase(
       productId: AppConstants.weeklyProductId,
       restored: false,

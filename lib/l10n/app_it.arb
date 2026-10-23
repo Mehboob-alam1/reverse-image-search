@@ -1,6 +1,6 @@
 {
   "@@locale": "it",
-  "appName": "Deep Image Search",
+  "appName": "Reverse Image Search",
   "appTagline": "Search the web using any image.",
   "continueAction": "Continue",
   "skip": "Skip",
@@ -268,12 +268,12 @@
   "noPaymentNow": "Nessun pagamento ora",
   "selectImage": "Seleziona immagine",
   "uploadingSerpApi": "Caricamento dell'immagine e ricerca con SerpApi",
-  "communityGuidelinesBody": "Usa Deep Image Search solo per ricerche di immagini lecite.\n\nNon usare questa app per molestare, pedinare, impersonare o sfruttare nessuno. Non cercare né condividere contenuti sessuali che coinvolgono minori.\n\nRispetta la privacy altrui e il copyright delle immagini che trovi. I risultati provengono da siti di terze parti e restano soggetti ai loro termini.\n\nPossiamo limitare o rifiutare ricerche che abusano del servizio.",
-  "privacyPolicyBody": "Deep Image Search elabora le immagini che scegli, scatti o fornisci tramite URL per eseguire ricerche inverse tramite SerpApi Google Lens.\n\nLe foto locali vengono caricate su un host temporaneo così il provider di ricerca può leggerle. Non conserviamo le immagini caricate su un server proprietario.\n\nI risultati provengono da siti di terze parti. Quei siti restano la fonte delle immagini e possono avere copyright e termini propri.\n\nCronologia e preferiti restano su questo dispositivo. Possono essere raccolti eventi di analisi come apertura dell'app, inizio e fine della ricerca. Non raccogliamo i contenuti delle immagini nell'analisi.\n\nGli abbonamenti sono gestiti da Apple o Google. Non memorizziamo i dati della carta.\n\nPuoi eliminare la cronologia locale e rimuovere i preferiti dall'app.",
+  "communityGuidelinesBody": "Usa Reverse Image Search solo per ricerche di immagini lecite.\n\nNon usare questa app per molestare, pedinare, impersonare o sfruttare nessuno. Non cercare né condividere contenuti sessuali che coinvolgono minori.\n\nRispetta la privacy altrui e il copyright delle immagini che trovi. I risultati provengono da siti di terze parti e restano soggetti ai loro termini.\n\nPossiamo limitare o rifiutare ricerche che abusano del servizio.",
+  "privacyPolicyBody": "Reverse Image Search elabora le immagini che scegli, scatti o fornisci tramite URL per eseguire ricerche inverse tramite SerpApi Google Lens.\n\nLe foto locali vengono caricate su un host temporaneo così il provider di ricerca può leggerle. Non conserviamo le immagini caricate su un server proprietario.\n\nI risultati provengono da siti di terze parti. Quei siti restano la fonte delle immagini e possono avere copyright e termini propri.\n\nCronologia e preferiti restano su questo dispositivo. Possono essere raccolti eventi di analisi come apertura dell'app, inizio e fine della ricerca. Non raccogliamo i contenuti delle immagini nell'analisi.\n\nGli abbonamenti sono gestiti da Apple o Google. Non memorizziamo i dati della carta.\n\nPuoi eliminare la cronologia locale e rimuovere i preferiti dall'app.",
   "allowPhotoAccess": "Consenti l'accesso alle foto per cercare dalla galleria.",
   "allowCameraAccess": "Consenti l'accesso alla fotocamera per scattare una foto.",
   "emptyImage": "L'immagine selezionata è vuota.",
-  "shareAppMessage": "Prova Deep Image Search: {url}",
+  "shareAppMessage": "Prova Reverse Image Search: {url}",
   "@shareAppMessage": {
     "placeholders": {
       "url": {

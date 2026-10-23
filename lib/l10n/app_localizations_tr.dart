@@ -823,11 +823,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get communityGuidelinesBody =>
-      'Deep Image Search\'ü yalnızca yasal görsel araması için kullanın.\n\nBu uygulamayı kimseyi taciz etmek, takip etmek, taklit etmek veya sömürmek için kullanmayın. Reşit olmayanlarla ilgili cinsel içerik aramayın veya paylaşmayın.\n\nBaşkalarının gizliliğine ve bulduğunuz görsellerin telif haklarına saygı gösterin. Sonuçlar üçüncü taraf sitelerden gelir ve o sitelerin koşullarına tabidir.\n\nHizmeti kötüye kullanan aramaları sınırlayabilir veya reddedebiliriz.';
+      'Reverse Image Search\'ü yalnızca yasal görsel araması için kullanın.\n\nBu uygulamayı kimseyi taciz etmek, takip etmek, taklit etmek veya sömürmek için kullanmayın. Reşit olmayanlarla ilgili cinsel içerik aramayın veya paylaşmayın.\n\nBaşkalarının gizliliğine ve bulduğunuz görsellerin telif haklarına saygı gösterin. Sonuçlar üçüncü taraf sitelerden gelir ve o sitelerin koşullarına tabidir.\n\nHizmeti kötüye kullanan aramaları sınırlayabilir veya reddedebiliriz.';
 
   @override
   String get privacyPolicyBody =>
-      'Deep Image Search, SerpApi Google Lens üzerinden ters görsel araması yapmak için seçtiğiniz, çektiğiniz veya URL ile verdiğiniz görselleri işler.\n\nYerel fotoğraflar, arama sağlayıcısının okuyabilmesi için geçici bir dosya sunucusuna yüklenir. Yüklenen görselleri özel bir sunucuda tutmayız.\n\nArama sonuçları üçüncü taraf sitelerden alınır. Bu siteler görsellerin kaynağı olmaya devam eder ve kendi telif hakları ile koşulları olabilir.\n\nGeçmiş ve favoriler bu cihazda kalır. Uygulama açma, arama başlatma ve tamamlama gibi analitik olaylar toplanabilir. Analitikte görsel içeriği toplamayız.\n\nAbonelikler Apple veya Google tarafından işlenir. Kart bilgilerini saklamayız.\n\nUygulamadan yerel geçmişi silebilir ve favorileri kaldırabilirsiniz.';
+      'Reverse Image Search, SerpApi Google Lens üzerinden ters görsel araması yapmak için seçtiğiniz, çektiğiniz veya URL ile verdiğiniz görselleri işler.\n\nYerel fotoğraflar, arama sağlayıcısının okuyabilmesi için geçici bir dosya sunucusuna yüklenir. Yüklenen görselleri özel bir sunucuda tutmayız.\n\nArama sonuçları üçüncü taraf sitelerden alınır. Bu siteler görsellerin kaynağı olmaya devam eder ve kendi telif hakları ile koşulları olabilir.\n\nGeçmiş ve favoriler bu cihazda kalır. Uygulama açma, arama başlatma ve tamamlama gibi analitik olaylar toplanabilir. Analitikte görsel içeriği toplamayız.\n\nAbonelikler Apple veya Google tarafından işlenir. Kart bilgilerini saklamayız.\n\nUygulamadan yerel geçmişi silebilir ve favorileri kaldırabilirsiniz.';
 
   @override
   String get allowPhotoAccess =>
@@ -842,6 +842,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String shareAppMessage(String url) {
-    return 'Deep Image Search\'ü dene: $url';
+    return 'Reverse Image Search\'ü dene: $url';
   }
 }

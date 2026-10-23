@@ -4,8 +4,8 @@ import 'subscription_config.dart';
 class AppConstants {
   AppConstants._();
 
-  static const String appName = 'Deep Image Search';
-  static const String packageName = 'com.reverseimagesearch.app';
+  static const String appName = 'Reverse Image Search';
+  static const String packageName = 'com.deep.image.search.reverseimagesearch.facesearcher';
 
   static const Duration splashDuration = Duration(milliseconds: 1600);
   static const Duration apiTimeout = Duration(seconds: 45);

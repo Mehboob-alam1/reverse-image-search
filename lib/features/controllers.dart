@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 
 import '../core/constants/app_constants.dart';
+import '../core/constants/subscription_config.dart';
 import '../core/errors/app_exception.dart';
 import '../core/storage/local_storage.dart';
 import '../models/favorite_item.dart';
@@ -402,12 +405,17 @@ class IapState {
     this.available = false,
     this.loading = false,
     this.error,
+    this.notFoundProductIds = const {},
   });
 
   final List<ProductDetails> products;
   final bool available;
   final bool loading;
   final String? error;
+  /// Product IDs queried from the app but missing in Play Console / Store.
+  final Set<String> notFoundProductIds;
+
+  bool get hasStoreProducts => products.isNotEmpty;
 }
 
 final iapControllerProvider =
@@ -428,18 +436,24 @@ class IapController extends Notifier<IapState> {
     return const IapState(loading: true);
   }
 
+  static const _storeProductIds = {
+    SubscriptionConfig.weeklyProductId,
+    SubscriptionConfig.monthlyProductId,
+    SubscriptionConfig.yearlyProductId,
+  };
+
   Future<void> load() async {
     final store = InAppPurchase.instance;
     final available = await store.isAvailable();
     if (!available) {
-      state = const IapState(available: false, loading: false);
+      state = const IapState(
+        available: false,
+        loading: false,
+        error: 'Google Play Billing is unavailable on this device.',
+      );
       return;
     }
-    final response = await store.queryProductDetails({
-      AppConstants.weeklyProductId,
-      AppConstants.monthlyProductId,
-      AppConstants.yearlyProductId,
-    });
+    final response = await store.queryProductDetails(_storeProductIds);
     final products = List<ProductDetails>.from(response.productDetails);
     products.sort((a, b) {
       int rank(String id) {
@@ -450,16 +464,33 @@ class IapController extends Notifier<IapState> {
 
       return rank(a.id).compareTo(rank(b.id));
     });
+    final notFound = response.notFoundIDs.toSet();
+    String? error;
+    if (response.error != null) {
+      error = response.error!.message;
+    } else if (products.isEmpty) {
+      error =
+          'No subscriptions found in Play Console. Create these product IDs: '
+          '${_storeProductIds.join(', ')}';
+    } else if (notFound.isNotEmpty) {
+      error = 'Missing in Play Console: ${notFound.join(', ')}';
+    }
     state = IapState(
       available: true,
       loading: false,
       products: products,
+      notFoundProductIds: notFound,
+      error: error,
     );
   }
 
-  Future<void> buy(ProductDetails product) async {
-    await InAppPurchase.instance.buyNonConsumable(
-      purchaseParam: PurchaseParam(productDetails: product),
+  /// Starts a Play / App Store subscription purchase for [product].
+  Future<bool> buy(ProductDetails product) async {
+    final purchaseParam = (!kIsWeb && Platform.isAndroid)
+        ? GooglePlayPurchaseParam(productDetails: product)
+        : PurchaseParam(productDetails: product);
+    return InAppPurchase.instance.buyNonConsumable(
+      purchaseParam: purchaseParam,
     );
   }
 
@@ -467,13 +498,21 @@ class IapController extends Notifier<IapState> {
     await InAppPurchase.instance.restorePurchases();
   }
 
-  Future<void> grantProAfterPurchase({String? productId}) async {
+  /// Unlocks Pro only after a real store purchase / restore event.
+  Future<void> activateFromStorePurchase({
+    required String productId,
+    required bool restored,
+  }) async {
     await ref.read(localStorageProvider).activateSubscriptionFromPurchase(
-          productId: productId ?? AppConstants.weeklyProductId,
-          restored: false,
+          productId: productId,
+          restored: restored,
         );
     await ref.read(authControllerProvider.notifier).refreshUsage();
-    await ref.read(analyticsServiceProvider).subscriptionStarted();
+    if (restored) {
+      await ref.read(analyticsServiceProvider).subscriptionRestored();
+    } else {
+      await ref.read(analyticsServiceProvider).subscriptionStarted();
+    }
   }
 
   Future<void> _onPurchaseUpdates(List<PurchaseDetails> purchases) async {
@@ -482,20 +521,24 @@ class IapController extends Notifier<IapState> {
         case PurchaseStatus.pending:
           break;
         case PurchaseStatus.error:
+          state = IapState(
+            available: state.available,
+            loading: false,
+            products: state.products,
+            notFoundProductIds: state.notFoundProductIds,
+            error: purchase.error?.message ?? 'Purchase failed',
+          );
           break;
         case PurchaseStatus.canceled:
           break;
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
-          await ref.read(localStorageProvider).activateSubscriptionFromPurchase(
-                productId: purchase.productID,
-                restored: purchase.status == PurchaseStatus.restored,
-              );
-          await ref.read(authControllerProvider.notifier).refreshUsage();
-          if (purchase.status == PurchaseStatus.restored) {
-            await ref.read(analyticsServiceProvider).subscriptionRestored();
-          } else {
-            await ref.read(analyticsServiceProvider).subscriptionStarted();
+          // Only activate known Play Console subscription IDs.
+          if (_storeProductIds.contains(purchase.productID)) {
+            await activateFromStorePurchase(
+              productId: purchase.productID,
+              restored: purchase.status == PurchaseStatus.restored,
+            );
           }
           break;
       }

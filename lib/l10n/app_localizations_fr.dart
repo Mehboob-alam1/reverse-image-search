@@ -839,11 +839,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communityGuidelinesBody =>
-      'Utilisez Deep Image Search uniquement pour des recherches d\'images légales.\n\nN\'utilisez pas cette appli pour harceler, surveiller, usurper l\'identité ou exploiter quiconque. Ne recherchez ni ne partagez de contenu sexuel impliquant des mineurs.\n\nRespectez la vie privée des autres et le droit d\'auteur des images trouvées. Les résultats proviennent de sites tiers et restent soumis à leurs conditions.\n\nNous pouvons limiter ou refuser les recherches qui abusent du service.';
+      'Utilisez Reverse Image Search uniquement pour des recherches d\'images légales.\n\nN\'utilisez pas cette appli pour harceler, surveiller, usurper l\'identité ou exploiter quiconque. Ne recherchez ni ne partagez de contenu sexuel impliquant des mineurs.\n\nRespectez la vie privée des autres et le droit d\'auteur des images trouvées. Les résultats proviennent de sites tiers et restent soumis à leurs conditions.\n\nNous pouvons limiter ou refuser les recherches qui abusent du service.';
 
   @override
   String get privacyPolicyBody =>
-      'Deep Image Search traite les images que vous choisissez, capturez ou fournissez par URL afin d\'effectuer une recherche d\'image inversée via SerpApi Google Lens.\n\nLes photos locales sont envoyées vers un hébergeur temporaire pour que le fournisseur de recherche puisse les lire. Nous ne conservons pas les images téléversées sur un serveur personnalisé.\n\nLes résultats proviennent de sites tiers. Ces sites restent la source des images et peuvent avoir leurs propres droits d\'auteur et conditions.\n\nL\'historique et les favoris restent sur cet appareil. Des événements d\'analyse comme l\'ouverture de l\'appli, le début et la fin d\'une recherche peuvent être collectés. Nous ne collectons pas le contenu des images dans l\'analyse.\n\nLes abonnements sont traités par Apple ou Google. Nous ne stockons pas les données de carte.\n\nVous pouvez supprimer l\'historique local et retirer des favoris depuis l\'appli.';
+      'Reverse Image Search traite les images que vous choisissez, capturez ou fournissez par URL afin d\'effectuer une recherche d\'image inversée via SerpApi Google Lens.\n\nLes photos locales sont envoyées vers un hébergeur temporaire pour que le fournisseur de recherche puisse les lire. Nous ne conservons pas les images téléversées sur un serveur personnalisé.\n\nLes résultats proviennent de sites tiers. Ces sites restent la source des images et peuvent avoir leurs propres droits d\'auteur et conditions.\n\nL\'historique et les favoris restent sur cet appareil. Des événements d\'analyse comme l\'ouverture de l\'appli, le début et la fin d\'une recherche peuvent être collectés. Nous ne collectons pas le contenu des images dans l\'analyse.\n\nLes abonnements sont traités par Apple ou Google. Nous ne stockons pas les données de carte.\n\nVous pouvez supprimer l\'historique local et retirer des favoris depuis l\'appli.';
 
   @override
   String get allowPhotoAccess =>
@@ -858,6 +858,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String shareAppMessage(String url) {
-    return 'Essayez Deep Image Search : $url';
+    return 'Essayez Reverse Image Search : $url';
   }
 }

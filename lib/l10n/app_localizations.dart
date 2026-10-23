@@ -121,7 +121,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'Deep Image Search'**
+  /// **'Reverse Image Search'**
   String get appName;
 
   /// No description provided for @appTagline.
@@ -1669,13 +1669,13 @@ abstract class AppLocalizations {
   /// No description provided for @communityGuidelinesBody.
   ///
   /// In en, this message translates to:
-  /// **'Use Deep Image Search for lawful image lookup only.\n\nDo not use this app to harass, stalk, impersonate, or exploit anyone. Do not search for or share sexual content involving minors.\n\nRespect other people\'s privacy and the copyright of images you find. Results come from third-party websites and remain under those sites\' terms.\n\nWe may limit or refuse searches that abuse the service.'**
+  /// **'Use Reverse Image Search for lawful image lookup only.\n\nDo not use this app to harass, stalk, impersonate, or exploit anyone. Do not search for or share sexual content involving minors.\n\nRespect other people\'s privacy and the copyright of images you find. Results come from third-party websites and remain under those sites\' terms.\n\nWe may limit or refuse searches that abuse the service.'**
   String get communityGuidelinesBody;
 
   /// No description provided for @privacyPolicyBody.
   ///
   /// In en, this message translates to:
-  /// **'Deep Image Search processes images you pick, capture, or provide by URL. Gallery photos may be uploaded briefly to a temporary public file host so Google Lens (web) can open them. We do not keep images on our own server.\n\nIn-app About insights may use OpenAI (GPT-4o mini) and/or Qwen-VL when you configure API keys; image data is sent only to those providers for analysis.\n\nGoogle Lens web results come from Google and linked websites with their own terms.\n\nHistory and favorites stay on this device. Subscriptions are processed by Apple or Google.'**
+  /// **'Reverse Image Search processes images you pick, capture, or provide by URL. Gallery photos may be uploaded briefly to a temporary public file host so Google Lens (web) can open them. We do not keep images on our own server.\n\nIn-app About insights may use OpenAI (GPT-4o mini) and/or Qwen-VL when you configure API keys; image data is sent only to those providers for analysis.\n\nGoogle Lens web results come from Google and linked websites with their own terms.\n\nHistory and favorites stay on this device. Subscriptions are processed by Apple or Google.'**
   String get privacyPolicyBody;
 
   /// No description provided for @allowPhotoAccess.
@@ -1699,7 +1699,7 @@ abstract class AppLocalizations {
   /// No description provided for @shareAppMessage.
   ///
   /// In en, this message translates to:
-  /// **'Try Deep Image Search: {url}'**
+  /// **'Try Reverse Image Search: {url}'**
   String shareAppMessage(String url);
 }
 

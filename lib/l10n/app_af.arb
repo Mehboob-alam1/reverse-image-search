@@ -1,6 +1,6 @@
 {
   "@@locale": "af",
-  "appName": "Deep Image Search",
+  "appName": "Reverse Image Search",
   "appTagline": "Search the web using any image.",
   "continueAction": "Continue",
   "skip": "Skip",
@@ -268,12 +268,12 @@
   "noPaymentNow": "Geen betaling nou nie",
   "selectImage": "Kies beeld",
   "uploadingSerpApi": "Laai beeld op en soek met SerpApi",
-  "communityGuidelinesBody": "Gebruik Deep Image Search slegs vir wettige beeldsoektogte.\n\nMoenie hierdie program gebruik om iemand te teister, dophou, naboots of uitbuit nie. Moenie seksuele inhoud wat kinders betrek soek of deel nie.\n\nRespekteer ander se privaatheid en die kopiereg van beelde wat jy vind. Resultate kom van derdeparty-webwerwe en bly onder daardie werwe se voorwaardes.\n\nOns kan soektogte wat die diens misbruik beperk of weier.",
-  "privacyPolicyBody": "Deep Image Search verwerk beelde wat jy kies, neem of per URL gee sodat ons omgekeerde beeldsoektogte deur SerpApi Google Lens kan doen.\n\nPlaaslike foto's word na 'n tydelike lêergasheer opgelaai sodat die soekverskaffer dit kan lees. Ons hou nie opgelaaide beelde op 'n eie bediener nie.\n\nSoekresultate kom van derdeparty-webwerwe. Daardie webwerwe bly die bron van die beelde en kan hul eie kopiereg en voorwaardes hê.\n\nGeskiedenis en gunstelinge bly op hierdie toestel. Analise-gebeure soos programopeninge, soektog begin en soektog voltooi kan versamel word. Ons versamel nie beeldinhoud in analise nie.\n\nIntekeninge word deur Apple of Google verwerk. Ons stoor nie kaartbesonderhede nie.\n\nJy kan plaaslike geskiedenis uitvee en gunstelinge in die program verwyder.",
+  "communityGuidelinesBody": "Gebruik Reverse Image Search slegs vir wettige beeldsoektogte.\n\nMoenie hierdie program gebruik om iemand te teister, dophou, naboots of uitbuit nie. Moenie seksuele inhoud wat kinders betrek soek of deel nie.\n\nRespekteer ander se privaatheid en die kopiereg van beelde wat jy vind. Resultate kom van derdeparty-webwerwe en bly onder daardie werwe se voorwaardes.\n\nOns kan soektogte wat die diens misbruik beperk of weier.",
+  "privacyPolicyBody": "Reverse Image Search verwerk beelde wat jy kies, neem of per URL gee sodat ons omgekeerde beeldsoektogte deur SerpApi Google Lens kan doen.\n\nPlaaslike foto's word na 'n tydelike lêergasheer opgelaai sodat die soekverskaffer dit kan lees. Ons hou nie opgelaaide beelde op 'n eie bediener nie.\n\nSoekresultate kom van derdeparty-webwerwe. Daardie webwerwe bly die bron van die beelde en kan hul eie kopiereg en voorwaardes hê.\n\nGeskiedenis en gunstelinge bly op hierdie toestel. Analise-gebeure soos programopeninge, soektog begin en soektog voltooi kan versamel word. Ons versamel nie beeldinhoud in analise nie.\n\nIntekeninge word deur Apple of Google verwerk. Ons stoor nie kaartbesonderhede nie.\n\nJy kan plaaslike geskiedenis uitvee en gunstelinge in die program verwyder.",
   "allowPhotoAccess": "Laat foto-toegang toe om uit die gallery te soek.",
   "allowCameraAccess": "Laat kamera-toegang toe om 'n foto te neem.",
   "emptyImage": "Die gekose beeld is leeg.",
-  "shareAppMessage": "Probeer Deep Image Search: {url}",
+  "shareAppMessage": "Probeer Reverse Image Search: {url}",
   "@shareAppMessage": {
     "placeholders": {
       "url": {

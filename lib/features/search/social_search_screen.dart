@@ -26,7 +26,7 @@ class SocialPlatform {
   });
 
   final String id;
-  final IconData icon;
+  final FaIconData icon;
   final List<String> domains;
 }
 

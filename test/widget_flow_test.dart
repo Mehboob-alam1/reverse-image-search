@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:reverse_image_search/core/storage/local_storage.dart';
+import 'package:reverse_image_search/core/storage/subscription_vault.dart';
 import 'package:reverse_image_search/core/theme/app_theme.dart';
 import 'package:reverse_image_search/features/controllers.dart';
 import 'package:reverse_image_search/features/home/home_screen.dart';
@@ -34,6 +35,7 @@ Widget _wrap(Widget child, SharedPreferences prefs) {
   return ProviderScope(
     overrides: [
       sharedPreferencesProvider.overrideWithValue(prefs),
+      subscriptionVaultProvider.overrideWithValue(SubscriptionVault.memory()),
       historyControllerProvider.overrideWith(_EmptyHistory.new),
       favoritesControllerProvider.overrideWith(_EmptyFavorites.new),
       iapControllerProvider.overrideWith(_QuietIap.new),

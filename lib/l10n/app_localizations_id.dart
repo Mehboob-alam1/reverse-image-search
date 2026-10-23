@@ -830,11 +830,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get communityGuidelinesBody =>
-      'Gunakan Deep Image Search hanya untuk pencarian gambar yang sah.\n\nJangan gunakan aplikasi ini untuk melecehkan, menguntit, meniru, atau mengeksploitasi siapa pun. Jangan mencari atau membagikan konten seksual yang melibatkan anak di bawah umur.\n\nHormati privasi orang lain dan hak cipta gambar yang Anda temukan. Hasil berasal dari situs pihak ketiga dan tetap mengikuti ketentuan situs tersebut.\n\nKami dapat membatasi atau menolak pencarian yang menyalahgunakan layanan.';
+      'Gunakan Reverse Image Search hanya untuk pencarian gambar yang sah.\n\nJangan gunakan aplikasi ini untuk melecehkan, menguntit, meniru, atau mengeksploitasi siapa pun. Jangan mencari atau membagikan konten seksual yang melibatkan anak di bawah umur.\n\nHormati privasi orang lain dan hak cipta gambar yang Anda temukan. Hasil berasal dari situs pihak ketiga dan tetap mengikuti ketentuan situs tersebut.\n\nKami dapat membatasi atau menolak pencarian yang menyalahgunakan layanan.';
 
   @override
   String get privacyPolicyBody =>
-      'Deep Image Search memproses gambar yang Anda pilih, ambil, atau berikan lewat URL agar pencarian gambar terbalik dapat dilakukan melalui SerpApi Google Lens.\n\nFoto lokal diunggah ke host file sementara agar penyedia pencarian dapat membacanya. Kami tidak menyimpan gambar yang diunggah di server khusus.\n\nHasil pencarian diambil dari situs pihak ketiga. Situs tersebut tetap menjadi sumber gambar dan mungkin memiliki hak cipta serta ketentuan sendiri.\n\nRiwayat dan favorit tetap di perangkat ini. Peristiwa analitik seperti membuka aplikasi, pencarian dimulai, dan pencarian selesai dapat dikumpulkan. Kami tidak mengumpulkan isi gambar dalam analitik.\n\nLangganan diproses oleh Apple atau Google. Kami tidak menyimpan detail kartu pembayaran.\n\nAnda dapat menghapus riwayat lokal dan menghapus favorit dari aplikasi.';
+      'Reverse Image Search memproses gambar yang Anda pilih, ambil, atau berikan lewat URL agar pencarian gambar terbalik dapat dilakukan melalui SerpApi Google Lens.\n\nFoto lokal diunggah ke host file sementara agar penyedia pencarian dapat membacanya. Kami tidak menyimpan gambar yang diunggah di server khusus.\n\nHasil pencarian diambil dari situs pihak ketiga. Situs tersebut tetap menjadi sumber gambar dan mungkin memiliki hak cipta serta ketentuan sendiri.\n\nRiwayat dan favorit tetap di perangkat ini. Peristiwa analitik seperti membuka aplikasi, pencarian dimulai, dan pencarian selesai dapat dikumpulkan. Kami tidak mengumpulkan isi gambar dalam analitik.\n\nLangganan diproses oleh Apple atau Google. Kami tidak menyimpan detail kartu pembayaran.\n\nAnda dapat menghapus riwayat lokal dan menghapus favorit dari aplikasi.';
 
   @override
   String get allowPhotoAccess =>
@@ -848,6 +848,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String shareAppMessage(String url) {
-    return 'Coba Deep Image Search: $url';
+    return 'Coba Reverse Image Search: $url';
   }
 }

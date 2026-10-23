@@ -8,19 +8,28 @@ import '../constants/app_constants.dart';
 import '../constants/storage_keys.dart';
 import '../constants/subscription_config.dart';
 import '../../models/user_models.dart';
+import 'subscription_vault.dart';
 
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError('SharedPreferences must be overridden in main()');
 });
 
+final subscriptionVaultProvider = Provider<SubscriptionVault>((ref) {
+  throw UnimplementedError('SubscriptionVault must be overridden in main()');
+});
+
 final localStorageProvider = Provider<LocalStorage>((ref) {
-  return LocalStorage(ref.watch(sharedPreferencesProvider));
+  return LocalStorage(
+    ref.watch(sharedPreferencesProvider),
+    ref.watch(subscriptionVaultProvider),
+  );
 });
 
 class LocalStorage {
-  LocalStorage(this._prefs);
+  LocalStorage(this._prefs, this._vault);
 
   final SharedPreferences _prefs;
+  final SubscriptionVault _vault;
 
   SharedPreferences get prefs => _prefs;
 
@@ -102,51 +111,51 @@ class LocalStorage {
   }
 
   bool get isProEntitled =>
-      _prefs.getBool(StorageKeys.isProEntitled) ?? false;
+      _vault.getBool(StorageKeys.isProEntitled) ?? false;
 
   Future<void> setProEntitled(bool value) =>
-      _prefs.setBool(StorageKeys.isProEntitled, value);
+      _vault.setBool(StorageKeys.isProEntitled, value);
 
   int get searchCreditsUsed =>
-      _prefs.getInt(StorageKeys.searchCreditsUsed) ?? 0;
+      _vault.getInt(StorageKeys.searchCreditsUsed) ?? 0;
 
   int get rewardedBonusCredits =>
-      _prefs.getInt(StorageKeys.rewardedBonusCredits) ?? 0;
+      _vault.getInt(StorageKeys.rewardedBonusCredits) ?? 0;
 
   Future<void> addRewardedBonusCredit({int amount = 1}) async {
-    await _prefs.setInt(
+    await _vault.setInt(
       StorageKeys.rewardedBonusCredits,
       rewardedBonusCredits + amount,
     );
   }
 
   bool get hasStartedIntroTrial =>
-      _prefs.getBool(StorageKeys.hasStartedIntroTrial) ?? false;
+      _vault.getBool(StorageKeys.hasStartedIntroTrial) ?? false;
 
   DateTime? get subscriptionExpiresAt {
-    final ms = _prefs.getInt(StorageKeys.subscriptionExpiresAt);
+    final ms = _vault.getInt(StorageKeys.subscriptionExpiresAt);
     if (ms == null) return null;
     return DateTime.fromMillisecondsSinceEpoch(ms);
   }
 
   String get subscriptionPlan =>
-      _prefs.getString(StorageKeys.subscriptionPlan) ?? 'none';
+      _vault.getString(StorageKeys.subscriptionPlan) ?? 'none';
 
   int get subscriptionPeriodSearchesUsed =>
-      _prefs.getInt(StorageKeys.subscriptionPeriodSearchesUsed) ?? 0;
+      _vault.getInt(StorageKeys.subscriptionPeriodSearchesUsed) ?? 0;
 
   int get subscriptionPeriodSearchAllowance =>
-      _prefs.getInt(StorageKeys.subscriptionPeriodSearchAllowance) ??
+      _vault.getInt(StorageKeys.subscriptionPeriodSearchAllowance) ??
       SubscriptionConfig.weeklySearchAllowance;
 
   DateTime? get subscriptionPeriodStartAt {
-    final ms = _prefs.getInt(StorageKeys.subscriptionPeriodStartAt);
+    final ms = _vault.getInt(StorageKeys.subscriptionPeriodStartAt);
     if (ms == null) return null;
     return DateTime.fromMillisecondsSinceEpoch(ms);
   }
 
   DateTime? get lastSearchAt {
-    final ms = _prefs.getInt(StorageKeys.lastSearchAtMs);
+    final ms = _vault.getInt(StorageKeys.lastSearchAtMs);
     if (ms == null) return null;
     return DateTime.fromMillisecondsSinceEpoch(ms);
   }
@@ -162,8 +171,8 @@ class LocalStorage {
   void _expireSubscriptionIfNeededSync() {
     final expires = subscriptionExpiresAt;
     if (expires != null && !DateTime.now().isBefore(expires)) {
-      _prefs.setBool(StorageKeys.isProEntitled, false);
-      _prefs.setString(StorageKeys.subscriptionPlan, 'none');
+      _vault.putBool(StorageKeys.isProEntitled, false);
+      _vault.putString(StorageKeys.subscriptionPlan, 'none');
     }
   }
 
@@ -189,19 +198,22 @@ class LocalStorage {
     if (now.difference(start) < periodLength) return;
 
     final allowance = subscriptionPeriodSearchAllowance;
-    _prefs.setInt(StorageKeys.subscriptionPeriodStartAt, now.millisecondsSinceEpoch);
-    _prefs.setInt(StorageKeys.subscriptionPeriodSearchesUsed, 0);
-    _prefs.setInt(StorageKeys.subscriptionPeriodSearchAllowance, allowance);
+    _vault.putInt(
+      StorageKeys.subscriptionPeriodStartAt,
+      now.millisecondsSinceEpoch,
+    );
+    _vault.putInt(StorageKeys.subscriptionPeriodSearchesUsed, 0);
+    _vault.putInt(StorageKeys.subscriptionPeriodSearchAllowance, allowance);
   }
 
   Future<void> _ensureLegacyPremiumMetadata() async {
     if (isProEntitled && subscriptionExpiresAt == null) {
       final now = DateTime.now();
-      await _prefs.setInt(
+      await _vault.setInt(
         StorageKeys.subscriptionExpiresAt,
         now.add(const Duration(days: 7)).millisecondsSinceEpoch,
       );
-      await _prefs.setString(StorageKeys.subscriptionPlan, 'weekly');
+      await _vault.setString(StorageKeys.subscriptionPlan, 'weekly');
       await _startSearchPeriod(
         now,
         allowance: SubscriptionConfig.weeklySearchAllowance,
@@ -210,12 +222,12 @@ class LocalStorage {
   }
 
   Future<void> _startSearchPeriod(DateTime start, {required int allowance}) async {
-    await _prefs.setInt(
+    await _vault.setInt(
       StorageKeys.subscriptionPeriodStartAt,
       start.millisecondsSinceEpoch,
     );
-    await _prefs.setInt(StorageKeys.subscriptionPeriodSearchAllowance, allowance);
-    await _prefs.setInt(StorageKeys.subscriptionPeriodSearchesUsed, 0);
+    await _vault.setInt(StorageKeys.subscriptionPeriodSearchAllowance, allowance);
+    await _vault.setInt(StorageKeys.subscriptionPeriodSearchesUsed, 0);
   }
 
   /// Called from IAP when a subscription is purchased or restored.
@@ -228,10 +240,10 @@ class LocalStorage {
         !hasStartedIntroTrial && !restored && productId == AppConstants.weeklyProductId;
 
     if (eligibleForIntroTrial) {
-      await _prefs.setBool(StorageKeys.hasStartedIntroTrial, true);
-      await _prefs.setString(StorageKeys.subscriptionPlan, 'trial');
+      await _vault.setBool(StorageKeys.hasStartedIntroTrial, true);
+      await _vault.setString(StorageKeys.subscriptionPlan, 'trial');
       final trialEnds = now.add(SubscriptionConfig.introTrialDuration);
-      await _prefs.setInt(
+      await _vault.setInt(
         StorageKeys.subscriptionExpiresAt,
         trialEnds.millisecondsSinceEpoch,
       );
@@ -258,8 +270,8 @@ class LocalStorage {
     final base = (currentExpiry != null && currentExpiry.isAfter(now))
         ? currentExpiry
         : now;
-    await _prefs.setString(StorageKeys.subscriptionPlan, plan);
-    await _prefs.setInt(
+    await _vault.setString(StorageKeys.subscriptionPlan, plan);
+    await _vault.setInt(
       StorageKeys.subscriptionExpiresAt,
       base.add(period).millisecondsSinceEpoch,
     );
@@ -290,6 +302,8 @@ class LocalStorage {
   }
 
   UsageStats buildUsageStats() {
+    // Fire-and-forget expiry/roll writes; cache already reflects prior state.
+    // Callers that need a hard sync should use [refreshSubscriptionState].
     _expireSubscriptionIfNeededSync();
     _maybeRollSubscriptionPeriod();
 
@@ -335,15 +349,18 @@ class LocalStorage {
   }
 
   Future<void> incrementSearchCreditsUsed() async {
-    await _prefs.setInt(StorageKeys.lastSearchAtMs, DateTime.now().millisecondsSinceEpoch);
+    await _vault.setInt(
+      StorageKeys.lastSearchAtMs,
+      DateTime.now().millisecondsSinceEpoch,
+    );
     if (hasActivePremiumAccess) {
-      await _prefs.setInt(
+      await _vault.setInt(
         StorageKeys.subscriptionPeriodSearchesUsed,
         subscriptionPeriodSearchesUsed + 1,
       );
       return;
     }
-    await _prefs.setInt(
+    await _vault.setInt(
       StorageKeys.searchCreditsUsed,
       searchCreditsUsed + 1,
     );

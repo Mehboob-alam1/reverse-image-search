@@ -68,15 +68,27 @@ class _ProScreenState extends ConsumerState<ProScreen> {
         ? AppConstants.monthlyProductId
         : AppConstants.weeklyProductId;
     final product = _product(iap, productId);
-    if (product != null) {
-      await ref.read(iapControllerProvider.notifier).buy(product);
+    if (product == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            iap.error ??
+                'Subscription "$productId" is not linked in Google Play Console yet. '
+                'Create it under Monetize → Subscriptions, then install from an Internal testing track.',
+          ),
+        ),
+      );
       return;
     }
-    await ref.read(iapControllerProvider.notifier).grantProAfterPurchase(
-          productId: productId,
-        );
-    if (!mounted) return;
-    _continueFree();
+    final started = await ref.read(iapControllerProvider.notifier).buy(product);
+    if (!started && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not start Google Play purchase. Try again.'),
+        ),
+      );
+    }
   }
 
   String _statusSubtitle(AuthState auth, UsageStats? usage) {

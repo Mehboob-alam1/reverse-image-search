@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Deep Image Search</string>
+	<string>Reverse Image Search</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Deep Image Search</string>
+	<string>Reverse Image Search</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Camera is used to take photos for reverse image searches.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

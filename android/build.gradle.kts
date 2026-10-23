@@ -18,8 +18,18 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(":app")
 }
-// Do not force Billing Library 8 here: in_app_purchase_android 0.4.x targets 7.1.1.
-// Forcing 8.0.0 breaks Java compile (QueryProductDetailsResult / queryPurchaseHistoryAsync).
+// Play Billing Library 8.0.0 via in_app_purchase_android 0.5.3.
+subprojects {
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "com.android.billingclient" &&
+                requested.name == "billing") {
+                useVersion("8.0.0")
+                because("Pin Google Play Billing Library 8.0.0")
+            }
+        }
+    }
+}
 
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
