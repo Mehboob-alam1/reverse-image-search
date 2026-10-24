@@ -37,7 +37,7 @@ class AppConstants {
   static const String monthlyProductId = SubscriptionConfig.monthlyProductId;
   static const String yearlyProductId = SubscriptionConfig.yearlyProductId;
 
-  static const String supportEmail = 'support@reverseimagesearch.app';
+  static const String supportEmail = 'hello@appomatrix.com';
   static const String privacyUrl = 'https://reverseimagesearch.app/privacy';
   static const String termsUrl = 'https://reverseimagesearch.app/terms';
 }

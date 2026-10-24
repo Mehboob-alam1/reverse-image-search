@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Reverse Image Search</title>
+  <meta name="description" content="Privacy Policy for the Reverse Image Search mobile app. Learn what data we process, why, and your choices." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #171d25;
+      --ink: #e8edf4;
+      --muted: #9aa7b8;
+      --line: #2a3442;
+      --accent: #3d9a7a;
+      --accent-soft: rgba(61, 154, 122, 0.14);
+      --warn: #e8c07a;
+      --max: 44rem;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(61, 154, 122, 0.18), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(80, 120, 180, 0.12), transparent 50%),
+        var(--bg);
+    }
+
+    a { color: var(--accent); text-underline-offset: 0.18em; }
+    a:hover { color: #6ec7a8; }
+
+    .wrap {
+      width: min(100% - 2rem, var(--max));
+      margin: 0 auto;
+      padding: 2.5rem 0 4.5rem;
+    }
+
+    header {
+      padding-bottom: 1.75rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 2rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(61, 154, 122, 0.35);
+      border-radius: 999px;
+      padding: 0.35rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: Fraunces, Georgia, serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      line-height: 1.15;
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .summary {
+      margin: 1.75rem 0 0;
+      padding: 1.15rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .summary strong { color: var(--warn); font-weight: 600; }
+
+    nav.toc {
+      margin: 2rem 0;
+      padding: 1.15rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    nav.toc h2 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.15rem;
+      margin: 0 0 0.75rem;
+    }
+
+    nav.toc ol {
+      margin: 0;
+      padding-left: 1.25rem;
+      color: var(--muted);
+    }
+
+    nav.toc li { margin: 0.35rem 0; }
+    nav.toc a { color: var(--ink); text-decoration: none; }
+    nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+
+    section {
+      margin: 2.25rem 0;
+      scroll-margin-top: 1.25rem;
+    }
+
+    h2 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin: 0 0 0.85rem;
+      letter-spacing: -0.01em;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 1.35rem 0 0.5rem;
+      color: #c5d0de;
+    }
+
+    p { margin: 0 0 1rem; color: #d5dde8; }
+    ul, ol { margin: 0 0 1rem; padding-left: 1.3rem; color: #d5dde8; }
+    li { margin: 0.4rem 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 0 1.25rem;
+      font-size: 0.95rem;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      display: block;
+    }
+
+    thead, tbody, tr { width: 100%; }
+    thead { background: #1c2430; }
+    th, td {
+      text-align: left;
+      padding: 0.75rem 0.85rem;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th { color: #b8c4d4; font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+    @media (min-width: 640px) {
+      table { display: table; }
+    }
+
+    .note {
+      padding: 0.95rem 1.1rem;
+      border-left: 3px solid var(--accent);
+      background: var(--accent-soft);
+      border-radius: 0 10px 10px 0;
+      margin: 1rem 0 1.25rem;
+      color: #d7e8e0;
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    footer p { color: var(--muted); margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">Reverse Image Search</div>
+      <h1>Privacy Policy</h1>
+      <p class="meta">
+        Effective date: October 24, 2026<br />
+        App package: <code>com.deep.image.search.reverseimagesearch.facesearcher</code><br />
+        Last updated: October 24, 2026
+      </p>
+      <div class="summary">
+        <p style="margin:0">
+          <strong>In short:</strong> We process images you choose so the app can run reverse image search and optional AI “About” insights.
+          Search history and favorites stay on your device. Subscriptions and ads are handled by Google (and Apple on iOS).
+          We do not sell your personal information.
+        </p>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Table of contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#who">Who we are</a></li>
+        <li><a href="#scope">Scope</a></li>
+        <li><a href="#collect">Information we collect</a></li>
+        <li><a href="#use">How we use information</a></li>
+        <li><a href="#images">Images &amp; search processing</a></li>
+        <li><a href="#permissions">Device permissions</a></li>
+        <li><a href="#third">Third-party services</a></li>
+        <li><a href="#ads">Advertising</a></li>
+        <li><a href="#purchases">Subscriptions &amp; payments</a></li>
+        <li><a href="#retention">Storage &amp; retention</a></li>
+        <li><a href="#security">Security</a></li>
+        <li><a href="#children">Children’s privacy</a></li>
+        <li><a href="#rights">Your choices &amp; rights</a></li>
+        <li><a href="#international">International transfers</a></li>
+        <li><a href="#changes">Changes to this policy</a></li>
+        <li><a href="#contact">Contact us</a></li>
+      </ol>
+    </nav>
+
+    <section id="who">
+      <h2>1. Who we are</h2>
+      <p>
+        This Privacy Policy describes how <strong>Reverse Image Search</strong> (the “App”) handles information when you use our Android application
+        (and iOS, if offered). For privacy questions, contact
+        <a href="mailto:hello@appomatrix.com">hello@appomatrix.com</a>.
+      </p>
+    </section>
+
+    <section id="scope">
+      <h2>2. Scope</h2>
+      <p>This policy covers:</p>
+      <ul>
+        <li>Using the App to search with camera photos, gallery images, or image URLs</li>
+        <li>Optional AI insights shown in the App</li>
+        <li>Free usage limits, Pro subscriptions, and ads</li>
+        <li>Analytics and push notifications (where enabled)</li>
+      </ul>
+      <p>
+        It does <strong>not</strong> control the privacy practices of third-party websites that appear in search results.
+        Those sites have their own terms and policies.
+      </p>
+    </section>
+
+    <section id="collect">
+      <h2>3. Information we collect</h2>
+
+      <h3>3.1 Information you provide</h3>
+      <ul>
+        <li><strong>Images you select or capture</strong> for reverse search or AI insights</li>
+        <li><strong>Image URLs</strong> you paste for search</li>
+        <li><strong>In-app actions</strong> such as saving favorites or clearing history (stored locally)</li>
+      </ul>
+
+      <h3>3.2 Information collected automatically</h3>
+      <ul>
+        <li><strong>Device &amp; app diagnostics</strong> (for example app version, OS, crash/performance signals via analytics SDKs)</li>
+        <li><strong>Usage events</strong> such as app open, search started/completed, subscription screen viewed (Firebase Analytics, when configured)</li>
+        <li><strong>Advertising identifiers</strong> used by Google Mobile Ads / AdMob on free tiers (subject to platform limits and your OS settings)</li>
+        <li><strong>Push notification tokens</strong> if you allow notifications (Firebase Cloud Messaging)</li>
+      </ul>
+
+      <h3>3.3 Information we do not collect on our own servers</h3>
+      <div class="note">
+        We do not operate a custom user-account database for this App. Search history and favorites are saved on your device.
+        We do not store uploaded images on an App-owned permanent server.
+      </div>
+    </section>
+
+    <section id="use">
+      <h2>4. How we use information</h2>
+      <ul>
+        <li>To perform reverse image search and show Visual / Exact / Product-style matches</li>
+        <li>To generate optional “About” / insight text when AI features are enabled</li>
+        <li>To enforce free search limits and Pro subscription entitlements</li>
+        <li>To show ads to free users and measure ad performance</li>
+        <li>To send service notifications (updates, reminders) if you opt in</li>
+        <li>To improve stability, understand feature usage, and fix bugs</li>
+        <li>To comply with law and prevent abuse (harassment, illegal content, fraud)</li>
+      </ul>
+    </section>
+
+    <section id="images">
+      <h2>5. Images &amp; search processing</h2>
+      <p>When you start a search, your image may be processed as follows:</p>
+      <ol>
+        <li><strong>On-device selection</strong> — you pick a gallery photo or take a camera photo.</li>
+        <li><strong>Temporary hosting (when required)</strong> — some search paths briefly upload the image to a temporary public file host so a reverse-search provider (for example Google Lens web flows) can fetch it. Uploads are for search completion, not long-term storage by us.</li>
+        <li><strong>Search providers</strong> — image data or a hosted URL may be sent to search backends configured for the App (for example Apify Google Lens actors, Bing Visual Search, or similar services used by the App build).</li>
+        <li><strong>Optional AI insights</strong> — if enabled in your build, image data may be sent to OpenAI (e.g. GPT-4o mini) and/or Qwen-VL (DashScope) solely to produce descriptions / insights shown in the App.</li>
+      </ol>
+      <p>
+        Result pages often open third-party websites. Those sites may set cookies or collect data under their own policies.
+      </p>
+    </section>
+
+    <section id="permissions">
+      <h2>6. Device permissions</h2>
+      <p>Depending on your OS version, the App may request:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Permission</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Internet / network</td>
+            <td>Search, ads, analytics, subscriptions, loading result images</td>
+          </tr>
+          <tr>
+            <td>Camera</td>
+            <td>Capture a photo to search</td>
+          </tr>
+          <tr>
+            <td>Photos / media / storage</td>
+            <td>Select an existing image from your gallery</td>
+          </tr>
+          <tr>
+            <td>Notifications</td>
+            <td>Optional push messages (Android 13+ requires runtime consent)</td>
+          </tr>
+          <tr>
+            <td>Billing (Google Play)</td>
+            <td>Purchase and restore Pro subscriptions</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>You can deny or revoke permissions in system settings. Some features will not work without the related permission.</p>
+    </section>
+
+    <section id="third">
+      <h2>7. Third-party services</h2>
+      <p>We use trusted processors to run the App. Their handling of data is governed by their policies:</p>
+      <ul>
+        <li><strong>Google Play / Google Play Billing</strong> — subscription purchase, restore, and entitlement</li>
+        <li><strong>Google Mobile Ads (AdMob)</strong> — ads for free users</li>
+        <li><strong>Firebase (Google)</strong> — Analytics and Cloud Messaging when enabled</li>
+        <li><strong>Search / hosting providers</strong> — temporary image hosts and reverse-search backends configured for the App</li>
+        <li><strong>AI providers</strong> — OpenAI and/or Alibaba Cloud DashScope (Qwen) when insight features are enabled</li>
+        <li><strong>Apple App Store</strong> — purchases on iOS builds, if distributed there</li>
+      </ul>
+      <p>
+        We encourage you to review:
+        <a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank">Google Privacy Policy</a>,
+        <a href="https://openai.com/policies/privacy-policy" rel="noopener noreferrer" target="_blank">OpenAI Privacy Policy</a>,
+        and other provider policies applicable to your region.
+      </p>
+    </section>
+
+    <section id="ads">
+      <h2>8. Advertising</h2>
+      <p>
+        Free users may see banner, native, interstitial, or rewarded ads served by Google AdMob.
+        Ad partners may use advertising IDs and approximate device signals to serve and measure ads.
+      </p>
+      <p>
+        Pro subscribers generally do not see ads while entitlement is active.
+        You can limit ad personalization in your device settings (for example Google advertising settings on Android).
+      </p>
+    </section>
+
+    <section id="purchases">
+      <h2>9. Subscriptions &amp; payments</h2>
+      <p>
+        Paid plans (weekly / monthly / yearly product IDs configured in the store) are sold through
+        <strong>Google Play Billing</strong> (and Apple on iOS). We do not receive or store your full card numbers.
+        Google/Apple process payment details under their terms.
+      </p>
+      <p>
+        The App may store an encrypted local record of Pro status, plan type, expiry, and remaining search allowance on your device
+        so features work offline. Restore Purchases re-syncs with the store when needed.
+      </p>
+    </section>
+
+    <section id="retention">
+      <h2>10. Storage &amp; retention</h2>
+      <ul>
+        <li><strong>On device:</strong> history, favorites, settings, and subscription cache until you clear them or uninstall the App</li>
+        <li><strong>Temporary uploads:</strong> removed according to the temporary host’s retention (often hours); we do not keep a permanent image archive</li>
+        <li><strong>Analytics / ads / FCM:</strong> retained by those providers per their policies and your OS controls</li>
+        <li><strong>Purchase records:</strong> retained by Google Play / Apple as required for billing and tax</li>
+      </ul>
+    </section>
+
+    <section id="security">
+      <h2>11. Security</h2>
+      <p>
+        We use reasonable technical measures appropriate for a mobile app, including encrypted local storage for subscription entitlement data
+        and HTTPS for network calls where supported by providers.
+        No method of transmission or storage is 100% secure. Please keep your device locked and updated.
+      </p>
+    </section>
+
+    <section id="children">
+      <h2>12. Children’s privacy</h2>
+      <p>
+        The App is not directed to children under 13 (or the minimum age required in your country).
+        Do not use the App to seek or share sexual content involving minors.
+        We do not knowingly collect personal information from children. If you believe a child provided data through the App, contact us and we will take appropriate steps.
+      </p>
+    </section>
+
+    <section id="rights">
+      <h2>13. Your choices &amp; rights</h2>
+      <ul>
+        <li>Deny camera, photos, or notification permissions in system settings</li>
+        <li>Clear in-app history / favorites, or uninstall the App to remove local data</li>
+        <li>Manage or cancel subscriptions in Google Play (or App Store) subscription settings</li>
+        <li>Opt out of personalized ads via your Google account / device ad settings</li>
+        <li>Depending on your region (for example GDPR/CCPA), you may have rights to access, delete, or restrict certain processing — contact us to make a request</li>
+      </ul>
+    </section>
+
+    <section id="international">
+      <h2>14. International transfers</h2>
+      <p>
+        Providers may process data in the United States or other countries.
+        Where required, they use appropriate safeguards (such as standard contractual clauses) described in their documentation.
+      </p>
+    </section>
+
+    <section id="changes">
+      <h2>15. Changes to this policy</h2>
+      <p>
+        We may update this Privacy Policy to reflect product, legal, or provider changes.
+        The “Last updated” date at the top will change when we do.
+        Continued use of the App after an update means you accept the revised policy, where permitted by law.
+      </p>
+    </section>
+
+    <section id="contact">
+      <h2>16. Contact us</h2>
+      <p>
+        Privacy requests and questions:<br />
+        Email: <a href="mailto:hello@appomatrix.com">hello@appomatrix.com</a><br />
+        App: Reverse Image Search<br />
+        Android package: <code>com.deep.image.search.reverseimagesearch.facesearcher</code>
+      </p>
+      <p>
+        Related pages:
+        <a href="https://reverseimagesearch.app/terms">Terms of Use</a>
+        (when published).
+      </p>
+    </section>
+
+    <footer>
+      <p>© 2026 Reverse Image Search. All rights reserved.</p>
+      <p>This page is provided for transparency and Play Console / App Store privacy disclosures.</p>
+    </footer>
+  </div>
+</body>
+</html>

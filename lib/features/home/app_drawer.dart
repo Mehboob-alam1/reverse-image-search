@@ -116,7 +116,7 @@ class AppDrawer extends ConsumerWidget {
                 showDivider: false,
                 onTap: () => _open(context, () {
                   const UrlService().openStore(
-                    'mailto:${AppConstants.supportEmail}?subject=Deep%20Image%20Search%20feedback',
+                    'mailto:${AppConstants.supportEmail}?subject=Reverse%20Image%20Search%20feedback',
                   );
                 }),
               ),
