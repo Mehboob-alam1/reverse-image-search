@@ -34,12 +34,24 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            // All three Play metrics (optimize / obfuscate / shrink) need these on:
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            ndk {
+                // Drop unused ABIs from the local merge; Play still serves per-device splits
+                abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+            }
+        }
+    }
+
+    packaging {
+        jniLibs {
+            // Compress native libs in the APK/AAB (smaller download)
+            useLegacyPackaging = false
         }
     }
 }

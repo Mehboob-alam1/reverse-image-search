@@ -14,18 +14,10 @@ class PickedMedia {
   static final ImagePicker _picker = ImagePicker();
 
   static Future<File?> pickOriginal({required ImageSource source}) async {
-    if (source == ImageSource.gallery) {
-      final photos = await Permission.photos.request();
-      final storage = photos.isGranted || photos.isLimited
-          ? photos
-          : await Permission.storage.request();
-      if (storage.isPermanentlyDenied) {
-        throw const AppException(
-          code: AppErrorCode.validation,
-          message: 'allowPhotoAccess',
-        );
-      }
-    } else {
+    // Gallery: use the OS photo picker (Android Photo Picker / iOS PHPicker).
+    // Do NOT request READ_MEDIA_IMAGES / storage — Play policy forbids it when
+    // the system picker is enough for one-off image selection.
+    if (source == ImageSource.camera) {
       final camera = await Permission.camera.request();
       if (!camera.isGranted) {
         throw const AppException(
@@ -37,7 +29,8 @@ class PickedMedia {
 
     final picked = await _picker.pickImage(
       source: source,
-      requestFullMetadata: true,
+      // Avoid triggering full media-library access on Android.
+      requestFullMetadata: false,
       maxWidth: 1200,
       maxHeight: 1200,
       imageQuality: 78,
