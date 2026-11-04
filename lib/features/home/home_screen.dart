@@ -16,6 +16,7 @@ import '../../models/user_models.dart';
 import '../../services/analytics_service.dart';
 import '../../app/deferred_app_open.dart';
 import '../../services/ads/ads_controller.dart';
+import '../../services/ads/ads_remote_config.dart';
 import '../../services/feature_access_service.dart';
 import '../controllers.dart';
 import '../subscription/credits_exhausted_sheet.dart';
@@ -220,8 +221,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const CreditsChip(),
-                            const SizedBox(width: 6),
-                            ProChip(onTap: () => context.push('/subscription')),
+                            if (ref.watch(subscriptionsEnabledProvider)) ...[
+                              const SizedBox(width: 6),
+                              ProChip(
+                                onTap: () => context.push('/subscription'),
+                              ),
+                            ],
                           ],
                         ),
                       ],

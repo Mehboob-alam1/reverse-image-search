@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/ads/ads_controller.dart';
+import '../../services/ads/ads_remote_config.dart';
 import '../controllers.dart';
 
 /// Shown when the user has no search credits left.
@@ -119,14 +120,16 @@ class _CreditsExhaustedSheetState extends ConsumerState<_CreditsExhaustedSheet> 
                 _watching ? l10n.loadingAd : l10n.watchAdForCredit,
               ),
             ),
-            const SizedBox(height: 10),
-            OutlinedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                context.push('/subscription');
-              },
-              child: Text(l10n.upgradeToPro),
-            ),
+            if (ref.watch(subscriptionsEnabledProvider)) ...[
+              const SizedBox(height: 10),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.push('/subscription');
+                },
+                child: Text(l10n.upgradeToPro),
+              ),
+            ],
           ],
         ),
       ),

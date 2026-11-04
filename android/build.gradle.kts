@@ -5,6 +5,33 @@ allprojects {
     }
 }
 
+// Force Kotlin ≥ Flutter's minimum (2.2.20). Some plugins still ship 2.2.10.
+extra["kotlin_version"] = "2.4.21"
+subprojects {
+    buildscript {
+        configurations.classpath {
+            resolutionStrategy.eachDependency {
+                if (requested.group == "org.jetbrains.kotlin" &&
+                    requested.name.startsWith("kotlin-gradle-plugin")) {
+                    useVersion("2.4.21")
+                    because("Flutter requires Kotlin ≥ 2.2.20")
+                }
+            }
+        }
+    }
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin" &&
+                (requested.name.startsWith("kotlin-stdlib") ||
+                    requested.name.startsWith("kotlin-reflect") ||
+                    requested.name == "kotlin-gradle-plugin")) {
+                useVersion("2.4.21")
+                because("Align Kotlin with Flutter minimum")
+            }
+        }
+    }
+}
+
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")

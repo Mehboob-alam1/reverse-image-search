@@ -78,9 +78,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (GoRouter.maybeOf(context) == null) return;
 
     final storage = ref.read(localStorageProvider);
+    final subscriptionsOn = settings.subscriptionsEnabled;
+    if (!subscriptionsOn && !storage.hasSeenPro) {
+      // Skip paywall while IAP is remotely disabled (Play review).
+      await storage.markProSeen();
+      await storage.markOnboardingComplete();
+      await storage.markPermissionsComplete();
+    }
     if (!storage.hasSelectedLanguage) {
       context.go('/language');
-    } else if (!storage.hasSeenPro) {
+    } else if (subscriptionsOn && !storage.hasSeenPro) {
       context.go('/pro');
     } else {
       context.go('/home');

@@ -10,6 +10,7 @@ import '../../core/storage/local_storage.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/user_models.dart';
+import '../../services/ads/ads_remote_config.dart';
 import '../../services/analytics_service.dart';
 import '../controllers.dart';
 import 'subscription_tier_table.dart';
@@ -29,7 +30,18 @@ class _ProScreenState extends ConsumerState<ProScreen> {
   @override
   void initState() {
     super.initState();
-    ref.read(analyticsServiceProvider).subscriptionViewed();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (!ref.read(subscriptionsEnabledProvider)) {
+        if (widget.fromSettings) {
+          context.pop();
+        } else {
+          context.go('/home');
+        }
+        return;
+      }
+      ref.read(analyticsServiceProvider).subscriptionViewed();
+    });
     if (!widget.fromSettings) {
       scheduleDeferredAppOpen(ref);
     }
@@ -124,6 +136,9 @@ class _ProScreenState extends ConsumerState<ProScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!ref.watch(subscriptionsEnabledProvider)) {
+      return const Scaffold(body: SizedBox.shrink());
+    }
     final l10n = AppLocalizations.of(context);
     final auth = ref.watch(authControllerProvider);
     final iap = ref.watch(iapControllerProvider);

@@ -15,11 +15,13 @@ import '../../features/splash/splash_screen.dart';
 import '../../features/favorites/favorites_screen.dart';
 import '../../features/subscription/pro_screen.dart';
 import '../../models/search_result.dart';
+import '../../services/ads/ads_remote_config.dart';
 
 final _rootKey = GlobalKey<NavigatorState>();
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final storage = ref.watch(localStorageProvider);
+  final subscriptionsOn = ref.watch(subscriptionsEnabledProvider);
 
   return GoRouter(
     navigatorKey: _rootKey,
@@ -58,7 +60,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return '/language';
       }
       if (loc == '/language') return null;
-      if (!storage.hasSeenPro && loc != '/pro') {
+      if (!subscriptionsOn && (loc == '/pro' || loc == '/subscription')) {
+        return storage.hasSelectedLanguage ? '/home' : '/language';
+      }
+      if (subscriptionsOn && !storage.hasSeenPro && loc != '/pro') {
         return '/pro';
       }
       return null;

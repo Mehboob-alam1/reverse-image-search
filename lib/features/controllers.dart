@@ -18,6 +18,7 @@ import '../models/search_response.dart';
 import '../models/search_result.dart';
 import '../models/search_type.dart';
 import '../models/user_models.dart';
+import '../services/ads/ads_remote_config.dart';
 import '../services/analytics_service.dart';
 import '../services/search_debug_log.dart';
 import '../services/feature_access_service.dart';
@@ -443,6 +444,10 @@ class IapController extends Notifier<IapState> {
   };
 
   Future<void> load() async {
+    if (!ref.read(subscriptionsEnabledProvider)) {
+      state = const IapState(available: false, loading: false);
+      return;
+    }
     final store = InAppPurchase.instance;
     final available = await store.isAvailable();
     if (!available) {
@@ -486,6 +491,7 @@ class IapController extends Notifier<IapState> {
 
   /// Starts a Play / App Store subscription purchase for [product].
   Future<bool> buy(ProductDetails product) async {
+    if (!ref.read(subscriptionsEnabledProvider)) return false;
     final purchaseParam = (!kIsWeb && Platform.isAndroid)
         ? GooglePlayPurchaseParam(productDetails: product)
         : PurchaseParam(productDetails: product);
@@ -495,6 +501,7 @@ class IapController extends Notifier<IapState> {
   }
 
   Future<void> restore() async {
+    if (!ref.read(subscriptionsEnabledProvider)) return;
     await InAppPurchase.instance.restorePurchases();
   }
 

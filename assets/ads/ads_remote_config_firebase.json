@@ -4,7 +4,7 @@
       "defaultValue": {
         "value": "true"
       },
-      "description": "Master switch turn all AdMob ads on off",
+      "description": "Master switch. false = all ads off ignoring per-format flags. true = each format uses its own toggle",
       "valueType": "BOOLEAN"
     },
     "api_base_url": {
@@ -13,6 +13,13 @@
       },
       "description": "Railway reverse image API base URL",
       "valueType": "STRING"
+    },
+    "subscriptions_enabled": {
+      "defaultValue": {
+        "value": "false"
+      },
+      "description": "Play Billing Pro paywall. Keep false until currency display is fixed; set true to re-enable IAP",
+      "valueType": "BOOLEAN"
     },
     "native_bottom_enabled": {
       "defaultValue": {

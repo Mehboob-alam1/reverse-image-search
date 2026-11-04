@@ -2,13 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/ad_config.dart';
 import '../../core/constants/railway_search_config.dart';
 import '../../core/constants/storage_keys.dart';
+import '../../core/firebase/firebase_bootstrap.dart';
 import '../../core/storage/local_storage.dart';
 
 class AdsRemoteSettings {
@@ -26,6 +28,7 @@ class AdsRemoteSettings {
     required this.nativeEveryNResults,
     required this.splashMinMs,
     required this.apiBaseUrl,
+    required this.subscriptionsEnabled,
     required this.nativeUnitId,
     required this.interstitialUnitId,
     required this.appOpenUnitId,
@@ -50,6 +53,7 @@ class AdsRemoteSettings {
       nativeEveryNResults: AdConfig.resultsNativeAdEvery,
       splashMinMs: AdConfig.splashMinDuration.inMilliseconds,
       apiBaseUrl: RailwaySearchConfig.defaultBaseUrl,
+      subscriptionsEnabled: AdConfig.subscriptionsEnabledByDefault,
       nativeUnitId: AdConfig.androidNativeUnitId,
       interstitialUnitId: AdConfig.androidInterstitialUnitId,
       appOpenUnitId: AdConfig.androidAppOpenUnitId,
@@ -58,13 +62,14 @@ class AdsRemoteSettings {
     );
   }
 
-  factory AdsRemoteSettings.fromMap(Map<String, dynamic> map) {
+  factory AdsRemoteSettings.fromMap(Map<String, dynamic> raw) {
+    final map = normalizeRemoteMap(raw);
     final defaults = AdsRemoteSettings.defaults();
     final android = !kIsWeb && Platform.isAndroid;
 
     String unit(List<String> keys, String fallback) {
       for (final key in keys) {
-        final v = map[key]?.toString().trim() ?? '';
+        final v = unwrapRemoteValue(map[key])?.toString().trim() ?? '';
         if (v.isNotEmpty) return v;
       }
       return fallback;
@@ -72,7 +77,9 @@ class AdsRemoteSettings {
 
     Object? first(List<String> keys) {
       for (final key in keys) {
-        if (map.containsKey(key) && map[key] != null) return map[key];
+        if (map.containsKey(key) && map[key] != null) {
+          return unwrapRemoteValue(map[key]);
+        }
       }
       return null;
     }
@@ -80,6 +87,11 @@ class AdsRemoteSettings {
     final apiBaseUrl = unit(
       [AdsRemoteConfigKeys.apiBaseUrl],
       defaults.apiBaseUrl,
+    );
+
+    final subscriptionsEnabled = _bool(
+      map[AdsRemoteConfigKeys.subscriptionsEnabled],
+      defaults.subscriptionsEnabled,
     );
 
     if (!android) {
@@ -98,6 +110,7 @@ class AdsRemoteSettings {
         splashMinMs: _int(map[AdsRemoteConfigKeys.splashMinMs], defaults.splashMinMs)
             .clamp(1500, 8000),
         apiBaseUrl: apiBaseUrl,
+        subscriptionsEnabled: subscriptionsEnabled,
         nativeUnitId: defaults.nativeUnitId,
         interstitialUnitId: defaults.interstitialUnitId,
         appOpenUnitId: defaults.appOpenUnitId,
@@ -106,25 +119,34 @@ class AdsRemoteSettings {
       );
     }
 
+    // Master kill-switch: when false, every ad format is forced off even if
+    // individual remote flags are true. When true, each format keeps its own flag.
+    final adsEnabled = _bool(
+          map[AdsRemoteConfigKeys.adsEnabled],
+          defaults.adsEnabled,
+        ) &&
+        AdConfig.enableAdsOnAndroid;
+
     return AdsRemoteSettings(
-      adsEnabled: _bool(map[AdsRemoteConfigKeys.adsEnabled], defaults.adsEnabled) &&
-          AdConfig.enableAdsOnAndroid,
-      nativeBottomEnabled:
+      adsEnabled: adsEnabled,
+      nativeBottomEnabled: adsEnabled &&
           _bool(map[AdsRemoteConfigKeys.nativeEnabled], defaults.nativeBottomEnabled),
-      interstitialEnabled: _bool(
-        map[AdsRemoteConfigKeys.interstitialEnabled],
-        defaults.interstitialEnabled,
-      ),
-      appOpenEnabled:
+      interstitialEnabled: adsEnabled &&
+          _bool(
+            map[AdsRemoteConfigKeys.interstitialEnabled],
+            defaults.interstitialEnabled,
+          ),
+      appOpenEnabled: adsEnabled &&
           _bool(map[AdsRemoteConfigKeys.appOpenEnabled], defaults.appOpenEnabled),
-      bannerEnabled:
+      bannerEnabled: adsEnabled &&
           _bool(map[AdsRemoteConfigKeys.bannerEnabled], defaults.bannerEnabled),
-      rewardedEnabled:
+      rewardedEnabled: adsEnabled &&
           _bool(map[AdsRemoteConfigKeys.rewardedEnabled], defaults.rewardedEnabled),
-      interstitialAfterSearch: _bool(
-        map[AdsRemoteConfigKeys.interstitialAfterSearch],
-        defaults.interstitialAfterSearch,
-      ),
+      interstitialAfterSearch: adsEnabled &&
+          _bool(
+            map[AdsRemoteConfigKeys.interstitialAfterSearch],
+            defaults.interstitialAfterSearch,
+          ),
       interstitialIntervalSeconds: _int(
         first([
           AdsRemoteConfigKeys.interstitialCooldownSec,
@@ -147,6 +169,7 @@ class AdsRemoteSettings {
       splashMinMs: _int(map[AdsRemoteConfigKeys.splashMinMs], defaults.splashMinMs)
           .clamp(1500, 8000),
       apiBaseUrl: apiBaseUrl,
+      subscriptionsEnabled: subscriptionsEnabled,
       nativeUnitId: unit(
         [AdsRemoteConfigKeys.native, AdsRemoteConfigKeys.nativeUnitId],
         defaults.nativeUnitId,
@@ -183,31 +206,88 @@ class AdsRemoteSettings {
   final int nativeEveryNResults;
   final int splashMinMs;
   final String apiBaseUrl;
+  /// When false, hide Pro paywall / Play Billing purchase UI (Play review safe).
+  final bool subscriptionsEnabled;
   final String nativeUnitId;
   final String interstitialUnitId;
   final String appOpenUnitId;
   final String bannerUnitId;
   final String rewardedUnitId;
 
+  /// Flattens Firebase RC template exports and unwraps parameter objects.
+  static Map<String, dynamic> normalizeRemoteMap(Map<String, dynamic> raw) {
+    final params = raw['parameters'];
+    if (params is Map) {
+      final flat = <String, dynamic>{};
+      for (final e in params.entries) {
+        flat[e.key.toString()] = unwrapRemoteValue(e.value) ?? e.value;
+      }
+      for (final e in raw.entries) {
+        final key = e.key.toString();
+        if (key == 'parameters' ||
+            key == 'version' ||
+            key == 'parameterGroups') {
+          continue;
+        }
+        flat.putIfAbsent(key, () => unwrapRemoteValue(e.value) ?? e.value);
+      }
+      return flat;
+    }
+
+    final flat = <String, dynamic>{};
+    for (final e in raw.entries) {
+      flat[e.key.toString()] = unwrapRemoteValue(e.value) ?? e.value;
+    }
+    return flat;
+  }
+
+  /// Handles flat values and Firebase `{defaultValue:{value:"…"}}` objects.
+  static Object? unwrapRemoteValue(Object? value) {
+    if (value == null) return null;
+    if (value is Map) {
+      final map = Map<String, dynamic>.from(value);
+      final defaultValue = map['defaultValue'];
+      if (defaultValue is Map) {
+        final nested = Map<String, dynamic>.from(defaultValue);
+        if (nested.containsKey('value')) return nested['value'];
+      }
+      if (defaultValue != null) return defaultValue;
+      if (map.containsKey('value')) return map['value'];
+    }
+    return value;
+  }
+
   static bool _bool(Object? value, bool fallback) {
-    if (value == null) return fallback;
-    if (value is bool) return value;
-    final s = value.toString().toLowerCase();
+    final unwrapped = unwrapRemoteValue(value);
+    if (unwrapped == null) return fallback;
+    if (unwrapped is bool) return unwrapped;
+    final s = unwrapped.toString().trim().toLowerCase();
     if (s == 'true' || s == '1') return true;
     if (s == 'false' || s == '0') return false;
     return fallback;
   }
 
   static int _int(Object? value, int fallback) {
-    if (value == null) return fallback;
-    if (value is int) return value;
-    return int.tryParse(value.toString()) ?? fallback;
+    final unwrapped = unwrapRemoteValue(value);
+    if (unwrapped == null) return fallback;
+    if (unwrapped is int) return unwrapped;
+    if (unwrapped is double) return unwrapped.round();
+    return int.tryParse(unwrapped.toString().trim()) ?? fallback;
   }
 }
 
 final adsRemoteSettingsProvider = FutureProvider<AdsRemoteSettings>((ref) async {
   final storage = ref.read(localStorageProvider);
   return AdsRemoteConfigLoader(storage).load();
+});
+
+/// Safe default `false` until remote/bundled config loads (Play review).
+final subscriptionsEnabledProvider = Provider<bool>((ref) {
+  final async = ref.watch(adsRemoteSettingsProvider);
+  return async.maybeWhen(
+    data: (s) => s.subscriptionsEnabled,
+    orElse: () => AdConfig.subscriptionsEnabledByDefault,
+  );
 });
 
 class AdsRemoteConfigLoader {
@@ -224,21 +304,32 @@ class AdsRemoteConfigLoader {
       settings = AdsRemoteSettings.fromMap({..._toMap(settings), ...cached});
     }
 
+    // 1) Optional hosted flat/Firebase-template JSON URL.
     final url = AdConfig.remoteConfigUrl.trim();
-    if (url.isEmpty) {
-      RailwaySearchConfig.applyRemoteBaseUrl(settings.apiBaseUrl);
-      return settings;
+    if (url.isNotEmpty) {
+      try {
+        final remote = await _fetchRemote(url);
+        if (remote != null) {
+          final flat = AdsRemoteSettings.normalizeRemoteMap(remote);
+          await _writeCache(flat);
+          settings = AdsRemoteSettings.fromMap({..._toMap(settings), ...flat});
+        }
+      } on Object {
+        // Keep cached / bundled values when offline.
+      }
     }
 
+    // 2) Firebase Remote Config console values (wins over CDN when present).
     try {
-      final remote = await _fetchRemote(url);
-      if (remote != null) {
-        await _writeCache(remote);
-        settings = AdsRemoteSettings.fromMap({..._toMap(settings), ...remote});
+      final firebase = await _fetchFirebaseRemoteConfig();
+      if (firebase != null && firebase.isNotEmpty) {
+        await _writeCache({..._toMap(settings), ...firebase});
+        settings = AdsRemoteSettings.fromMap({..._toMap(settings), ...firebase});
       }
     } on Object {
-      // Keep cached / bundled values when offline.
+      // Firebase optional — ignore when unavailable.
     }
+
     RailwaySearchConfig.applyRemoteBaseUrl(settings.apiBaseUrl);
     return settings;
   }
@@ -278,6 +369,34 @@ class AdsRemoteConfigLoader {
     return null;
   }
 
+  /// Reads live keys from Firebase Console Remote Config.
+  Future<Map<String, dynamic>?> _fetchFirebaseRemoteConfig() async {
+    if (kIsWeb || !FirebaseBootstrap.ready) return null;
+    final rc = FirebaseRemoteConfig.instance;
+    await rc.setConfigSettings(
+      RemoteConfigSettings(
+        fetchTimeout: const Duration(seconds: 10),
+        minimumFetchInterval:
+            kDebugMode ? Duration.zero : AdConfig.remoteConfigCacheTtl,
+      ),
+    );
+    await rc.setDefaults(_toMap(AdsRemoteSettings.defaults()).map(
+      (key, value) => MapEntry(key, value is bool ? value : value.toString()),
+    ));
+    await rc.fetchAndActivate();
+
+    final all = rc.getAll();
+    if (all.isEmpty) return null;
+
+    final out = <String, dynamic>{};
+    for (final entry in all.entries) {
+      final raw = entry.value.asString().trim();
+      if (raw.isEmpty) continue;
+      out[entry.key] = raw;
+    }
+    return out.isEmpty ? null : out;
+  }
+
   Map<String, dynamic> _toMap(AdsRemoteSettings s) => {
         AdsRemoteConfigKeys.adsEnabled: s.adsEnabled,
         AdsRemoteConfigKeys.nativeEnabled: s.nativeBottomEnabled,
@@ -292,6 +411,7 @@ class AdsRemoteConfigLoader {
         AdsRemoteConfigKeys.nativeEveryN: s.nativeEveryNResults,
         AdsRemoteConfigKeys.splashMinMs: s.splashMinMs,
         AdsRemoteConfigKeys.apiBaseUrl: s.apiBaseUrl,
+        AdsRemoteConfigKeys.subscriptionsEnabled: s.subscriptionsEnabled,
         AdsRemoteConfigKeys.native: s.nativeUnitId,
         AdsRemoteConfigKeys.interstitial: s.interstitialUnitId,
         AdsRemoteConfigKeys.appOpen: s.appOpenUnitId,
@@ -305,7 +425,11 @@ class AdsRemoteConfigLoader {
     if (raw == null || raw.isEmpty) return null;
     try {
       final decoded = jsonDecode(raw);
-      if (decoded is Map) return Map<String, dynamic>.from(decoded);
+      if (decoded is Map) {
+        return AdsRemoteSettings.normalizeRemoteMap(
+          Map<String, dynamic>.from(decoded),
+        );
+      }
     } on Object {
       // ignore
     }
@@ -314,7 +438,8 @@ class AdsRemoteConfigLoader {
 
   Future<void> _writeCache(Map<String, dynamic> remote) async {
     final prefs = _storage.prefs;
-    await prefs.setString(StorageKeys.adsRemoteConfigJson, jsonEncode(remote));
+    final flat = AdsRemoteSettings.normalizeRemoteMap(remote);
+    await prefs.setString(StorageKeys.adsRemoteConfigJson, jsonEncode(flat));
     await prefs.setInt(
       StorageKeys.adsRemoteConfigFetchedAt,
       DateTime.now().millisecondsSinceEpoch,

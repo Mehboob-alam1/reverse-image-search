@@ -6,6 +6,7 @@ import '../../app/deferred_app_open.dart';
 import '../../core/storage/local_storage.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/ads/ads_remote_config.dart';
 import '../controllers.dart';
 
 class _Lang {
@@ -106,7 +107,18 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
                 if (!context.mounted) return;
                 if (widget.fromSettings) {
                   context.pop();
-                } else if (!ref.read(localStorageProvider).hasSeenPro) {
+                  return;
+                }
+                final storage = ref.read(localStorageProvider);
+                final subscriptionsOn =
+                    ref.read(subscriptionsEnabledProvider);
+                if (!subscriptionsOn && !storage.hasSeenPro) {
+                  await storage.markProSeen();
+                  await storage.markOnboardingComplete();
+                  await storage.markPermissionsComplete();
+                }
+                if (!context.mounted) return;
+                if (subscriptionsOn && !storage.hasSeenPro) {
                   context.go('/pro');
                 } else {
                   context.go('/home');

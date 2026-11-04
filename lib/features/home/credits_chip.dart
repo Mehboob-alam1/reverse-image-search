@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/user_models.dart';
+import '../../services/ads/ads_remote_config.dart';
 import '../controllers.dart';
 import '../subscription/credits_exhausted_sheet.dart';
 
@@ -26,12 +27,16 @@ class CreditsChip extends ConsumerWidget {
     final limit = usage?.limit ?? AppConstants.freeSearchCredits;
     final exhausted = remaining <= 0;
 
+    final subscriptionsOn = ref.watch(subscriptionsEnabledProvider);
+
     Future<void> onTap() async {
       if (exhausted && !auth.isPro) {
         await showCreditsExhaustedSheet(context, ref);
         return;
       }
-      if (context.mounted) context.push('/subscription');
+      if (subscriptionsOn && context.mounted) {
+        context.push('/subscription');
+      }
     }
 
     if (auth.isPro) {

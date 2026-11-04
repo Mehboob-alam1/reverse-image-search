@@ -74,8 +74,11 @@ class AdsController extends Notifier<AdsUiState> {
     state = state.copyWith(bootstrapMessage: 'Preparing ads…');
     await _manager.preloadAll(isPro: _isPro);
     _manager.markSplashFinished();
-    _pendingAppOpenAfterSplash = settings.appOpenEnabled;
-    _publishNativeFromPool(settings.nativeBottomEnabled);
+    _pendingAppOpenAfterSplash =
+        settings.adsEnabled && settings.appOpenEnabled;
+    _publishNativeFromPool(
+      settings.adsEnabled && settings.nativeBottomEnabled,
+    );
     state = state.copyWith(
       ready: true,
       bootstrapMessage: '',

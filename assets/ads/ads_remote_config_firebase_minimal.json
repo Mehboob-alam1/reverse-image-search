@@ -18,6 +18,12 @@
       },
       "valueType": "STRING"
     },
+    "subscriptions_enabled": {
+      "defaultValue": {
+        "value": "false"
+      },
+      "valueType": "BOOLEAN"
+    },
     "banner": {
       "defaultValue": {
         "value": "ca-app-pub-3940256099942544/2014213617"

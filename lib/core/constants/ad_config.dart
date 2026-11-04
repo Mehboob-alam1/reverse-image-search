@@ -4,7 +4,13 @@ class AdConfig {
   AdConfig._();
 
   /// Local kill-switch. Remote `ads_enabled` must also be true (Android only).
+  /// Remote master `ads_enabled: false` forces all formats off regardless of
+  /// per-format flags; master true + a format false disables only that format.
   static const bool enableAdsOnAndroid = true;
+
+  /// Compile-time default when remote omits `subscriptions_enabled`.
+  /// Keep `false` for Play review until offer/payment currency display is fixed.
+  static const bool subscriptionsEnabledByDefault = false;
 
   /// HTTPS JSON for ad toggles + Android unit IDs.
   /// Override: `--dart-define=ADS_REMOTE_CONFIG_URL=https://.../ads_remote_config.json`
@@ -74,6 +80,10 @@ class AdsRemoteConfigKeys {
 
   /// Railway (or other) reverse-image API root URL. Empty = app default.
   static const apiBaseUrl = 'api_base_url';
+
+  /// Play Billing / Pro paywall. Default off until currency/localization is fixed.
+  /// Set `"subscriptions_enabled": true` in hosted remote JSON to turn IAP back on.
+  static const subscriptionsEnabled = 'subscriptions_enabled';
 
   /// Short unit-ID keys (Firebase Remote Config style).
   static const banner = 'banner';
